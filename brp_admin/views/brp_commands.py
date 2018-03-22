@@ -64,7 +64,29 @@ class ReactivateUsers(TemplateView):
 
     def get(self, request):
         context = self.get_context_data()
-        # context = super(ReactivateUsers, self).get_context_data()
-        print("COntext:")
-        print(context)
+        return render(request, 'form.html', context)
+
+
+class CacheLabels(TemplateView):
+    def get_context_data(self):
+        context = {}
+        context['form_title'] = "Cache labels"
+        context['message1'] = "select submit to cache all ehb labels"
+        context['message2'] = "This function may take a few minutes, you will receive confirmation shortly"
+        return context
+
+    def post(self, request):
+        print(request)
+        try:
+            management.call_command('cache_ehb_labels', verbosity=0)
+            context = {}
+            context['message'] = "Caching complete"
+            return render(request, 'confirmation.html', context)
+        except(Exception):
+            context = self.get_context_data()
+            context['error'] = "There was an error processing your request"
+            return render(request, 'form.html', context)
+
+    def get(self, request):
+        context = self.get_context_data()
         return render(request, 'form.html', context)

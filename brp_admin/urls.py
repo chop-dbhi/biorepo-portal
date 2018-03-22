@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from .views.protocol import Fn_in_progress, ProtocolUserView
 
-from .views.brp_commands import CacheSubjects, ReactivateUsers
+from .views.brp_commands import CacheSubjects, ReactivateUsers, CacheLabels
 
 
 urlpatterns = [
@@ -23,4 +23,8 @@ urlpatterns = [
         r'^reactivate_user/$',
         login_required(ReactivateUsers.as_view()),
         name='cache_subjects'),
+    url(
+        r'^cache_labels/$',
+        login_required(CacheLabels.as_view()),
+        name='cache_labels'),
 ]
