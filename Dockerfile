@@ -37,6 +37,7 @@ RUN pip3 install "dj-static>=0.0.6,<0.1.0"
 RUN pip3 install "python-json-logger==0.1.7"
 RUN pip3 install "django-admin-tools"
 RUN pip3 install "django-crispy-forms"
+RUN pip3 install "requests"
 
 
 ENV APP_ENV test

@@ -92,6 +92,7 @@ class LoggingMiddleware(object):
                         'protocol': pds.protocol.id,
                         'subject_id': subject_id,
                         'user_error_msg': user_error_msg,
+                        'user_error_msg': user_error_msg,
                         'response_time': response_time})
             else:
                 logger('{action}'.format(action=action), extra={

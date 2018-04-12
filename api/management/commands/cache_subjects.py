@@ -124,3 +124,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.cache_records(options['protocol_id'])
+        print("caching complete")

@@ -43,6 +43,7 @@ class CustomMenu(Menu):
                 children=[
                     items.MenuItem('cache subjects', '/brp_admin/cache_subjects/'),
                     items.MenuItem('toggle maintenance', '/brp_admin/fn_in_progress/'),
+                    items.MenuItem('cache ehb labels', '/brp_admin/cache_labels/'),
                 ]
             ),
             items.MenuItem(
