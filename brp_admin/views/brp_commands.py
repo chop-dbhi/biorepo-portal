@@ -1,8 +1,9 @@
 from django.views.generic import TemplateView
-from django.shortcuts import render
-from api.models.protocols import Protocol
-from brp_admin.forms import ProtocolForm, UserForm
+from django.shortcuts import render, redirect
+from api.models.protocols import Protocol, ProtocolUserCredentials
+from brp_admin.forms import ProtocolForm, UserForm, NautilusCredentialForm
 from django.core import management
+from django.contrib.auth.models import User
 
 
 class CacheSubjects(TemplateView):
@@ -34,6 +35,49 @@ class CacheSubjects(TemplateView):
         context = self.get_context_data()
         return render(request, 'form.html', context)
 
+class UpdateNautilusCredentials(TemplateView):
+    """
+        This generates the logic and display information for changing the
+    """
+    def get_context_data(self):
+        context = {}
+        context['form_title'] = "Update Nautilus Credentials"
+        context['message1'] = "Update a user's Nautilus credentials"
+        context['message2'] = ""
+        context['form'] = NautilusCredentialForm()
+        return context
+
+    def post(self, request):
+        context = {}
+        usernum = request.POST['username']
+        password = request.POST['password']
+        if (usernum and password):
+            user = User.objects.get(pk=usernum)
+            context = {}
+            #context = self.get_context_data()
+            set = ProtocolUserCredentials.objects.filter(user=user, data_source__driver=0)
+            set.update(data_source_password=password)
+            context['message'] = "Altered the following entries:\n"
+            for ent in set:
+                context['message'] += str(user) + ": " + str(ent.protocol.name) + "\n"
+            return render(request, 'confirmation.html', context)
+        elif (usernum):
+            user = User.objects.get(pk=usernum)
+            context = self.get_context_data()
+            context['error'] = "Please include the new password"
+            return render(request, 'form.html', context)
+        elif (password):
+            context = self.get_context_data()
+            context['error'] = "Please include the user you want to edit"
+            return render(request, 'form.html', context)
+        else:
+            context = self.get_context_data()
+            context['error'] = "Please include literally anything"
+            return render(request, 'form.html', context)
+
+    def get(self, request):
+        context = self.get_context_data()
+        return render(request, 'form.html', context)
 
 class ReactivateUsers(TemplateView):
 

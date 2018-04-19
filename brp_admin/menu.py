@@ -50,7 +50,7 @@ class CustomMenu(Menu):
                 _('User Management'),
                 children=[
                     items.MenuItem('re-activate user', '/brp_admin/reactivate_user/'),
-                    items.MenuItem('update user nautilus credentials', '/brp_admin/fn_in_progress/'),
+                    items.MenuItem('update user nautilus credentials', '/brp_admin/update_nautilus_credentials/'),
                     items.MenuItem('update user REDCap credentials', '/brp_admin/fn_in_progress/'),
                 ]
             ),

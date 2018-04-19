@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from .views.protocol import Fn_in_progress, ProtocolUserView
 
-from .views.brp_commands import CacheSubjects, ReactivateUsers, CacheLabels
+from .views.brp_commands import CacheSubjects, ReactivateUsers, CacheLabels, UpdateNautilusCredentials
 
 
 urlpatterns = [
@@ -27,4 +27,8 @@ urlpatterns = [
         r'^cache_labels/$',
         login_required(CacheLabels.as_view()),
         name='cache_labels'),
+    url(
+        r'^update_nautilus_credentials/$',
+        login_required(UpdateNautilusCredentials.as_view()),
+        name='update_nautilus_credentials'),
 ]
