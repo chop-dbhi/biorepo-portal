@@ -4,9 +4,54 @@ from django.shortcuts import render
 from django.forms.formsets import formset_factory
 from django.forms import modelformset_factory
 from django.core.exceptions import ObjectDoesNotExist
+from api.models.constants import ProtocolDataSourceConstants
 
-from brp_admin.forms import ProtocolUserForm, ProtocolUserCredentialsForm
+from brp_admin.forms import ProtocolUserForm, ProtocolUserCredentialsForm, NautilusCredentialForm
 from api.models.protocols import ProtocolUser, ProtocolUserCredentials, Protocol, ProtocolDataSource
+
+
+class UpdateNautilusCredentials(TemplateView):
+    """
+        This generates the logic and display information for changing a user's Nautilus password
+    """
+    def get_context_data(self):
+        context = {}
+        context['form_title'] = "Update Nautilus Credentials"
+        context['message1'] = "Update a user's Nautilus credentials"
+        context['message2'] = ""
+        context['form'] = NautilusCredentialForm()
+        return context
+
+    def post(self, request):
+        context = self.get_context_data()
+        template = 'form.html'
+        usernum = request.POST['username']
+        password = request.POST['password']
+        if (usernum and password):
+            try:
+                user = User.objects.get(pk=usernum)
+                context = {}
+                set = ProtocolUserCredentials.objects.filter(user=user, data_source__driver=ProtocolDataSourceConstants.nautilus_driver)
+                set.update(data_source_password=password)
+                context['message'] = "Altered the following entries:\n"
+                for ent in set:
+                    context['message'] += str(user) + ": " + str(ent.protocol.name) + "\n"
+                template = 'confirmation.html'
+            except(Exception):
+                context = self.get_context_data()
+                context['error'] = "There was an issue processing your request"
+        else:
+            errmsg = ""
+            if not usernum:
+                errmsg += "Please select a user.\n"
+            if not password:
+                errmsg += "Please enter the new password."
+            context['error'] = errmsg
+        return render(request, template, context)
+
+    def get(self, request):
+        context = self.get_context_data()
+        return render(request, 'form.html', context)
 
 
 class ProtocolUserView(TemplateView):
