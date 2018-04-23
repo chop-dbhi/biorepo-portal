@@ -25,4 +25,4 @@ class UserForm(forms.Form):
 
 class NautilusCredentialForm(forms.Form):
     username = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="Select a User")
-    newNautilusPassword = forms.CharField(max_length=50, label='New Nautilus Password')
+    password = forms.CharField(max_length=50, label='New Nautilus Password')
