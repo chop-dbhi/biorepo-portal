@@ -9,6 +9,8 @@ from api.models.constants import ProtocolDataSourceConstants
 from brp_admin.forms import ProtocolUserForm, ProtocolUserCredentialsForm, NautilusCredentialForm
 from api.models.protocols import ProtocolUser, ProtocolUserCredentials, Protocol, ProtocolDataSource
 
+from django.db.models import Q
+
 
 class UpdateNautilusCredentials(TemplateView):
     """
@@ -31,7 +33,7 @@ class UpdateNautilusCredentials(TemplateView):
             try:
                 user = User.objects.get(pk=usernum)
                 context = {}
-                set = ProtocolUserCredentials.objects.filter(user=user, data_source__driver=ProtocolDataSourceConstants.nautilus_driver)
+                set = ProtocolUserCredentials.objects.filter(Q(user = user), Q(data_source__driver = ProtocolDataSourceConstants.nautilus_driver), ~Q(data_source_password = ''))
                 set.update(data_source_password=password)
                 context['message'] = "Altered the following entries:\n"
                 for ent in set:
