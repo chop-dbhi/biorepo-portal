@@ -2,7 +2,7 @@
 {% block main_content %}
 
 <div class="container" style="border:1px solid #cecece;">
-  <h2> {{ message }} <span class="badge badge-secondary"></span></h2>
+  <h2> {{ message|linebreaks }} <span class="badge badge-secondary"></span></h2>
 
     <form method="POST" class="post-form">{% csrf_token %}
       {% for source in context.data_source %}
