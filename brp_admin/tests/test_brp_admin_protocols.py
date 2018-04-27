@@ -4,11 +4,8 @@ from django.contrib.auth.models import User
 from brp_admin.forms import NautilusCredentialForm
 from brp_admin.views.protocol import UpdateNautilusCredentials
 from api.models.constants import ProtocolDataSourceConstants
-<<<<<<< HEAD
-from api.models.protocols import DataSource, ProtocolUser, ProtocolUserCredentials, ProtocolDataSource, Protocol, User
-=======
+
 from api.models.protocols import DataSource, ProtocolUser, ProtocolUserCredentials, ProtocolDataSource, Protocol
->>>>>>> Updating my package.json and requirements.txt to examine differences
 
 from unittest.mock import MagicMock
 import pytest
