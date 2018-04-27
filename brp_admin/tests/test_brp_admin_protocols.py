@@ -180,13 +180,10 @@ class UpdateNautilusCredentialsTest(TestCase):
 
     @pytest.mark.skip(reason="For debugging output only")
     def test_DEBUGGING_MODE(self):
-<<<<<<< HEAD
         print("Datasource: " + str(self.datasource))
         print("Protocol: " + str(self.protocol))
         print("User: " + str(self.user))
-=======
         print("Protocol: " + str(self.protocol))
->>>>>>> Updating my package.json and requirements.txt to examine differences
         print("ProtocolUser: " + str(self.protocoluser))
         print("ProtocolDataSource: " + str(self.protocoldatasource))
         print("ProtocolUserCredentials: " + str(self.protocolusercredentials))
