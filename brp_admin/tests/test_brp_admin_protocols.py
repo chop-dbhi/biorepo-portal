@@ -1,6 +1,6 @@
 import json
 
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, Client
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.core.urlresolvers import reverse
@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from rest_framework.test import APIRequestFactory, APITestCase, \
                                 force_authenticate
 
-from brp_admin.views.protocol import UpdateNautilusCredentials
+from brp_admin.views.protocol import UpdateNautilusCredentials, ProtocolUserView
 
 from api.models.constants import ProtocolDataSourceConstants
 from api.models.protocols import DataSource, ProtocolUser, \
@@ -18,8 +18,9 @@ from api.models.protocols import DataSource, ProtocolUser, \
 from unittest.mock import MagicMock
 import pytest
 
-factory = APIRequestFactory()
-
+restFactory = APIRequestFactory()
+djangoFactory = RequestFactory()
+client = Client()
 
 class BRPTestCase(APITestCase):
 
@@ -27,6 +28,7 @@ class BRPTestCase(APITestCase):
 
     def setUp(self):
         self.test_user = User.objects.get(username='admin')
+        self.test_protocol = Protocol.objects.get(name='Demonstration Protocol')
 
 
 class UpdateNautilusCredentialsTest(BRPTestCase):
@@ -161,16 +163,26 @@ class UpdateNautilusCredentialsTest(BRPTestCase):
         set.update(data_source_password="newPassword")
         """
 
-    def test_get_reply(self):
+    def test_post_reply(self):
         url = reverse('update_nautilus_credentials')
-        postRequest = factory.post(url, {'username': self.test_user.username, 'password': "anyOldThing"})
-        testView = UpdateNautilusCredentials.as_view()
+        #url = reverse('UserProtocolCredential')
+        #postRequest = restFactory.post(url, {'username': self.test_user.username, 'password': "anyOldThing", 'user': self.test_user, 'protocol': self.test_protocol})
+        #postRequest = restFactory.post(url, {'username': self.test_user.username, 'password': "anyOldThing"})
+        #testView = UpdateNautilusCredentials.as_view()
+        #testView = ProtocolUserView.as_view()
         #force_authenticate(postRequest, user=self.user)
-        print(str(self.test_user))
+        #print(str(self.test_user))
         #print(str(postRequest))
         #print(str(testView))
-        response = testView(postRequest)
-        print(str(response))
+        #response = testView(postRequest)
+        response = client.post(url, {'username': self.test_user.username, 'password': "something"})
+        print("")
+        for key, val in response.items():
+            print(str(key) + ": " + str(val))
+        print(str(response.status_code))
+        print("Content  : " + str(response.content))
+        print("Templates: " + str(response.templates))
+        print("Context  : " + str(response.context))
         pass
 
     """
