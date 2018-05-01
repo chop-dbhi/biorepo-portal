@@ -30,15 +30,6 @@ class BRPTestCase(APITestCase):
         self.test_user = User.objects.get(username='admin')
         self.test_protocol = Protocol.objects.get(name='Demonstration Protocol')
 
-
-class UpdateNautilusCredentialsTest(BRPTestCase):
-
-    """
-    def setUp(self):
-        #DataSource.createEhbInstance = MagicMock(return_value=True)
-        #Protocol.createEhbProtocolGroup = MagicMock()
-        self.factory = RequestFactory()
-
         DataSource.objects.create(
             name='UnitTestDataSource',
             url='http://example.com',
@@ -159,6 +150,17 @@ class UpdateNautilusCredentialsTest(BRPTestCase):
             data_source_password="unitPassword"
             )
 
+
+class UpdateNautilusCredentialsTest(BRPTestCase):
+
+    """
+    def setUp(self):
+        #DataSource.createEhbInstance = MagicMock(return_value=True)
+        #Protocol.createEhbProtocolGroup = MagicMock()
+        #self.factory = RequestFactory()
+
+
+
         set = ProtocolUserCredentials.objects.filter(user=self.user, data_source__driver=ProtocolDataSourceConstants.nautilus_driver)
         set.update(data_source_password="newPassword")
         """
@@ -167,7 +169,7 @@ class UpdateNautilusCredentialsTest(BRPTestCase):
         url = reverse('update_nautilus_credentials')
         #url = reverse('UserProtocolCredential')
         #postRequest = restFactory.post(url, {'username': self.test_user.username, 'password': "anyOldThing", 'user': self.test_user, 'protocol': self.test_protocol})
-        #postRequest = restFactory.post(url, {'username': self.test_user.username, 'password': "anyOldThing"})
+        postRequest = restFactory.post(url, {'username': self.user.username, 'password': "anyOldThing"})
         #testView = UpdateNautilusCredentials.as_view()
         #testView = ProtocolUserView.as_view()
         #force_authenticate(postRequest, user=self.user)
@@ -175,7 +177,12 @@ class UpdateNautilusCredentialsTest(BRPTestCase):
         #print(str(postRequest))
         #print(str(testView))
         #response = testView(postRequest)
-        response = client.post(url, {'username': self.test_user.username, 'password': "something"})
+        response = client.post(url, {'username': self.user.username, 'password': "something"})
+        naut = UpdateNautilusCredentials()
+        try:
+            naut.post(postRequest)
+        except(Exception):
+            pass
         print("")
         for key, val in response.items():
             print(str(key) + ": " + str(val))
@@ -183,6 +190,12 @@ class UpdateNautilusCredentialsTest(BRPTestCase):
         print("Content  : " + str(response.content))
         print("Templates: " + str(response.templates))
         print("Context  : " + str(response.context))
+        otherOtherSet = ProtocolUserCredentials.objects.all()
+        otherSet = ProtocolUserCredentials.objects.filter(data_source__driver=ProtocolDataSourceConstants.nautilus_driver)
+        set = ProtocolUserCredentials.objects.filter(data_source_password="anyOldThing", data_source__driver=ProtocolDataSourceConstants.nautilus_driver)
+        print(str(otherOtherSet))
+        print(str(otherSet))
+        print(str(set))
         pass
 
     """

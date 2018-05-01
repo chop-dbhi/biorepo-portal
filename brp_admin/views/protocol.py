@@ -29,8 +29,12 @@ class UpdateNautilusCredentials(TemplateView):
         usernum = request.POST['username']
         password = request.POST['password']
         if (usernum and password):
+            print("And I got here of course")
             try:
-                user = User.objects.get(pk=usernum)
+                if isinstance(usernum, int):
+                    user = User.objects.get(pk=usernum)
+                else:
+                    user = User.objects.get(username=usernum)
                 context = {}
                 set = ProtocolUserCredentials.objects.filter(Q(data_source_username=user.username),
                                                              Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
