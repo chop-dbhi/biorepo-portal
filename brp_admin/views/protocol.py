@@ -15,6 +15,7 @@ class UpdateNautilusCredentials(TemplateView):
     """
         This generates the logic and display information for changing a user's Nautilus password
     """
+    template = 'form.html'
     def get_context_data(self):
         context = {}
         context['form_title'] = "Update Nautilus Credentials"
@@ -25,7 +26,6 @@ class UpdateNautilusCredentials(TemplateView):
 
     def post(self, request):
         context = self.get_context_data()
-        template = 'form.html'
         usernum = request.POST['username']
         password = request.POST['password']
         if (usernum and password):
@@ -52,7 +52,7 @@ class UpdateNautilusCredentials(TemplateView):
                     context['message'] += "The following were found, but not changed because data_source_username did not match the user's username:\n\n"
                     for ent in compSet:
                         context['message'] += str(user) + ": " + str(ent.protocol.name) + "\n"
-                template = 'confirmation.html'
+                self.template = 'confirmation.html'
             except(Exception):
                 context = self.get_context_data()
                 context['error'] = "There was an issue processing your request"
@@ -63,7 +63,7 @@ class UpdateNautilusCredentials(TemplateView):
             if not password:
                 errmsg += "Please enter the new password."
             context['error'] = errmsg
-        return render(request, template, context)
+        return render(request, self.template, context)
 
     def get(self, request):
         context = self.get_context_data()
