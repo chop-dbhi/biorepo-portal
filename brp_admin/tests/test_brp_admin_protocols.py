@@ -1,21 +1,41 @@
-from django.test import TestCase
+import json
+
+from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import User
+from django.db.models import Q
+from django.core.urlresolvers import reverse
 
-from brp_admin.forms import NautilusCredentialForm
+from rest_framework.test import APIRequestFactory, APITestCase, \
+                                force_authenticate
+
 from brp_admin.views.protocol import UpdateNautilusCredentials
-from api.models.constants import ProtocolDataSourceConstants
 
-from api.models.protocols import DataSource, ProtocolUser, ProtocolUserCredentials, ProtocolDataSource, Protocol
+from api.models.constants import ProtocolDataSourceConstants
+from api.models.protocols import DataSource, ProtocolUser, \
+                                 ProtocolUserCredentials, \
+                                 ProtocolDataSource, Protocol
 
 from unittest.mock import MagicMock
 import pytest
 
-# Create your tests here.
-class UpdateNautilusCredentialsTest(TestCase):
+factory = APIRequestFactory()
+
+
+class BRPTestCase(APITestCase):
+
+    fixtures = ['demo_data']
 
     def setUp(self):
-        DataSource.createEhbInstance = MagicMock(return_value=True)
-        Protocol.createEhbProtocolGroup = MagicMock()
+        self.test_user = User.objects.get(username='admin')
+
+
+class UpdateNautilusCredentialsTest(BRPTestCase):
+
+    """
+    def setUp(self):
+        #DataSource.createEhbInstance = MagicMock(return_value=True)
+        #Protocol.createEhbProtocolGroup = MagicMock()
+        self.factory = RequestFactory()
 
         DataSource.objects.create(
             name='UnitTestDataSource',
@@ -44,6 +64,13 @@ class UpdateNautilusCredentialsTest(TestCase):
             email='unit_test_user@example.com'
             )
         self.user2 = User.objects.get(username='UnitTestUser2')
+        User.objects.create(
+            username='UnitTestUser3',
+            first_name='UnitJim',
+            last_name='UnitDoe',
+            email='unit_test_user@example.com'
+            )
+        self.user3 = User.objects.get(username='UnitTestUser3')
 
         ProtocolUser.objects.create(
             protocol=self.protocol,
@@ -88,7 +115,7 @@ class UpdateNautilusCredentialsTest(TestCase):
             data_source=self.protocoldatasource,
             user=self.user,
             protocol_user=self.protocoluser,
-            data_source_username="unitName",
+            data_source_username=self.user.username,
             data_source_password="unitPassword"
             )
         ProtocolUserCredentials.objects.create(
@@ -96,7 +123,7 @@ class UpdateNautilusCredentialsTest(TestCase):
             data_source=self.protocoldatasource2,
             user=self.user,
             protocol_user=self.protocoluser,
-            data_source_username="unitName",
+            data_source_username=self.user.username,
             data_source_password="unitPassword"
             )
         ProtocolUserCredentials.objects.create(
@@ -104,7 +131,7 @@ class UpdateNautilusCredentialsTest(TestCase):
             data_source=self.protocoldatasource3,
             user=self.user,
             protocol_user=self.protocoluser,
-            data_source_username="unitName",
+            data_source_username=self.user.username,
             data_source_password="unitPassword"
             )
         ProtocolUserCredentials.objects.create(
@@ -112,7 +139,7 @@ class UpdateNautilusCredentialsTest(TestCase):
             data_source=self.protocoldatasource2,
             user=self.user2,
             protocol_user=self.protocoluser,
-            data_source_username="unitName",
+            data_source_username=self.user2.username,
             data_source_password="unitPassword"
             )
         ProtocolUserCredentials.objects.create(
@@ -120,38 +147,33 @@ class UpdateNautilusCredentialsTest(TestCase):
             data_source=self.protocoldatasource,
             user=self.user2,
             protocol_user=self.protocoluser,
-            data_source_username="unitName"
+            data_source_username=self.user2.username
             )
-        """
-
-            This case breaks the database...
-
         ProtocolUserCredentials.objects.create(
             protocol=self.protocol,
-            data_source=self.protocoldatasource3,
+            data_source=self.protocoldatasource,
+            user=self.user3,
             protocol_user=self.protocoluser,
-            data_source_username="unitName2",
             data_source_password="unitPassword"
             )
-        """
-        """
-            All tests require this change and the below updates so I moved them into the setup.
-        """
+
         set = ProtocolUserCredentials.objects.filter(user=self.user, data_source__driver=ProtocolDataSourceConstants.nautilus_driver)
         set.update(data_source_password="newPassword")
-
-        self.protocolusercredentials = ProtocolUserCredentials.objects.get(user=self.user, data_source=self.protocoldatasource)
-        self.protocolusercredentials2 = ProtocolUserCredentials.objects.get(user=self.user, data_source=self.protocoldatasource2)
-        self.protocolusercredentials3 = ProtocolUserCredentials.objects.get(user=self.user, data_source=self.protocoldatasource3)
-        self.protocolusercredentials4 = ProtocolUserCredentials.objects.get(user=self.user2, data_source=self.protocoldatasource2)
-        self.protocolusercredentials5 = ProtocolUserCredentials.objects.get(user=self.user2, data_source=self.protocoldatasource)
         """
 
-            This case breaks the database...
+    def test_get_reply(self):
+        url = reverse('update_nautilus_credentials')
+        postRequest = factory.post(url, {'username': self.test_user.username, 'password': "anyOldThing"})
+        testView = UpdateNautilusCredentials.as_view()
+        #force_authenticate(postRequest, user=self.user)
+        print(str(self.test_user))
+        #print(str(postRequest))
+        #print(str(testView))
+        response = testView(postRequest)
+        print(str(response))
+        pass
 
-        self.protocolusercredentials6 = ProtocolUserCredentials.objects.get(data_source_username="unitName2", data_source=self.protocoldatasource3)
-        """
-
+    """
     def test_that_protocoldatasource_has_nautilus_driver(self):
         self.assertEqual(self.protocoldatasource.driver, ProtocolDataSourceConstants.nautilus_driver)
 
@@ -170,10 +192,7 @@ class UpdateNautilusCredentialsTest(TestCase):
 
     def test_that_user_credentials_with_blank_passwords_are_left_alone(self):
         self.assertNotEqual(self.protocolusercredentials5.data_source_password, "newPassword")
-
-    @pytest.mark.skip(reason="This particular test is impossible because not adding a user breaks the database.")
-    def test_that_blank_user_fields_do_not_throw_false_positives(self):
-        self.assertNotEqual(self.protocolusercredentials6.data_source_password, "newPassword")
+    """
 
     @pytest.mark.skip(reason="For debugging output only")
     def test_DEBUGGING_MODE(self):

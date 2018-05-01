@@ -4,12 +4,11 @@ from django.shortcuts import render
 from django.forms.formsets import formset_factory
 from django.forms import modelformset_factory
 from django.core.exceptions import ObjectDoesNotExist
-from api.models.constants import ProtocolDataSourceConstants
+from django.db.models import Q
 
 from brp_admin.forms import ProtocolUserForm, ProtocolUserCredentialsForm, NautilusCredentialForm
 from api.models.protocols import ProtocolUser, ProtocolUserCredentials, Protocol, ProtocolDataSource
-
-from django.db.models import Q
+from api.models.constants import ProtocolDataSourceConstants
 
 
 class UpdateNautilusCredentials(TemplateView):
@@ -33,11 +32,22 @@ class UpdateNautilusCredentials(TemplateView):
             try:
                 user = User.objects.get(pk=usernum)
                 context = {}
-                set = ProtocolUserCredentials.objects.filter(Q(user = user), Q(data_source__driver = ProtocolDataSourceConstants.nautilus_driver), ~Q(data_source_password = ''))
+                set = ProtocolUserCredentials.objects.filter(Q(data_source_username=user.username),
+                                                             Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
+                                                             ~Q(data_source_password=''))
+                compSet = ProtocolUserCredentials.objects.filter(Q(user=user),
+                                                                 Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
+                                                                 ~Q(data_source_password=''),
+                                                                 ~Q(data_source_username=user.username))
                 set.update(data_source_password=password)
-                context['message'] = "Altered the following entries:\n"
+                context['message'] = "Altered the following entries:\n\n"
                 for ent in set:
                     context['message'] += str(user) + ": " + str(ent.protocol.name) + "\n"
+                if len(compSet) > 0:
+                    context['message'] += "\n\n-----------------------------------\n\n"
+                    context['message'] += "The following were found, but not changed because data_source_username did not match the user's username:\n\n"
+                    for ent in compSet:
+                        context['message'] += str(user) + ": " + str(ent.protocol.name) + "\n"
                 template = 'confirmation.html'
             except(Exception):
                 context = self.get_context_data()
@@ -53,6 +63,7 @@ class UpdateNautilusCredentials(TemplateView):
 
     def get(self, request):
         context = self.get_context_data()
+        context['error'] = str(request)
         return render(request, 'form.html', context)
 
 
