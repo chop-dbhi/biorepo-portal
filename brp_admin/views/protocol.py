@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 from django.shortcuts import render
 from django.forms.formsets import formset_factory
 from django.forms import modelformset_factory
@@ -16,6 +16,7 @@ class UpdateNautilusCredentials(TemplateView):
         This generates the logic and display information for changing a user's Nautilus password
     """
     template = 'form.html'
+
     def get_context_data(self):
         context = {}
         context['form_title'] = "Update Nautilus Credentials"
@@ -29,11 +30,12 @@ class UpdateNautilusCredentials(TemplateView):
         usernum = request.POST['username']
         password = request.POST['password']
         if (usernum and password):
-            print("And I got here of course")
             try:
-                if isinstance(usernum, int):
+                if usernum.isdigit():
+                    print("int: " + str(usernum))
                     user = User.objects.get(pk=usernum)
                 else:
+                    print("notInt: " + str(usernum))
                     user = User.objects.get(username=usernum)
                 context = {}
                 set = ProtocolUserCredentials.objects.filter(Q(data_source_username=user.username),
@@ -67,7 +69,6 @@ class UpdateNautilusCredentials(TemplateView):
 
     def get(self, request):
         context = self.get_context_data()
-        context['error'] = str(request)
         return render(request, 'form.html', context)
 
 

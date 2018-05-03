@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'session_security',
     'accounts',
     'brp',
+    'brp_admin',
     'api',
     'dataentry',
 ]
