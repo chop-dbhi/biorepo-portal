@@ -4,6 +4,7 @@ from ..models.protocols import Organization, DataSource, Protocol, \
     ProtocolUser
 from unittest.mock import MagicMock
 
+
 class OrganizationTest(TestCase):
 
     def setUp(self):
@@ -69,8 +70,25 @@ class DataSourceTest(TestCase):
             description='A test data source',
             ehb_service_es_id=1)
 
-    def test_ds(self):
-        pass
+    def test_get_name(self):
+        src = DataSource.objects.get(name='TestDataSource')
+        self.assertEqual(src.name, 'TestDataSource')
+
+    def test_representitive_name(self):
+        src = DataSource.objects.get(name='TestDataSource')
+        self.assertEqual(str(src), 'TestDataSource')
+
+    def test_get_url(self):
+        src = DataSource.objects.get(name='TestDataSource')
+        self.assertEqual(src.url, 'http://example.com')
+
+    def test_get_description(self):
+        src = DataSource.objects.get(name='TestDataSource')
+        self.assertEqual(src.description, 'A test data source')
+
+    def test_get_ehb_service_es_id(self):
+        src = DataSource.objects.get(name='TestDataSource')
+        self.assertEqual(src.ehb_service_es_id, 1)
 
     def tearDown(self):
         ds = DataSource.objects.get(name='TestDataSource')
@@ -106,6 +124,7 @@ class ProtocolTest(TestCase):
         p = Protocol.objects.get(name='TestProtocol')
         self.protocol.delete()
         self.user.delete()
+
 
 class ProtocolDataSourceTest(TestCase):
 

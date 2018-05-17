@@ -15,7 +15,6 @@ class UpdateNautilusCredentials(TemplateView):
     """
         This generates the logic and display information for changing a user's Nautilus password
     """
-    template = 'form.html'
 
     def get_context_data(self):
         context = {}
@@ -26,35 +25,53 @@ class UpdateNautilusCredentials(TemplateView):
         return context
 
     def post(self, request):
+        template = 'form.html'
         context = self.get_context_data()
         usernum = request.POST['username']
         password = request.POST['password']
         if (usernum and password):
             try:
+                # This conditional block allows the method to be accessed using
+                # either primary keys or usernames. This makes it accessible to
+                # both our forms and unit tests.
                 if usernum.isdigit():
-                    print("int: " + str(usernum))
                     user = User.objects.get(pk=usernum)
                 else:
-                    print("notInt: " + str(usernum))
                     user = User.objects.get(username=usernum)
                 context = {}
                 set = ProtocolUserCredentials.objects.filter(Q(data_source_username=user.username),
+                                                             Q(user=user),
                                                              Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
                                                              ~Q(data_source_password=''))
+                # compSet holds any user credential object which matches the user
+                # but not the username. This is an issue we want to address per
+                # our requirements.
                 compSet = ProtocolUserCredentials.objects.filter(Q(user=user),
                                                                  Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
                                                                  ~Q(data_source_password=''),
                                                                  ~Q(data_source_username=user.username))
                 set.update(data_source_password=password)
-                context['message'] = "Altered the following entries:\n\n"
+                context["packed_message"] = []
+                context['packed_message'].append({'header': "Altered the following entries:"})
+                details = []
                 for ent in set:
-                    context['message'] += str(user) + ": " + str(ent.protocol.name) + "\n"
+                    details.append(str(user) + ": " + str(ent.protocol.name))
+                if(len(details) > 0):
+                    context['packed_message'][0]["details"] = details
                 if len(compSet) > 0:
-                    context['message'] += "\n\n-----------------------------------\n\n"
-                    context['message'] += "The following were found, but not changed because data_source_username did not match the user's username:\n\n"
+                    context['packed_message'].append({'header': "\n"})
+                    context['packed_message'].append({'header': "The following were \
+                                                                found, but not changed \
+                                                                because data_source_username \
+                                                                did not match the \
+                                                                user's username:"})
+                    details = []
                     for ent in compSet:
-                        context['message'] += str(user) + ": " + str(ent.protocol.name) + "\n"
-                self.template = 'confirmation.html'
+                        details.append(str(user) + ": " + str(ent.protocol.name))
+                    context['packed_message'][2]["details"] = details
+                # If we successfully completed these operations I load a different
+                # template. Aren't I clever?
+                template = 'confirmation.html'
             except(Exception):
                 context = self.get_context_data()
                 context['error'] = "There was an issue processing your request"
@@ -65,7 +82,7 @@ class UpdateNautilusCredentials(TemplateView):
             if not password:
                 errmsg += "Please enter the new password."
             context['error'] = errmsg
-        return render(request, self.template, context)
+        return render(request, template, context)
 
     def get(self, request):
         context = self.get_context_data()
@@ -92,6 +109,11 @@ class ProtocolUserView(TemplateView):
         if protocolUserForm.is_valid():
             protocolUserForm.save()
         # if form is not valid - send errors to UI
+        """
+            This block allows forms to submitted without a role specified.
+            This is where the backend needs to be modified potentially for
+            issue 157 in GitHub.
+        """
         if not protocolUserForm.is_valid():
             # ignore non_field_errors, it is okay if protocol user already exists for given protocol
             if not (protocolUserForm.non_field_errors()):

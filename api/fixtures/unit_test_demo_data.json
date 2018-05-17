@@ -1,0 +1,476 @@
+[{
+    "pk": 1,
+    "model": "auth.user",
+    "fields": {
+        "username": "admin",
+        "first_name": "Test",
+        "last_name": "User",
+        "is_active": true,
+        "is_superuser": true,
+        "is_staff": true,
+        "last_login": "2014-01-27T16:22:38.537Z",
+        "groups": [],
+        "user_permissions": [],
+        "password": "pbkdf2_sha256$10000$fe8KOhXyKFJt$nB8tFGivcvxNQJOdzk1igm4iA4dA00k4KB6bYYDBRfA=",
+        "email": "admin@email.chop.edu",
+        "date_joined": "2014-01-27T16:22:15.193Z"
+    }
+},{
+    "pk": 2,
+    "model": "auth.user",
+    "fields": {
+        "username": "UnitTestUser",
+        "first_name": "UnitJohn",
+        "last_name": "UnitDoe",
+        "is_active": true,
+        "is_superuser": true,
+        "is_staff": true,
+        "last_login": "2014-01-27T16:22:38.537Z",
+        "groups": [],
+        "user_permissions": [],
+        "password": "pbkdf2_sha256$10000$fe8KOhXyKFJt$nB8tFGivcvxNQJOdzk1igm4iA4dA00k4KB6bYYDBRfA=",
+        "email": "unit_test_user@example.com",
+        "date_joined": "2014-01-27T16:22:15.193Z"
+    }
+},{
+    "pk": 3,
+    "model": "auth.user",
+    "fields": {
+        "username": "UnitTestUser2",
+        "first_name": "UnitJane",
+        "last_name": "UnitDoe",
+        "is_active": true,
+        "is_superuser": true,
+        "is_staff": true,
+        "last_login": "2014-01-27T16:22:38.537Z",
+        "groups": [],
+        "user_permissions": [],
+        "password": "pbkdf2_sha256$10000$fe8KOhXyKFJt$nB8tFGivcvxNQJOdzk1igm4iA4dA00k4KB6bYYDBRfA=",
+        "email": "unit_test_user@example.com",
+        "date_joined": "2014-01-27T16:22:15.193Z"
+    }
+},{
+    "pk": 4,
+    "model": "auth.user",
+    "fields": {
+        "username": "UnitTestUser3",
+        "first_name": "UnitJim",
+        "last_name": "UnitDoe",
+        "is_active": true,
+        "is_superuser": true,
+        "is_staff": true,
+        "last_login": "2014-01-27T16:22:38.537Z",
+        "groups": [],
+        "user_permissions": [],
+        "password": "pbkdf2_sha256$10000$fe8KOhXyKFJt$nB8tFGivcvxNQJOdzk1igm4iA4dA00k4KB6bYYDBRfA=",
+        "email": "unit_test_user@example.com",
+        "date_joined": "2014-01-27T16:22:15.193Z"
+    }
+},
+{
+    "pk": 1,
+    "model": "accounts.userprofile",
+    "fields": {
+        "user": 1,
+        "institution": "CHOP",
+        "eula": true,
+        "reason": "testing"
+    }
+},
+{
+    "pk": 1,
+    "model": "authtoken.token",
+    "fields": {
+        "user": 1,
+        "key": "503a3664b2a929a7dceeba5c943cf2e9558e9fac",
+        "created": "2015-09-29T12:01:11.200Z"
+    }
+},{
+	"pk": 1,
+	"model": "api.immutablekey",
+	"fields": {
+		"modified": "2015-09-29T12:01:11.200Z",
+		"key": "C381K1T9G5SCOS5Z",
+		"created": "2015-09-29T12:01:11.200Z"
+	}
+}, {
+	"pk": 2,
+	"model": "api.immutablekey",
+	"fields": {
+		"modified": "2015-09-29T12:01:41.672Z",
+		"key": "M0536B4E2DDLA7W6",
+		"created": "2015-09-29T12:01:41.671Z"
+	}
+}, {
+	"pk": 3,
+	"model": "api.immutablekey",
+	"fields": {
+		"modified": "2015-09-29T12:01:41.672Z",
+		"key": "Z000000001111111",
+		"created": "2015-09-29T12:01:41.671Z"
+	}
+}, {
+	"pk": 1,
+	"model": "api.organization",
+	"fields": {
+		"immutable_key": 1,
+		"subject_id_label": "Record ID",
+		"modified": "2015-09-29T12:01:11.201Z",
+		"name": "Amazing Children's Hospital",
+		"created": "2015-09-29T12:01:11.201Z"
+	}
+}, {
+	"pk": 1,
+	"model": "api.datasource",
+	"fields": {
+		"description": "CHOP's REDCap Instance",
+		"created": "2015-09-29T12:03:50.203Z",
+		"url": "https://redcap.chop.edu/api/",
+		"modified": "2015-09-29T12:03:50.203Z",
+		"ehb_service_es_id": 1,
+		"name": "REDCap"
+	}
+}, {
+	"pk": 2,
+	"model": "api.datasource",
+	"fields": {
+		"description": "Laboratory Management",
+		"created": "2016-01-10T11:51:48.976Z",
+		"url": "https://example.com/api/",
+		"modified": "2016-01-10T11:51:48.976Z",
+		"ehb_service_es_id": 2,
+		"name": "LIMS"
+	}
+}, {
+	"pk": 3,
+	"model": "api.datasource",
+	"fields": {
+		"description": "Placeholder for external IDs",
+		"created": "2016-01-10T15:35:41.183Z",
+		"url": "http://example.com/noop/",
+		"modified": "2016-01-11T15:32:34.052Z",
+		"ehb_service_es_id": 3,
+		"name": "External Identifiers"
+	}
+}, {
+	"pk": 4,
+	"model": "api.datasource",
+	"fields": {
+		"description": "Added for unit testing",
+		"created": "2016-01-10T15:35:41.183Z",
+		"url": "http://example.com/",
+		"modified": "2016-01-11T15:32:34.052Z",
+		"ehb_service_es_id": 1,
+		"name": "UnitTestDataSource"
+	}
+},
+{
+	"pk": 1,
+	"model": "api.protocol",
+	"fields": {
+		"organizations": [1],
+		"immutable_key": 2,
+		"modified": "2015-09-29T12:01:41.672Z",
+		"name": "Demonstration Protocol",
+		"created": "2015-09-29T12:01:41.672Z"
+	}
+}, {
+	"pk": 2,
+	"model": "api.protocol",
+	"fields": {
+		"organizations": [1],
+		"immutable_key": 3,
+		"modified": "2015-09-29T12:01:41.672Z",
+		"name": "Demonstration Protocol II",
+		"created": "2015-09-29T12:01:41.672Z"
+	}
+},
+{
+	"pk": 1,
+	"model": "api.protocoldatasource",
+	"fields": {
+		"data_source": 1,
+		"protocol": 1,
+		"created": "2015-09-29T12:04:57.702Z",
+		"max_records_per_subject": -1,
+		"driver": 0,
+		"modified": "2016-01-12T12:42:03.487Z",
+		"display_label": "Health Data",
+		"path": "Demo",
+		"driver_configuration": "{\r\n    \"unique_event_names\": [\r\n        \"visit_arm_1\",\r\n        \"breakfast_at_visit_arm_1\",\r\n        \"lunch_at_visit_arm_1\",\r\n        \"dinner_at_visit_arm_1\"\r\n    ],\r\n    \"event_labels\": [\r\n        \"Visit Baseline\",\r\n        \"Breakfast\",\r\n        \"Lunch\",\r\n        \"Dinner\"\r\n    ],\r\n    \"form_data\": {\r\n        \"baseline_visit_data\": [\r\n            1,\r\n            0,\r\n            0,\r\n            0\r\n        ],\r\n        \"meal_description_form\": [\r\n            0,\r\n            1,\r\n            1,\r\n            1\r\n        ]\r\n    },\r\n    \"record_id_field_name\": \"study_id\",\r\n    \"links\": [1]\r\n}"
+	}
+}, {
+	"pk": 2,
+	"model": "api.protocoldatasource",
+	"fields": {
+		"data_source": 2,
+		"protocol": 1,
+		"created": "2016-01-10T11:52:38.165Z",
+		"max_records_per_subject": -1,
+		"driver": 1,
+		"modified": "2016-01-10T11:52:38.165Z",
+		"display_label": "Sample Check In",
+		"path": "demo_lab",
+		"driver_configuration": "{}"
+	}
+}, {
+	"pk": 3,
+	"model": "api.protocoldatasource",
+	"fields": {
+		"data_source": 3,
+		"protocol": 1,
+		"created": "2016-01-10T15:36:02.362Z",
+		"max_records_per_subject": 1,
+		"driver": 3,
+		"modified": "2016-01-13T11:10:26.142Z",
+		"display_label": "External IDs",
+		"path": "demo_exrecs",
+		"driver_configuration": "{\r\n    \"labels\": [2],\r\n    \"sort_on\": 2\r\n}"
+	}
+}, {
+	"pk": 4,
+	"model": "api.protocoldatasource",
+	"fields": {
+		"data_source": 1,
+		"protocol": 2,
+		"created": "2015-09-29T12:04:57.702Z",
+		"max_records_per_subject": -1,
+		"driver": 0,
+		"modified": "2016-01-12T12:42:03.487Z",
+		"display_label": "Health Data",
+		"path": "Demo",
+		"driver_configuration": "{\r\n    \"unique_event_names\": [\r\n        \"visit_arm_1\",\r\n        \"breakfast_at_visit_arm_1\",\r\n        \"lunch_at_visit_arm_1\",\r\n        \"dinner_at_visit_arm_1\"\r\n    ],\r\n    \"event_labels\": [\r\n        \"Visit Baseline\",\r\n        \"Breakfast\",\r\n        \"Lunch\",\r\n        \"Dinner\"\r\n    ],\r\n    \"form_data\": {\r\n        \"baseline_visit_data\": [\r\n            1,\r\n            0,\r\n            0,\r\n            0\r\n        ],\r\n        \"meal_description_form\": [\r\n            0,\r\n            1,\r\n            1,\r\n            1\r\n        ]\r\n    },\r\n    \"record_id_field_name\": \"study_id\",\r\n    \"links\": [1]\r\n}"
+	}
+}, {
+	"pk": 5,
+	"model": "api.protocoldatasource",
+	"fields": {
+		"data_source": 2,
+		"protocol": 2,
+		"created": "2016-01-10T11:52:38.165Z",
+		"max_records_per_subject": -1,
+		"driver": 1,
+		"modified": "2016-01-10T11:52:38.165Z",
+		"display_label": "Sample Check In",
+		"path": "demo_lab",
+		"driver_configuration": "{}"
+	}
+}, {
+	"pk": 6,
+	"model": "api.protocoldatasource",
+	"fields": {
+		"data_source": 3,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:02.362Z",
+		"max_records_per_subject": 1,
+		"driver": 3,
+		"modified": "2016-01-13T11:10:26.142Z",
+		"display_label": "External IDs",
+		"path": "demo_exrecs",
+		"driver_configuration": "{\r\n    \"labels\": [2],\r\n    \"sort_on\": 2\r\n}"
+	}
+}, {
+	"pk": 7,
+	"model": "api.protocoldatasource",
+	"fields": {
+		"data_source":4,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:02.362Z",
+		"max_records_per_subject": -1,
+		"driver": 1,
+		"modified": "2016-01-13T11:10:26.142Z",
+		"display_label": "UNIT TEST PROTOCOL DATA SOURCE",
+		"path": "UNIT TEST SUBJECTS",
+		"driver_configuration": "{}"
+	}
+}, {
+	"pk": 8,
+	"model": "api.protocoldatasource",
+	"fields": {
+		"data_source":4,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:02.362Z",
+		"max_records_per_subject": -1,
+		"driver": 1,
+		"modified": "2016-01-13T11:10:26.142Z",
+		"display_label": "UNIT TEST PROTOCOL DATA SOURCE 2",
+		"path": "UNIT TEST SUBJECTS 2",
+		"driver_configuration": "{}"
+	}
+}, {
+	"pk": 9,
+	"model": "api.protocoldatasource",
+	"fields": {
+		"data_source":4,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:02.362Z",
+		"max_records_per_subject": -1,
+		"driver": 2,
+		"modified": "2016-01-13T11:10:26.142Z",
+		"display_label": "UNIT TEST PROTOCOL DATA SOURCE 3",
+		"path": "UNIT TEST SUBJECTS 3",
+		"driver_configuration": "{}"
+	}
+},
+{
+	"pk": 1,
+	"model": "api.protocoluser",
+	"fields": {
+		"role": 0,
+		"user": 1,
+		"protocol": 1,
+		"modified": "2015-09-29T12:06:19.003Z",
+		"created": "2015-09-29T12:06:19.003Z"
+	}
+}, {
+	"pk": 2,
+	"model": "api.protocoluser",
+	"fields": {
+		"role": 0,
+		"user": 1,
+		"protocol": 2,
+		"modified": "2015-09-29T12:06:19.003Z",
+		"created": "2015-09-29T12:06:19.003Z"
+	}
+}, {
+	"pk": 3,
+	"model": "api.protocoluser",
+	"fields": {
+		"role": 0,
+		"user": 2,
+		"protocol": 2,
+		"modified": "2015-09-29T12:06:19.003Z",
+		"created": "2015-09-29T12:06:19.003Z"
+	}
+},
+{
+	"pk": 1,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 1,
+		"protocol": 1,
+		"created": "2015-09-29T12:08:11.730Z",
+		"data_source_username": "",
+		"modified": "2015-09-29T12:08:11.730Z",
+		"user": 1,
+		"protocol_user": 1,
+		"data_source_password": "71F3F25FC3BCF2232E27298E7AFBC636"
+	}
+}, {
+	"pk": 2,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 3,
+		"protocol": 1,
+		"created": "2016-01-10T15:36:26.764Z",
+		"data_source_username": "none",
+		"modified": "2016-01-10T15:36:26.764Z",
+		"user": 1,
+		"protocol_user": 1,
+		"data_source_password": "none"
+	}
+}, {
+	"pk": 3,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 1,
+		"protocol": 2,
+		"created": "2015-09-29T12:08:11.730Z",
+		"data_source_username": "",
+		"modified": "2015-09-29T12:08:11.730Z",
+		"user": 1,
+		"protocol_user": 2,
+		"data_source_password": "71F3F25FC3BCF2232E27298E7AFBC636"
+	}
+}, {
+	"pk": 4,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 3,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:26.764Z",
+		"data_source_username": "none",
+		"modified": "2016-01-10T15:36:26.764Z",
+		"user": 1,
+		"protocol_user": 2,
+		"data_source_password": "none"
+	}
+}, {
+	"pk": 5,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 7,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:26.764Z",
+		"data_source_username": "none",
+		"modified": "2016-01-10T15:36:26.764Z",
+		"user": 2,
+		"protocol_user": 2,
+		"data_source_password": "unitTestPassword"
+	}
+}, {
+	"pk": 6,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 8,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:26.764Z",
+		"data_source_username": "UnitTestUser",
+		"modified": "2016-01-10T15:36:26.764Z",
+		"user": 2,
+		"protocol_user": 2,
+		"data_source_password": "unitTestPassword"
+	}
+}, {
+	"pk": 7,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 9,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:26.764Z",
+		"data_source_username": "none",
+		"modified": "2016-01-10T15:36:26.764Z",
+		"user": 2,
+		"protocol_user": 2,
+		"data_source_password": "unitTestPassword"
+	}
+}, {
+	"pk": 8,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 8,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:26.764Z",
+		"data_source_username": "none",
+		"modified": "2016-01-10T15:36:26.764Z",
+		"user": 3,
+		"protocol_user": 2,
+		"data_source_password": "unitTestPassword"
+	}
+}, {
+	"pk": 9,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 7,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:26.764Z",
+		"data_source_username": "none",
+		"modified": "2016-01-10T15:36:26.764Z",
+		"user": 3,
+		"protocol_user": 2,
+		"data_source_password": "unitTestPassword"
+	}
+}, {
+	"pk": 10,
+	"model": "api.protocolusercredentials",
+	"fields": {
+		"data_source": 7,
+		"protocol": 2,
+		"created": "2016-01-10T15:36:26.764Z",
+		"data_source_username": "",
+		"modified": "2016-01-10T15:36:26.764Z",
+		"user": 4,
+		"protocol_user": 2,
+		"data_source_password": "unitTestPassword"
+	}
+}]
