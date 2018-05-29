@@ -32,3 +32,24 @@ def hasErrorTag(body):
 
 def trimTrailingWhitespace(body):
     return body[:body.rfind('.')+1]
+
+
+def extractUserCredentialInformation(body):
+    valid = []
+    invalid = []
+    validStart = body.find("<ul>", body.find("<h4>"))
+    validStop = body.find("</ul>", validStart)
+    invalidStart = body.find("<ul>", body.rfind("<h4>"))
+    invalidStop = body.find("</ul>", invalidStart)
+
+    if validStart != -1:
+        i = body.find("<p>", validStart) + len("<p>")
+        while i < validStop and i != 2:
+            valid.append(body[i:body.find("</p>", i)])
+            i = body.find("<p>", i) + len("<p>")
+    if invalidStart != validStart and invalidStart != -1:
+        i = body.find("<p>", invalidStart) + len("<p>")
+        while i < invalidStop and i != 2:
+            invalid.append(body[i:body.find("</p>", i)])
+            i = body.find("<p>", i) + len("<p>")
+    return[valid, invalid]

@@ -454,7 +454,7 @@
 		"data_source": 7,
 		"protocol": 2,
 		"created": "2016-01-10T15:36:26.764Z",
-		"data_source_username": "none",
+		"data_source_username": "UnitTestUser2",
 		"modified": "2016-01-10T15:36:26.764Z",
 		"user": 3,
 		"protocol_user": 2,
