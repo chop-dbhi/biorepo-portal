@@ -1,28 +1,34 @@
-import json
+import pytest
 
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
 
-from brp_admin.views.protocol import UpdateNautilusCredentials, ProtocolUserView
+from brp_admin.views.protocol import UpdateNautilusCredentials, \
+                                     ProtocolUserView
+
+from .parseBRPTemplateHTML import *
 
 from api.models.constants import ProtocolDataSourceConstants
 from api.models.protocols import DataSource, ProtocolUser, \
                                  ProtocolUserCredentials, \
                                  ProtocolDataSource, Protocol
 
-from .parseBRPTemplateHTML import *
-
 from unittest.mock import MagicMock
-import pytest
 
 
+#
+# Environmental constants to be used in the tests
+#
 factory = RequestFactory()
 naut = UpdateNautilusCredentials.as_view()
 url = reverse('update_nautilus_credentials')
 
 
+#                     DATABASE VALIDATION TESTS
+# ----------------------------------------------------------------------
+#
 databaseCases = (("case", "expectedOutcome", "comment"), [
     ("UnitTestUser", 1, 'User with change'),
     ("UnitTestUser1", 0, 'User without change'),
@@ -41,8 +47,14 @@ def test_database_status(case, expectedOutcome, comment):
     set = ProtocolUserCredentials.objects.filter(data_source_password="anyOldThing",
                                                  data_source_username=case)
     assert len(set) == expectedOutcome
+#
+# -----------------------------------------------------------------------
+#                                  END
 
 
+#                     ERROR MESSAGE VALIDATION TESTS
+# -----------------------------------------------------------------------
+#
 errorCases = (("case", "expectedMessage", "comment"), [
     ({'username': "UnitTestUser", 'password': "aValidOne"}, "no errors", 'Included both username and password'),
     ({'username': "", 'password': "aValidOne"}, "Please select a user.", 'Only included password.'),
@@ -57,8 +69,14 @@ def test_error_handling(case, expectedMessage, comment):
     call_command("loaddata", "unit_test_demo_data.json", verbosity=0)
     postRequest = factory.post(url, case)
     assert expectedMessage == extractErrors(str(naut(postRequest).content))
+#
+# -----------------------------------------------------------------------
+#                                   END
 
 
+#                             USER ALERT TEST
+# -----------------------------------------------------------------------
+#
 @pytest.mark.django_db
 def test_that_user_is_alerted_to_mismatched_usernames():
     call_command("loaddata", "unit_test_demo_data.json", verbosity=0)
@@ -66,3 +84,6 @@ def test_that_user_is_alerted_to_mismatched_usernames():
                                      'password': "anyOldThing"})
     changed = extractUserCredentialInformation(str(naut(postRequest).content))
     assert len(changed[1]) == 1
+#
+# -----------------------------------------------------------------------
+#                                    END
