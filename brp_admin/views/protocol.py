@@ -1,3 +1,7 @@
+import logging
+import datetime
+import time
+
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView, View
 from django.shortcuts import render
@@ -11,6 +15,9 @@ from api.models.protocols import ProtocolUser, ProtocolUserCredentials, Protocol
 from api.models.constants import ProtocolDataSourceConstants
 
 
+log = logging.getLogger(__name__)
+
+
 class UpdateNautilusCredentials(TemplateView):
     """
         This generates the logic and display information for changing a user's Nautilus password
@@ -19,7 +26,7 @@ class UpdateNautilusCredentials(TemplateView):
     def get_context_data(self):
         context = {}
         context['form_title'] = "Update Nautilus Credentials"
-        context['message1'] = "Update a user's Nautilus credentials"
+        context['message1'] = "Update a user's Nautilus credentials across all protocol user credentials"
         context['message2'] = ""
         context['form'] = NautilusCredentialForm()
         return context
@@ -39,42 +46,90 @@ class UpdateNautilusCredentials(TemplateView):
                 else:
                     user = User.objects.get(username=usernum)
                 context = {}
-                set = ProtocolUserCredentials.objects.filter(Q(data_source_username=user.username),
-                                                             Q(user=user),
-                                                             Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
-                                                             ~Q(data_source_password=''))
-                # compSet holds any user credential object which matches the user
+                matchedSet = ProtocolUserCredentials.objects.filter(Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
+                                                                    Q(data_source_username=user.username),
+                                                                    ~Q(data_source_password=''),
+                                                                    Q(user=user))
+                # mismatchSet holds any user credential object which matches the user
                 # but not the username. This is an issue we want to address per
                 # our requirements.
-                compSet = ProtocolUserCredentials.objects.filter(Q(user=user),
-                                                                 Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
-                                                                 ~Q(data_source_password=''),
-                                                                 ~Q(data_source_username=user.username))
-                set.update(data_source_password=password)
+                mismatchedSet = ProtocolUserCredentials.objects.filter(Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
+                                                                       ~Q(data_source_username=user.username),
+                                                                       ~Q(data_source_password=''),
+                                                                       Q(user=user))
+                noPasswordSet = ProtocolUserCredentials.objects.filter(Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
+                                                                       Q(data_source_password=''),
+                                                                       Q(user=user))
+                wrongDriverSet = ProtocolUserCredentials.objects.filter(~Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
+                                                                        Q(user=user))
+                matchedSet.update(data_source_password=password)
                 context["packed_message"] = []
-                context['packed_message'].append({'header': "Altered the following entries:"})
+                matchedMessage = {}
+                mismatchedMessage = {}
+                unchangedMessage = {}
                 details = []
-                for ent in set:
-                    details.append(str(user) + ": " + str(ent.protocol.name))
+                matchedMessage['header'] = "Changed the following Protocol User \
+                                            Credentials:"
+                for ent in matchedSet:
+                    entry = "User: " +str(user) + "\n"
+                    entry += "Protocol Data Source: " + str(ent.data_source)
+                    details.append(entry)
                 if(len(details) > 0):
-                    context['packed_message'][0]["details"] = details
-                if len(compSet) > 0:
-                    context['packed_message'].append({'header': "\n"})
-                    context['packed_message'].append({'header': "The following were \
-                                                                found, but not changed \
-                                                                because data_source_username \
-                                                                did not match the \
-                                                                user's username:"})
+                    matchedMessage["details"] = details
+                if len(mismatchedSet) > 0:
+                    mismatchedMessage['header'] = "Warning: The Username in the \
+                                                   folowing Protocol User Credentials \
+                                                   do not match the expected CHOP \
+                                                   assigned Username and were \
+                                                   left unchanged:"
+                    # the details list name is reused. It serves the same purpose
+                    # but collects the mismatched user details instead of the
+                    # matched ones.
                     details = []
-                    for ent in compSet:
-                        details.append(str(user) + ": " + str(ent.protocol.name))
-                    context['packed_message'][2]["details"] = details
+                    for ent in mismatchedSet:
+                        entry = "User: " + str(user) + "\n"
+                        entry += "Protocol Data Source: " + str(ent.data_source) + "\n"
+                        entry += "Issue: [ " + ent.data_source_username + " != " + str(user) + " ]"
+                        details.append(entry)
+                    mismatchedMessage["details"] = details
+                if len(noPasswordSet) + len(wrongDriverSet) > 0:
+                    unchangedMessage['header'] = "Warning: The following Protocol \
+                                                  User Credentials were left \
+                                                  unchanged for the reasons listed \
+                                                  with them:"
+                    details = []
+                    for ent in noPasswordSet:
+                        entry = "User: " + str(user) + "\n"
+                        entry += "Protocol Data Source: " + str(ent.data_source) + "\n"
+                        entry += "Issue: [ empty password field ]"
+                        details.append(entry)
+                    for ent in wrongDriverSet:
+                        entry = "User: " + str(user) + "\n"
+                        entry += "Protocol Data Source: " + str(ent.data_source) + "\n"
+                        entry += "Issue: [ the datasource is not Nautilus ]"
+                        details.append(entry)
+                    unchangedMessage['details'] = details
+                if(len(matchedSet) > 0):
+                    context['packed_message'].append(matchedMessage)
+                if(len(mismatchedSet) > 0):
+                    context['packed_message'].append(mismatchedMessage)
+                if len(noPasswordSet) + len(wrongDriverSet) > 0:
+                    context['packed_message'].append(unchangedMessage)
+                if(len(matchedSet) == 0 and len(mismatchedSet) == 0):
+                    context['message'] = "There were no user credentials \
+                                          your request so no changes were made."
                 # If we successfully completed these operations I load a different
-                # template. Aren't I clever?
+                # template. It acts as both a visual improvement and clearly
+                # indicates to users that a change was made.
                 template = 'confirmation.html'
-            except(Exception):
+            except Exception as e:
+                # Errors brought about by exceptions are made usable by time
+                # stamping them and logging the exception.
+                log_error(e, usernum)
                 context = self.get_context_data()
-                context['error'] = "There was an issue processing your request"
+                context['error'] = "There was an issue processing your request. \
+                                    The issue has been logged and we will \
+                                    evaluate it shortly."
         else:
             errmsg = ""
             if not usernum:
@@ -110,7 +165,7 @@ class ProtocolUserView(TemplateView):
             protocolUserForm.save()
         # if form is not valid - send errors to UI
         """
-            This block allows forms to submitted without a role specified.
+            This block allows forms to be submitted without a role specified.
             This is where the backend needs to be modified potentially for
             issue 157 in GitHub.
         """
@@ -275,3 +330,15 @@ class ProtocolUserCredentialForm(TemplateView):
 class Fn_in_progress(TemplateView):
 
     template_name = 'in_progress.html'
+
+
+def log_error(err, user):
+    logger = log.error
+    realTime = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+    logger(
+        'user {user} raised the following error while using the Update Nautlius User \
+        Credentials Feature'.format(user=str(user)),
+        extra={
+            'time': realTime,
+            'error': err
+            })

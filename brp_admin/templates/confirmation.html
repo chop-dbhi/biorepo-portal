@@ -5,12 +5,16 @@
   <h2> {{ message|linebreaks }} <span class="badge badge-secondary"></span></h2>
 
   {% for pack in packed_message %}
-    <h4> {{ pack.header | linebreaks }} </h4>
+    <h4 style="color:#555">{{ pack.header | linebreaks }}</h4>
+    <details>
+      <summary style="font-size:12px; color:#999">Details</summary>
+    <ul>
     {% for detail in pack.details %}
-      <ul>
-        <li style="font-size:16px"> {{ detail | linebreaks }} </li>
-      </ul>
+      <li style="font-size:15px; color:#555"> {{ detail | linebreaks }} </li>
     {% endfor %}
+    </ul>
+    </details>
+    <br/>
   {% endfor %}
 
   <form method="POST" class="post-form">{% csrf_token %}

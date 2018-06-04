@@ -26,14 +26,14 @@ naut = UpdateNautilusCredentials.as_view()
 url = reverse('update_nautilus_credentials')
 
 
-#                     DATABASE VALIDATION TESTS
+#           UpdateNautilusCredentials LOGIC VALIDATION TESTS
 # ----------------------------------------------------------------------
 #
 databaseCases = (("case", "expectedOutcome", "comment"), [
-    ("UnitTestUser", 1, 'User with change'),
-    ("UnitTestUser1", 0, 'User without change'),
-    ("UnitTestUser2", 0, 'User without change'),
-    ("admin", 0, 'User without change')
+    ("UnitTestUser", 1, 'UnitTestUser has only had one of their credentials altered.'),
+    ("UnitTestUser1", 0, 'UnitTestUser1 has had none of their credentials altered.'),
+    ("UnitTestUser2", 0, 'UnitTestUser2 has had none of their credentials altered.'),
+    ("admin", 0, 'admin has had none of their credentials altered.')
 ])
 
 
@@ -52,7 +52,7 @@ def test_database_status(case, expectedOutcome, comment):
 #                                  END
 
 
-#                     ERROR MESSAGE VALIDATION TESTS
+#        UpdateNautilusCredentials ERROR MESSAGE VALIDATION TESTS
 # -----------------------------------------------------------------------
 #
 errorCases = (("case", "expectedMessage", "comment"), [
@@ -74,7 +74,7 @@ def test_error_handling(case, expectedMessage, comment):
 #                                   END
 
 
-#                             USER ALERT TEST
+#                UpdateNautilusCredentials USER ALERT TEST
 # -----------------------------------------------------------------------
 #
 @pytest.mark.django_db
