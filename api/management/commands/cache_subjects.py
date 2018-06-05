@@ -12,24 +12,27 @@ from django.core.management.base import BaseCommand
 from django.core.cache import cache
 
 
-from rest_framework.response import Response
-
-
 class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('protocol_id', nargs='+', type=str)
 
     def getExternalRecords(self, pds, subject, lbls):
-        er_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD)
+        er_rh = ServiceClient.get_rh_for(
+            record_type=ServiceClient.EXTERNAL_RECORD)
+
         try:
             pds_records = er_rh.get(
-                external_system_url=pds.data_source.url, path=pds.path, subject_id=subject['id'])
+                external_system_url=pds.data_source.url, path=pds.path,
+                subject_id=subject['id'])
+
             time.sleep(0.05)
+
         except PageNotFound:
             pds_records = []
 
         r = []
+
         for ex_rec in pds_records:
             # Convert ehb-client object to JSON and then parse as py dict
             e = json.loads(ex_rec.json_from_identity(ex_rec))
@@ -47,13 +50,18 @@ class Command(BaseCommand):
 
     def cache_records(self, protocol_id):
         protocol_id = protocol_id[0]
+
         if protocol_id == 'all':
             protocols = Protocol.objects.all()
         else:
             protocols = Protocol.objects.filter(id=int(protocol_id)).all()
-        er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
+
+        er_label_rh = ServiceClient.get_rh_for(
+            record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
+
         lbls = er_label_rh.query()
         print('Caching {0} protocol(s)...'.format(len(protocols)))
+
         for protocol in protocols:
             print('Caching {}'.format(protocol))
             subjects = protocol.getSubjects()
@@ -62,14 +70,15 @@ class Command(BaseCommand):
                 subs = [eHBSubjectSerializer(sub).data for sub in subjects]
             else:
                 continue
+
             ehb_orgs = []
+
             # We can't rely on Ids being consistent across apps so we must
             # append the name here for display downstream.
             for o in organizations:
                 ehb_orgs.append(o.getEhbServiceInstance())
             # Check if the protocol has external IDs configured. If so retrieve them
             manageExternalIDs = False
-
             protocoldatasources = protocol.getProtocolDataSources()
 
             for pds in protocoldatasources:
@@ -81,10 +90,11 @@ class Command(BaseCommand):
                 try:
                     config = json.loads(ExIdSource.driver_configuration)
                     if 'sort_on' in list(config.keys()):
-                        # er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
+                        # er_label_rh = ServiceClient.get_rh_for(
+                        #     record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
                         # lbl = er_label_rh.get(id=config['sort_on'])
                         lbl = ''
-                        addl_id_column = lbl
+                        addl_id_column = lbl  # noqa
                 except:
                     raise
                     pass
@@ -96,7 +106,8 @@ class Command(BaseCommand):
                 sub.pop('organization_id')
                 for pds in protocoldatasources:
                     try:
-                        sub['external_records'].extend(self.getExternalRecords(pds, sub, lbls))
+                        sub['external_records'].extend(
+                            self.getExternalRecords(pds, sub, lbls))
                     except:
                         print("there was an error processing external records")
                         print("subject DB id:")
@@ -104,7 +115,6 @@ class Command(BaseCommand):
                         print("protocol data source:")
                         print(pds)
                         pass
-
 
                 if manageExternalIDs:
                     # Break out external ids into a separate object for ease of use
