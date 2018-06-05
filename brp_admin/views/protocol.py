@@ -1,6 +1,4 @@
 import logging
-import datetime
-import time
 
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView, View
@@ -63,61 +61,45 @@ class UpdateNautilusCredentials(TemplateView):
                 wrongDriverSet = ProtocolUserCredentials.objects.filter(~Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
                                                                         Q(user=user))
                 matchedSet.update(data_source_password=password)
+                log.info("{updatedUser} updated Nautilus credentials\
+                          for {user}.".format(updatedUser=str(request.user), user=str(user)))
                 context["packed_message"] = []
                 matchedMessage = {}
                 mismatchedMessage = {}
                 unchangedMessage = {}
                 details = []
                 matchedMessage['header'] = "Changed the following Protocol User \
-                                            Credentials:"
+                                            Credentials. Open the dropdown \
+                                            for more details."
                 for ent in matchedSet:
-                    entry = "User: " +str(user) + "\n"
-                    entry += "Protocol Data Source: " + str(ent.data_source)
-                    details.append(entry)
+                    details.append(makeEntry(user, ent))
                 if(len(details) > 0):
                     matchedMessage["details"] = details
-                if len(mismatchedSet) > 0:
-                    mismatchedMessage['header'] = "Warning: The Username in the \
-                                                   folowing Protocol User Credentials \
-                                                   do not match the expected CHOP \
-                                                   assigned Username and were \
-                                                   left unchanged:"
-                    # the details list name is reused. It serves the same purpose
-                    # but collects the mismatched user details instead of the
-                    # matched ones.
-                    details = []
-                    for ent in mismatchedSet:
-                        entry = "User: " + str(user) + "\n"
-                        entry += "Protocol Data Source: " + str(ent.data_source) + "\n"
-                        entry += "Issue: [ " + ent.data_source_username + " != " + str(user) + " ]"
-                        details.append(entry)
-                    mismatchedMessage["details"] = details
-                if len(noPasswordSet) + len(wrongDriverSet) > 0:
-                    unchangedMessage['header'] = "Warning: The following Protocol \
+                if len(noPasswordSet) + len(wrongDriverSet) + len(mismatchedSet) > 0:
+                    unchangedMessage['header'] = "The following Protocol \
                                                   User Credentials were left \
                                                   unchanged for the reasons listed \
-                                                  with them:"
+                                                  with them. Open the dropdown \
+                                                  for more details."
                     details = []
+                    for ent in mismatchedSet:
+                        issue = "Username, " + ent.data_source_username + ", does not match the CHOP assigned username"
+                        details.append(makeEntry(user, ent, issue))
                     for ent in noPasswordSet:
-                        entry = "User: " + str(user) + "\n"
-                        entry += "Protocol Data Source: " + str(ent.data_source) + "\n"
-                        entry += "Issue: [ empty password field ]"
-                        details.append(entry)
+                        issue = "empty password field"
+                        details.append(makeEntry(user, ent, issue))
                     for ent in wrongDriverSet:
-                        entry = "User: " + str(user) + "\n"
-                        entry += "Protocol Data Source: " + str(ent.data_source) + "\n"
-                        entry += "Issue: [ the datasource is not Nautilus ]"
-                        details.append(entry)
+                        issue = "The datasource is not Nautilus"
+                        details.append(makeEntry(user, ent, issue))
                     unchangedMessage['details'] = details
-                if(len(matchedSet) > 0):
+                if(len(matchedSet) == 0):
+                    notice = "No credentials were changed."
+                    context['error'] = notice
+                else:
+                    print(len(matchedSet))
                     context['packed_message'].append(matchedMessage)
-                if(len(mismatchedSet) > 0):
-                    context['packed_message'].append(mismatchedMessage)
-                if len(noPasswordSet) + len(wrongDriverSet) > 0:
-                    context['packed_message'].append(unchangedMessage)
-                if(len(matchedSet) == 0 and len(mismatchedSet) == 0):
-                    context['message'] = "There were no user credentials \
-                                          your request so no changes were made."
+                if len(noPasswordSet) + len(wrongDriverSet) + len(mismatchedSet) > 0:
+                        context['packed_message'].append(unchangedMessage)
                 # If we successfully completed these operations I load a different
                 # template. It acts as both a visual improvement and clearly
                 # indicates to users that a change was made.
@@ -125,11 +107,11 @@ class UpdateNautilusCredentials(TemplateView):
             except Exception as e:
                 # Errors brought about by exceptions are made usable by time
                 # stamping them and logging the exception.
-                log_error(e, usernum)
+                log_error(e, request.user, usernum)
                 context = self.get_context_data()
                 context['error'] = "There was an issue processing your request. \
-                                    The issue has been logged and we will \
-                                    evaluate it shortly."
+                                    Please reach out to eigsupport@email.chop.edu \
+                                    if you continue to experience this issue."
         else:
             errmsg = ""
             if not usernum:
@@ -332,13 +314,19 @@ class Fn_in_progress(TemplateView):
     template_name = 'in_progress.html'
 
 
-def log_error(err, user):
+def makeEntry(user, ent, issue=""):
+    entry = "User: " + str(user) + "\n"
+    entry += "Protocol Data Source: " + str(ent.data_source)
+    if issue != "":
+        entry += "\nIssue: [ " + issue + " ]"
+    return entry
+
+
+def log_error(err, user, updateUser):
     logger = log.error
-    realTime = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
     logger(
         'user {user} raised the following error while using the Update Nautlius User \
-        Credentials Feature'.format(user=str(user)),
+        Credentials Feature on {updateUser}'.format(user=str(user), updateUser=str(updateUser)),
         extra={
-            'time': realTime,
-            'error': err
+            'error': err,
             })
