@@ -10,12 +10,19 @@ from ehb_client.requests.group_request_handler import GroupRequestHandler
 
 
 class ServiceClient(object):
-    '''
-    This class provides access to the ehb-client api
-    '''
+    """This class provides access to the ehb-client api.
+
+    The various request handlers are initialized using auth settings. They
+    can be accessed using the `get_rh_for` method with either the record_type
+    constant or a record instance itself. The `create` method tries to create
+    a passed record in the EHB, using the passed functions on success, error,
+    and exception.
+    """
+
     SERVICE_CLIENT_SETTINGS = settings.SERVICE_CLIENT_SETTINGS
     host = SERVICE_CLIENT_SETTINGS['HOST']
     root_path = SERVICE_CLIENT_SETTINGS['ROOT_PATH']
+    # TODO: Why is this needed?
     self_root_path = SERVICE_CLIENT_SETTINGS['SELF_ROOT_PATH']
     isSecure = SERVICE_CLIENT_SETTINGS['ISSECURE']
     APP_URL = SERVICE_CLIENT_SETTINGS['APP_URL']
@@ -46,16 +53,24 @@ class ServiceClient(object):
 
     @staticmethod
     def get_rh_for(**kwargs):
-        '''
-        Expected kwargs are:
-        * record: value of an appropriate ehb_client IdentityBase instance
-        * record_type:  value from one of ServiceClient predefined int values
-        '''
+        """Get the request handler for the given record instance or constant.
+
+        Args:
+            record: value of an appropriate ehb_client IdentityBase instance
+            record_type: value from one of ServiceClient predefined int values
+
+        Returns:
+            An auth-configured instance of the appropriate EHB client request
+            handler or None if the appropriate client can't be found.
+        """
+
         rec_type = kwargs.pop('record_type', -1)
         record = kwargs.pop('record', None)
         if rec_type in ServiceClient.req_handlers:
             return ServiceClient.req_handlers.get(rec_type)
         elif record:
+
+            # TODO: Could the `isinstance()` builtin function work here?
             for c in type(record).__bases__:
                 if c.__name__ == 'Subject':
                     return ServiceClient.subj_client
@@ -76,6 +91,8 @@ class ServiceClient(object):
 
     @staticmethod
     def create(record, f_success, f_errors, f_except=None):
+        """Create a record in the EHB using the provided callbacks."""
+
         rh = ServiceClient.get_rh_for(record)
         if rh:
             try:

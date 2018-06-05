@@ -9,11 +9,17 @@ from django.conf import settings
 
 
 class AutoDateTimeField(models.DateTimeField):
+    """A last-modified-style date field."""
+
+    # TODO: Why doesn't `auto_now` work here?
+
     def pre_save(self, model_instance, add):
         return timezone.now()
 
 
 class CreatedModified(models.Model):
+    """A model with created and modified timestamps."""
+
     date_help_text = "Please use date format: <em>YYYY-MM-DD</em>"
     created = models.DateTimeField(
         default=timezone.now,
@@ -29,6 +35,8 @@ class CreatedModified(models.Model):
 
 
 class Base(CreatedModified):
+    """A model that provides access to settings props."""
+
     def _settings_prop(self, GROUP, KEY, default=None):
         PROTOCOL_PROPS = settings.PROTOCOL_PROPS
         if PROTOCOL_PROPS:
@@ -40,6 +48,7 @@ class Base(CreatedModified):
         else:
             return default
 
+    # TODO: Is this necessary?
     def save(self, *args, **kwargs):
         # Create an immutable key for this protocol
         super(Base, self).save(*args, **kwargs)
@@ -50,6 +59,7 @@ class Base(CreatedModified):
 
 
 class ImmutableKey(Base):
+    """A model with a unique immutable key."""
 
     key = models.CharField(max_length=255, unique=True,
                            verbose_name='Immutable Key', editable=False,
@@ -57,6 +67,7 @@ class ImmutableKey(Base):
 
     def _make_random_key(
             self, seed, ja, l, chars=string.ascii_uppercase + string.digits):
+        # TODO: What is the `ja` argument for?
         random.seed(random.randrange(0, seed))
         return ''.join(random.choice(chars) for idx in range(l))
 
@@ -92,17 +103,18 @@ class ImmutableKey(Base):
 
 
 class BaseWithImmutableKey(Base):
-    '''
+    """A timestamped model with settings access and an immutable key.
+
     The immutable_key will serve as a unique identifier for the Organization
     which never changes
-    '''
+    """
+
+    # TODO: Why is this a relation?
     immutable_key = models.OneToOneField(
         ImmutableKey, editable=False, blank=True, unique=True, null=True)
 
     def _create_immutable_key(self):
-        '''
-        Generate an immutable_key for this entity
-        '''
+        """Generate an immutable_key for this entity."""
 
         if self.immutable_key:
             # If the key already exists then this model is being edited but

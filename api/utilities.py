@@ -13,14 +13,20 @@ logger = logging.getLogger(__name__)
 
 
 class DriverUtils(object):
+    """Driver utility methods.
+
+    Includes a method to get and configure a PDS driver for a given user.
+    """
 
     @staticmethod
     def getDriverFor(protocol_data_source, user):
-        '''
+        """Get and configure a PDS driver for the given user.
+
         Attempts to get the driver for the specified protocol_data_source and
-        user and configures the driver.  If the user does not have
-        credentials for this data source a DoesNotExist exception is raised
-        '''
+        user and configures the driver. If the user does not have
+        credentials for this data source a DoesNotExist exception is raised.
+        """
+
         from .models.protocols import ProtocolUserCredentials
         creds = ProtocolUserCredentials.objects.get(
             protocol=protocol_data_source.protocol,
@@ -34,14 +40,19 @@ class DriverUtils(object):
 
 
 class RecordUtils(object):
+    """Record utility methods.
+
+    Includes a method to add PDS ID and label descriptions to external records.
+    """
 
     @staticmethod
     def serialize_external_records(pds, records, labels):
-        '''
+        """Add PDS ID and label descriptions to External Records.
+
         Returns serialized form of eHB external records from the eHB to API
         friendly form. API friendly meaning it contains ProtocolDatasource ID,
         and label description.
-        '''
+        """
 
         serialized_records = []
 
@@ -62,8 +73,19 @@ class RecordUtils(object):
 
 
 class SubjectUtils(object):
+    """Subject utility methods.
+
+    Includes methods for getting the unique name for a Protocol/Subject
+    record group, creating, getting, and deleting that group from the EHB,
+    and adding a record to that group. Also, methods for getting a standard
+    subject record prefix, validating the uniqueness of a new external record
+    id, and creating a new external record in the EHB are included.
+    """
+
     @staticmethod
     def protocol_subject_record_group_name(protocol, subject):
+        """Get the unique protocol/subject record group name."""
+
         from .models.protocols import Organization
         orh = ServiceClient.get_rh_for(record_type=ServiceClient.ORGANIZATION)
         ehb_org = orh.get(id=subject.organization_id)
@@ -73,6 +95,8 @@ class SubjectUtils(object):
 
     @staticmethod
     def get_protocol_subject_record_group(protocol, subject):
+        """Get the protocol/subject record group from the EHB."""
+
         gh = ServiceClient.get_rh_for(record_type=ServiceClient.GROUP)
         return gh.get(
             name=SubjectUtils.protocol_subject_record_group_name(protocol, subject)
@@ -80,6 +104,8 @@ class SubjectUtils(object):
 
     @staticmethod
     def create_protocol_subject_record_group(protocol, subject):
+        """Create the protocol/subject record group in the EHB."""
+
         try:
             n = SubjectUtils.protocol_subject_record_group_name(protocol, subject)
             gh = ServiceClient.get_rh_for(record_type=ServiceClient.GROUP)
@@ -92,6 +118,8 @@ class SubjectUtils(object):
             )
             r = gh.create(grp)
             return r[0].get('success')
+
+        # TODO: This Exception handling is confusing. Does it work?
         except:
             raise
             logger.error("Failure creating a subject record group for {0}".format(subject.id))
@@ -99,6 +127,8 @@ class SubjectUtils(object):
 
     @staticmethod
     def delete_protocol_subject_record_group(protocol, subject):
+        """Delete the protocol/subject record group from the EHB."""
+
         try:
             n = SubjectUtils.protocol_subject_record_group_name(protocol, subject)
             gh = ServiceClient.get_rh_for(record_type=ServiceClient.GROUP)
@@ -108,8 +138,11 @@ class SubjectUtils(object):
         except:
             return False
 
+    # TODO: Is this method needed? Where is it used?
     @staticmethod
     def standard_record_prefix(subject):
+        """Get the standard record prefix for a subject."""
+
         return ProtocolConstants.ex_rec_org_pre +\
             str(subject.organization_id) + ProtocolConstants.ex_rec_sep +\
             ProtocolConstants.ex_rec_sub_id_pre +\
@@ -117,6 +150,8 @@ class SubjectUtils(object):
 
     @staticmethod
     def add_record_to_subject_record_group(protocol, subject, record):
+        """Add a record to a protocol/subject record group in the EHB."""
+
         grp = SubjectUtils.get_protocol_subject_record_group(protocol, subject)
         grp.client_key = protocol._settings_prop('CLIENT_KEY', 'key', '')
         gh = ServiceClient.get_rh_for(record_type=ServiceClient.GROUP)
@@ -124,7 +159,8 @@ class SubjectUtils(object):
 
     @staticmethod
     def validate_new_record_id(protocol_data_source, subject, record_id, include_path):
-        '''
+        """Validates that an external system record ID is unique in the EHB.
+
         Checks if the record_id (an external system record id, not the eHB
         record id) is acceptable by eHB uniqueness rules.
         If yes, returns 0.
@@ -133,7 +169,7 @@ class SubjectUtils(object):
                 protocoldatasource
             2 : record id exists for this protocoldatasource for a
                 different subject.
-        '''
+        """
 
         er_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD)
 
@@ -166,20 +202,24 @@ class SubjectUtils(object):
 
     @staticmethod
     def create_new_ehb_external_record(protocol_data_source, user, subject, record_id, label=None):
-        '''
+        """Create a new external record for this PDS/subject in the EHB.
+
         Creates a new external record in the ehb-service for this data source,
-        subject, record_id and
+        subject and record_id, using the credentials of the given user and the
+        label, if given.
 
-        Output
-        ------
-        If successful returns the
+        Returns:
+            If successful, returns the new ExternalRecord object.
 
-        ehb_client.external_record_request_handler.ExternalRecord object
-        '''
+        Raises:
+            RecordCreationError: If the creation request response has errors or
+                an Exception is raised during operation.
+        """
 
         es = protocol_data_source.data_source.getExternalSystem()
 
-        # Want to make sure we're not going to overwrite a record already in the system
+        # Want to make sure we're not going to overwrite a record already in
+        # the system
         try:
             if not label:
                 label = 1
