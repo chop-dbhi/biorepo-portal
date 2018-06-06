@@ -83,7 +83,8 @@ class UpdateNautilusCredentials(TemplateView):
                                                   for more details."
                     details = []
                     for ent in mismatchedSet:
-                        issue = "Username, " + ent.data_source_username + ", does not match the CHOP assigned username"
+                        issue = "Username, " + ent.data_source_username + \
+                                ", does not match the CHOP assigned username"
                         details.append(makeEntry(user, ent, issue))
                     for ent in noPasswordSet:
                         issue = "empty password field"
@@ -314,10 +315,10 @@ class Fn_in_progress(TemplateView):
     template_name = 'in_progress.html'
 
 
-def makeEntry(user, ent, issue=""):
+def makeEntry(user, ent, issue=None):
     entry = "User: " + str(user) + "\n"
     entry += "Protocol Data Source: " + str(ent.data_source)
-    if issue != "":
+    if issue:
         entry += "\nIssue: [ " + issue + " ]"
     return entry
 
