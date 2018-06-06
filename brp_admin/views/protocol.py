@@ -61,8 +61,12 @@ class UpdateNautilusCredentials(TemplateView):
                 wrongDriverSet = ProtocolUserCredentials.objects.filter(~Q(data_source__driver=ProtocolDataSourceConstants.nautilus_driver),
                                                                         Q(user=user))
                 matchedSet.update(data_source_password=password)
-                log.info("{updatedUser} updated Nautilus credentials\
-                          for {user}.".format(updatedUser=str(request.user), user=str(user)))
+                if hasattr(request, 'user'):
+                    log.info("{updatedUser} updated Nautilus credentials\
+                              for {user}.".format(updatedUser=str(request.user), user=str(user)))
+                else:
+                    log.info("{updatedUser} updated Nautilus credentials\
+                              for {user}.".format(updatedUser="unknown", user=str(user)))
                 context["packed_message"] = []
                 matchedMessage = {}
                 mismatchedMessage = {}
@@ -108,7 +112,10 @@ class UpdateNautilusCredentials(TemplateView):
             except Exception as e:
                 # Errors brought about by exceptions are made usable by time
                 # stamping them and logging the exception.
-                log_error(e, request.user, usernum)
+                if hasattr(request, 'user'):
+                    log_error(e, request.user, usernum)
+                else:
+                    log_error(e, "unknown", usernum)
                 context = self.get_context_data()
                 context['error'] = "There was an issue processing your request. \
                                     Please reach out to eigsupport@email.chop.edu \

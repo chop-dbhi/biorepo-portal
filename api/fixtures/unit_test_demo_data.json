@@ -464,13 +464,13 @@
 	"pk": 10,
 	"model": "api.protocolusercredentials",
 	"fields": {
-		"data_source": 7,
-		"protocol": 2,
+		"data_source": 8,
+		"protocol": 1,
 		"created": "2016-01-10T15:36:26.764Z",
-		"data_source_username": "",
+		"data_source_username": "UnitTestUser",
 		"modified": "2016-01-10T15:36:26.764Z",
-		"user": 4,
+		"user": 2,
 		"protocol_user": 2,
-		"data_source_password": "unitTestPassword"
+		"data_source_password": ""
 	}
 }]
