@@ -322,6 +322,8 @@ class Fn_in_progress(TemplateView):
     template_name = 'in_progress.html'
 
 
+# The function is used to create messages for UpdateNautilusCredentials.
+# These fill the content for the details section of the packed message format.
 def makeEntry(user, ent, issue=None):
     entry = "User: " + str(user) + "\n"
     entry += "Protocol Data Source: " + str(ent.data_source)
@@ -330,6 +332,10 @@ def makeEntry(user, ent, issue=None):
     return entry
 
 
+# This function is built to take advantage of our established error logging.
+# It takes an error message, the active user, and the user being acted on and
+# logs the error. At this point it is built for UpdateNautilusCredentials, but
+# it could be easily adapted to work with any of the protocols here.
 def log_error(err, user, updateUser):
     logger = log.error
     logger(
