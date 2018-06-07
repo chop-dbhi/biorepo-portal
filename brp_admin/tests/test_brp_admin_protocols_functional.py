@@ -30,18 +30,18 @@ url = reverse('update_nautilus_credentials')
 #           UpdateNautilusCredentials LOGIC VALIDATION TESTS
 # ----------------------------------------------------------------------
 #
-databaseCases = (("username", "driver", "password", "datasource_username", "empty", "comment"), [
-    ("UnitTestUser", 1, "newPassword", "UnitTestUser", False, "User gets their valid credentials changed."),
-    ("UnitTestUser", 2, "newPassword", "UnitTestUser", True, "User's non-nautilus credentials are untouched."),
-    ("UnitTestUser", 1, "", "UnitTestUser", False, "User's nautilus credentials with empty password fields are untouched."),
-    ("UnitTestUser", 1, "newPassword", "Bob", True, "User's nautilus credentials with mismatched username fields are untouched."),
-    ("admin", 1, "newPassword", "admin", True, "Other users credentials are untouched.")
+databaseCases = (("username", "driver", "password", "datasource_username", "shouldMatch", "comment"), [
+    ("UnitTestUser", 1, "newPassword", "UnitTestUser", True, "User gets their valid credentials changed."),
+    ("UnitTestUser", 2, "newPassword", "UnitTestUser", False, "User's non-nautilus credentials are untouched."),
+    ("UnitTestUser", 1, "", "UnitTestUser", True, "User's nautilus credentials with empty password fields are untouched."),
+    ("UnitTestUser", 1, "newPassword", "Bob", False, "User's nautilus credentials with mismatched username fields are untouched."),
+    ("admin", 1, "newPassword", "admin", False, "Other users credentials are untouched.")
 ])
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(*databaseCases)
-def test_database_status(username, driver, password, datasource_username, empty, comment):
+def test_database_status(username, driver, password, datasource_username, shouldMatch, comment):
     call_command("loaddata", "unit_test_demo_data.json", verbosity=0)
     postRequest = factory.post(url, {'username': "UnitTestUser",
                                      'password': "newPassword"})
@@ -51,10 +51,10 @@ def test_database_status(username, driver, password, datasource_username, empty,
                                                  Q(data_source__driver=driver),
                                                  Q(data_source_password=password),
                                                  Q(data_source_username=datasource_username))
-    if empty:
-        assert len(set) == 0
-    else:
+    if shouldMatch:
         assert len(set) > 0
+    else:
+        assert len(set) == 0
 #
 # -----------------------------------------------------------------------
 #                                  END
@@ -71,6 +71,9 @@ errorCases = (("case", "expectedMessage", "comment"), [
 ])
 
 
+# These cases rely on a raw HTML parsing function which looks at the form.html
+# template. If you are running into strange test failures, it may be due to
+# a change in that template. Look at the extractErrors() function just in case.
 @pytest.mark.django_db
 @pytest.mark.parametrize(*errorCases)
 def test_error_handling(case, expectedMessage, comment):
@@ -79,27 +82,4 @@ def test_error_handling(case, expectedMessage, comment):
     assert expectedMessage == extractErrors(str(naut(postRequest).content))
 #
 # -----------------------------------------------------------------------
-#                                   END
-
-
-#                UpdateNautilusCredentials USER ALERT TEST
-# -----------------------------------------------------------------------
-#
-"""
-
-    We may not need this test case.
-    Or perhaps it needs to be reworked.
-    If we rework it, we will need to improve the extractUserCredentialInformation
-    function within parseBRPTemplateHTML.py
-
-@pytest.mark.django_db
-def test_that_user_is_alerted_to_mismatched_usernames():
-    call_command("loaddata", "unit_test_demo_data.json", verbosity=0)
-    postRequest = factory.post(url, {'username': "UnitTestUser",
-                                     'password': "anyOldThing"})
-    changed = extractUserCredentialInformation(str(naut(postRequest).content))
-    assert len(changed[1]) == 1
-"""
-#
-# -----------------------------------------------------------------------
-#                                    END
+#                                   END                                 END
