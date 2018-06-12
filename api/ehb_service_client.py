@@ -21,8 +21,9 @@ class ServiceClient(object):
 
     SERVICE_CLIENT_SETTINGS = settings.SERVICE_CLIENT_SETTINGS
     host = SERVICE_CLIENT_SETTINGS['HOST']
+    # This is for calls to the eHB
     root_path = SERVICE_CLIENT_SETTINGS['ROOT_PATH']
-    # TODO: Why is this needed?
+    # This is needed for react UI to connect to the BRP dataentry Backend
     self_root_path = SERVICE_CLIENT_SETTINGS['SELF_ROOT_PATH']
     isSecure = SERVICE_CLIENT_SETTINGS['ISSECURE']
     APP_URL = SERVICE_CLIENT_SETTINGS['APP_URL']

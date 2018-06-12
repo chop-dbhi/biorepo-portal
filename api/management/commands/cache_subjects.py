@@ -39,7 +39,7 @@ class Command(BaseCommand):
         try:
 
             # Retrieve the external records for the subject/protocol.
-            # TODO: explain the "path" argument.
+            # Path argument is needed for ehb_datasources to make request.
             pds_records = er_rh.get(
                 external_system_url=pds.data_source.url, path=pds.path, subject_id=subject['id'])
 
@@ -56,6 +56,8 @@ class Command(BaseCommand):
 
             # Convert ehb-client object to JSON and then parse as py dict.
             # TODO: the external record object should have this capability.
+            # We should examine this to refactor for simplicity. It is possible
+            # to remove json.loads for each json_from_identity call.
             e = json.loads(ex_rec.json_from_identity(ex_rec))
 
             # Map label descriptions from the eHB to External Records.
@@ -75,13 +77,14 @@ class Command(BaseCommand):
     def cache_records(self, protocol_id):
         """Cache subject records from a given protocol locally."""
 
-        # TODO: Why only take first argument?
+        # TODO: consider passing in a list if we ever need to cache a small
+        # number of protocols at one time. look at why only using first item in
+        # list.
         protocol_id = protocol_id[0]
         if protocol_id == 'all':
             # Special "all" protocol gets all protocols.
             protocols = Protocol.objects.all()
         else:
-            # TODO: Why is this not `id__in`?
             protocols = Protocol.objects.filter(id=int(protocol_id)).all()
 
         # Get external record label request handler.
