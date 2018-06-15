@@ -59,6 +59,7 @@ export function clearRecordState() {
 }
 
 export function createRecordRequest() {
+  
   return {
     type: CREATE_RECORD_REQUEST,
     isCreating: true,
