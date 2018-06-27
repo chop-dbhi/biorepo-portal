@@ -1,4 +1,25 @@
 {% extends "base.html" %}
+{% load static %}
+
+
+<style>
+
+.table .table-borderless td {
+    border: none;
+}
+
+.hi {
+  background-color: red;
+}
+
+</style>
+
+<head>
+  <link rel="stylesheet" href="{% static "css/redcap_driver.css" %}">
+</head>
+
+
+
 
 {% block head_content %}
 <title>Subject Data</title>
@@ -62,11 +83,41 @@
 
 <div> <span class="label label-primary">{{label.label}}</span></div>
 
-<div style="margin-top:10px">
+<div class="pull-right">
+<div class="col-md-6">
+
+  <table class = "table table-borderless">
+    <tbody>
+      <tr>
+        <td style="border:none" align="center"> <button class="btn btn-primary"> </button></td>
+        <td style="border:none" align="center"> <button class="btn btn-warning"> </button></td>
+        <td style="border:none" align="center"> <button class="btn btn-success"> </button></td>
+      </tr>
+
+      <tr>
+        <td style="border:none">Incomplete</td>
+        <td style="border:none">Unverified</td>
+        <td style="border:none">Complete</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+</div>
+
+
+
+<div style="margin-top:5px">
 
 {{subRecordSelectionForm|safe}}
 
 </div>
+
+
+
+
+
+
 
 <div class="modal fade" id="pleaseWaitModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">

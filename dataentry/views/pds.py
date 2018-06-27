@@ -28,31 +28,66 @@ class StartView(DataEntryView):
 
     template_name = 'pds_dataentry_start.html'
 
+    print ("in start view 31")
+
     def generateSubRecordSelectionForm(
-            self, driver, record_id, form_url, attempt_count,
+            self, driver, record_id, record, form_url, attempt_count, #added record
             max_attempts):
         try:
             form = driver.subRecordSelectionForm(
                 form_url=form_url,
-                record_id=record_id
+                record_id=record_id,
+                record=record #added record
             )
             self.request.META['action'] = 'Sub record selection form generated.'
             return form
         except RecordDoesNotExist:
             return None
 
+    def check_cache(self, cache_key):
+        self.cached_data = cache.get(cache_key)
+        if self.cached_data:
+            return True
+        else:
+            return False
+
+    def get_cache (self, cache_key):
+        print ("we're in get cache")
+        print (cache.get(cache_key))
+        return cache.get(cache_key)
+
+    def create_cache(self, cache_key, cache_data):
+        cache.set(cache_key, cache_data)
+        cache.persist(cache_key)
+        self.check_cache(cache_key)
+
+    # def update_cache(self):
+
+
     def get_context_data(self, **kwargs):
         context = super(StartView, self).get_context_data(**kwargs)
         form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/form_spec/'.format(
             root=self.service_client.self_root_path,
             **kwargs)
-        context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-            self.driver,
-            context['record'].record_id,
-            form_url,
-            0,
-            1,
-        )
+        print ("in get context data 58")
+        cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
+            root=self.service_client.self_root_path, **kwargs)
+
+        if self.check_cache(cache_key):
+            print ("we found cache 75")
+            context['subRecordSelectionForm'] = self.get_cache(cache_key)
+        else:
+            print ("we're in create cache 78")
+            context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
+                self.driver,
+                context['record'].record_id,
+                context['record'],          #added record
+                form_url,
+                0,
+                1,
+            )
+            self.create_cache(cache_key, context['subRecordSelectionForm'])
+
         return context
 
 
@@ -80,6 +115,10 @@ class FormView(DataEntryView):
             current_index = forms.index(kwargs['form_spec'])
             next_form = forms[current_index + 1]
             next_form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/form_spec/{next_form}/'.format(
+                root=self.service_client.self_root_path,
+                next_form=next_form,
+                **kwargs)
+            start_form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/start/'.format(
                 root=self.service_client.self_root_path,
                 next_form=next_form,
                 **kwargs)
@@ -176,7 +215,11 @@ class CreateView(DataEntryView):
 
     def update_cache(self):
         subs = json.loads(self.cached_data)
+        print ("line 190, subs")
+        print (subs)
         for sub in subs:
+            print ("this is sub")
+            print (sub)
             if sub['id'] == int(self.subject.id):
                 er = self.get_external_record(record_id=self.record_id)
                 context = {"record": er}
@@ -196,6 +239,7 @@ class CreateView(DataEntryView):
         self.check_cache()
 
     def get_context_data(self, **kwargs):
+        print ("in get context data")
         context = super(CreateView, self).get_context_data(**kwargs)
         if self.driver.new_record_form_required():
             # Generate the form and pass it to the template (Nautilus)
@@ -205,6 +249,7 @@ class CreateView(DataEntryView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
+        print ("in dispatch")
         context = super(CreateView, self).get_context_data(**kwargs)
         allow_more_records = False
         try:
