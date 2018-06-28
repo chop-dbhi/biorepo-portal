@@ -18,6 +18,11 @@ from .base import DataEntryView
 log = logging.getLogger(__name__)
 
 
+
+
+
+
+
 class StartView(DataEntryView):
     '''
     Renders a page with the list of current records in a Protocol Data Source
@@ -29,6 +34,7 @@ class StartView(DataEntryView):
     template_name = 'pds_dataentry_start.html'
 
     print ("in start view 31")
+    cache_needs_update = False
 
     def generateSubRecordSelectionForm(
             self, driver, record_id, record, form_url, attempt_count, #added record
@@ -44,24 +50,7 @@ class StartView(DataEntryView):
         except RecordDoesNotExist:
             return None
 
-    def check_cache(self, cache_key):
-        self.cached_data = cache.get(cache_key)
-        if self.cached_data:
-            return True
-        else:
-            return False
 
-    def get_cache (self, cache_key):
-        print ("we're in get cache")
-        print (cache.get(cache_key))
-        return cache.get(cache_key)
-
-    def create_cache(self, cache_key, cache_data):
-        cache.set(cache_key, cache_data)
-        cache.persist(cache_key)
-        self.check_cache(cache_key)
-
-    # def update_cache(self):
 
 
     def get_context_data(self, **kwargs):
@@ -118,10 +107,10 @@ class FormView(DataEntryView):
                 root=self.service_client.self_root_path,
                 next_form=next_form,
                 **kwargs)
-            start_form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/start/'.format(
-                root=self.service_client.self_root_path,
-                next_form=next_form,
-                **kwargs)
+            # start_form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/start/'.format(
+            #     root=self.service_client.self_root_path,
+            #     next_form=next_form,
+            #     **kwargs)
         except:
             next_form_url = ''
         context['form_submission_url'] = form_submission_url
@@ -170,6 +159,16 @@ class FormView(DataEntryView):
         else:
             self.request.META['action'] = 'Form processed.'
             self.request.META['subject_id'] = context['subject'].id  #The ehb PK for this subject
+
+            # start_form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/start/'.format(
+            #     root=self.service_client.self_root_path,
+            #     next_form=next_form,
+            #     **kwargs)
+            cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
+                root=self.service_client.self_root_path, **kwargs)
+
+            if (self.check_cache(cache_key)):
+                self.create_cache(cache_key, None)
             return JsonResponse({'status': 'ok'})
 
 
