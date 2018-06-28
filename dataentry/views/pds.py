@@ -51,22 +51,22 @@ class StartView(DataEntryView):
             return None
 
 
-
-
     def get_context_data(self, **kwargs):
         context = super(StartView, self).get_context_data(**kwargs)
         form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/form_spec/'.format(
             root=self.service_client.self_root_path,
             **kwargs)
-        print ("in get context data 58")
+
+        # cache for record selection table is identified by pds_id, subject id and record id
         cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
             root=self.service_client.self_root_path, **kwargs)
 
+        # if cache exists for the record selection table, load cache
         if self.check_cache(cache_key):
             print ("we found cache 75")
             context['subRecordSelectionForm'] = self.get_cache(cache_key)
+        # else create cache
         else:
-            print ("we're in create cache 78")
             context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
                 self.driver,
                 context['record'].record_id,
@@ -76,7 +76,6 @@ class StartView(DataEntryView):
                 1,
             )
             self.create_cache(cache_key, context['subRecordSelectionForm'])
-
         return context
 
 
@@ -107,10 +106,6 @@ class FormView(DataEntryView):
                 root=self.service_client.self_root_path,
                 next_form=next_form,
                 **kwargs)
-            # start_form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/start/'.format(
-            #     root=self.service_client.self_root_path,
-            #     next_form=next_form,
-            #     **kwargs)
         except:
             next_form_url = ''
         context['form_submission_url'] = form_submission_url
@@ -160,14 +155,11 @@ class FormView(DataEntryView):
             self.request.META['action'] = 'Form processed.'
             self.request.META['subject_id'] = context['subject'].id  #The ehb PK for this subject
 
-            # start_form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/start/'.format(
-            #     root=self.service_client.self_root_path,
-            #     next_form=next_form,
-            #     **kwargs)
+            # form was processed, clear cache for record selection table
             cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
                 root=self.service_client.self_root_path, **kwargs)
-
             if (self.check_cache(cache_key)):
+                # cache is reset to none 
                 self.create_cache(cache_key, None)
             return JsonResponse({'status': 'ok'})
 
