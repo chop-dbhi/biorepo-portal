@@ -1,6 +1,7 @@
 import json
 import logging
 import inspect
+import time
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
@@ -19,10 +20,6 @@ log = logging.getLogger(__name__)
 
 
 
-
-
-
-
 class StartView(DataEntryView):
     '''
     Renders a page with the list of current records in a Protocol Data Source
@@ -33,8 +30,6 @@ class StartView(DataEntryView):
 
     template_name = 'pds_dataentry_start.html'
 
-    print ("in start view 31")
-    cache_needs_update = False
 
     def generateSubRecordSelectionForm(
             self, driver, record_id, record, form_url, attempt_count, #added record
@@ -51,22 +46,46 @@ class StartView(DataEntryView):
             return None
 
 
+    def add_obj_to_cache(self, cache_key, record_id, table_data):
+        cache_data = (cache.get(cache_key))
+        # new_table = {record_id : table_data}
+        cache_data[record_id] = table_data
+        cache.set(cache_key, cache_data)
+        cache.persist(cache_key)
+
+
     def get_context_data(self, **kwargs):
+        start = time.time()
         context = super(StartView, self).get_context_data(**kwargs)
         form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/form_spec/'.format(
             root=self.service_client.self_root_path,
             **kwargs)
 
         # cache for record selection table is identified by pds_id, subject id and record id
-        cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
-            root=self.service_client.self_root_path, **kwargs)
+        cache_key = 'protocol{pds_id}_subject{subject_id}_record_tables'.format(root=self.service_client.self_root_path, **kwargs)
+        # subject_id = '{subject_id}'.format(root=self.service_client.self_root_path, **kwargs)
+        record_id = '{record_id}'.format(root=self.service_client.self_root_path, **kwargs)
+        record_id = int(record_id)
 
-        # if cache exists for the record selection table, load cache
         if self.check_cache(cache_key):
-            print ("we found cache 75")
-            context['subRecordSelectionForm'] = self.get_cache(cache_key)
-        # else create cache
+            print ("line 68, found cache key")
+            cache_data = cache.get(cache_key)
+            if record_id in cache_data:
+                print ("line 71, record id")
+                context['subRecordSelectionForm'] = cache_data[record_id]
+            else:
+                context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
+                    self.driver,
+                    context['record'].record_id,
+                    context['record'],          #added record
+                    form_url,
+                    0,
+                    1,
+                )
+                self.add_obj_to_cache (cache_key, record_id, context['subRecordSelectionForm'])
+
         else:
+            print ("not found, 85")
             context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
                 self.driver,
                 context['record'].record_id,
@@ -75,7 +94,34 @@ class StartView(DataEntryView):
                 0,
                 1,
             )
-            self.create_cache(cache_key, context['subRecordSelectionForm'])
+            table_data = context['subRecordSelectionForm']
+            new_table = {record_id : table_data}
+            cache.set(cache_key, new_table)
+            cache.persist(cache_key)
+            # self.add_obj_to_cache (cache_key, record_id, context['subRecordSelectionForm'])
+
+
+
+        # cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
+        #     root=self.service_client.self_root_path, **kwargs)
+        #
+        # # if cache exists for the record selection table, load cache
+        # if self.check_cache(cache_key):
+        #     print ("we found cache 75")
+        #     context['subRecordSelectionForm'] = self.get_cache(cache_key)
+        # # else create cache
+        # else:
+        #     context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
+        #         self.driver,
+        #         context['record'].record_id,
+        #         context['record'],          #added record
+        #         form_url,
+        #         0,
+        #         1,
+        #     )
+        #     self.create_cache(cache_key, context['subRecordSelectionForm'])
+        end = time.time()-start
+        print ("time elapsed to load subject data page: " + str(end))
         return context
 
 
@@ -155,12 +201,27 @@ class FormView(DataEntryView):
             self.request.META['action'] = 'Form processed.'
             self.request.META['subject_id'] = context['subject'].id  #The ehb PK for this subject
 
-            # form was processed, clear cache for record selection table
-            cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
+            # For all processed forms, clear cache for record selection table
+            cache_key = 'protocol{pds_id}_subject{subject_id}_record_tables'.format(
                 root=self.service_client.self_root_path, **kwargs)
-            if (self.check_cache(cache_key)):
-                # cache is reset to none 
-                self.create_cache(cache_key, None)
+            record_id = '{record_id}'.format(
+                root=self.service_client.self_root_path, **kwargs)
+            record_id = int(record_id)
+            if(self.check_cache(cache_key)):
+                cache_data = cache.get(cache_key)
+                if (record_id in cache_data):
+                    del cache_data[record_id]
+
+                cache.set(cache_key, cache_data)
+                cache.persist(cache_key)
+
+
+
+            # cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
+            #     root=self.service_client.self_root_path, **kwargs)
+            # if (self.check_cache(cache_key)):
+            #     # cache is reset to none
+            #     self.create_cache(cache_key, None)
             return JsonResponse({'status': 'ok'})
 
 
@@ -206,11 +267,7 @@ class CreateView(DataEntryView):
 
     def update_cache(self):
         subs = json.loads(self.cached_data)
-        print ("line 190, subs")
-        print (subs)
         for sub in subs:
-            print ("this is sub")
-            print (sub)
             if sub['id'] == int(self.subject.id):
                 er = self.get_external_record(record_id=self.record_id)
                 context = {"record": er}
@@ -230,7 +287,6 @@ class CreateView(DataEntryView):
         self.check_cache()
 
     def get_context_data(self, **kwargs):
-        print ("in get context data")
         context = super(CreateView, self).get_context_data(**kwargs)
         if self.driver.new_record_form_required():
             # Generate the form and pass it to the template (Nautilus)
@@ -240,7 +296,6 @@ class CreateView(DataEntryView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
-        print ("in dispatch")
         context = super(CreateView, self).get_context_data(**kwargs)
         allow_more_records = False
         try:
