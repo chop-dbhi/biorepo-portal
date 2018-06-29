@@ -19,7 +19,6 @@ from .base import DataEntryView
 log = logging.getLogger(__name__)
 
 
-
 class StartView(DataEntryView):
     '''
     Renders a page with the list of current records in a Protocol Data Source
@@ -29,7 +28,6 @@ class StartView(DataEntryView):
     '''
 
     template_name = 'pds_dataentry_start.html'
-
 
     def generateSubRecordSelectionForm(
             self, driver, record_id, record, form_url, attempt_count, #added record
