@@ -65,7 +65,6 @@ class PDSRecordGroup extends React.Component {
 
   handleNewRecordClick(pds) {
     const { dispatch } = this.props;
-    
     dispatch(PDSActions.setActivePDS(pds));
     dispatch(RecordActions.setAddRecordMode(true));
   }
