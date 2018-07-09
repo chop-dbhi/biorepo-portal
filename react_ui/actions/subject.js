@@ -161,7 +161,6 @@ export function addSubjectFailure(error) {
 }
 
 export function addSubject(protocolId, subject) {
-  
   return dispatch => {
     dispatch(addSubjectRequest());
     const url = `api/protocols/${protocolId}/subjects/create`;
