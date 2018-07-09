@@ -82,6 +82,8 @@ class DataEntryView(TemplateView):
         context['label'] = self.get_label(context)
         return context
 
+    # added caching functions mainly to cache record selection table
+    # can be used for other caching functions though
     def check_cache(self, cache_key):
         self.cached_data = cache.get(cache_key)
         if self.cached_data:
@@ -89,12 +91,11 @@ class DataEntryView(TemplateView):
         else:
             return False
 
-    def get_cache (self, cache_key):
-        print ("we're in get cache")
-        print (cache.get(cache_key))
-        return cache.get(cache_key)
-
-    def create_cache(self, cache_key, cache_data):
-        cache.set(cache_key, cache_data)
-        cache.persist(cache_key)
-        self.check_cache(cache_key)
+    # update cache for subrecordselectionform, class StartView
+    def update_cache(self, cache_key, record_id):
+        if(self.check_cache(cache_key)):
+            cache_data = cache.get(cache_key)
+            if (record_id in cache_data):
+                del cache_data[record_id]
+            cache.set(cache_key, cache_data)
+            cache.persist(cache_key)
