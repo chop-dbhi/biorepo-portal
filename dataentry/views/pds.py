@@ -36,7 +36,7 @@ class StartView(DataEntryView):
         try:
             form = driver.subRecordSelectionForm(
                 form_url=form_url,
-                record_id=record_id,
+                record_id=record_id
             )
             try:
                 self.request.META['action'] = 'Sub record selection form generated.'
