@@ -409,22 +409,3 @@ class CreateView(DataEntryView):
                 context,
                 context_instance=RequestContext(request)
             )
-
-    # cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
-    #     root=self.service_client.self_root_path, **kwargs)
-    #
-    # # if cache exists for the record selection table, load cache
-    # if self.check_cache(cache_key):
-    #     print ("we found cache 75")
-    #     context['subRecordSelectionForm'] = self.get_cache(cache_key)
-    # # else create cache
-    # else:
-    #     context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-    #         self.driver,
-    #         context['record'].record_id,
-    #         context['record'],          #added record
-    #         form_url,
-    #         0,
-    #         1,
-    #     )
-    #     self.create_cache(cache_key, context['subRecordSelectionForm'])
