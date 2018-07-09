@@ -69,11 +69,16 @@ class Command(BaseCommand):
 
     def get_protocol_user(self, protocol):
         users = protocol.users.all()
-        # find someone with admin rights
-        superuser = users.values().filter(is_superuser=True)
-        for s in superuser:
-            username = s['username']
-            break
+        # find someone on the eig team
+        eig_emails = ["felmeistera@email.chop.edu", "gonzalezak@email.chop.edu", "geraces@email.chop.edu", "williamsrm@email.chop.edu", "huangs4@email.chop.edu"]
+        for e in eig_emails:
+            print (e)
+            eig_user = users.values().filter(email=e)
+            if eig_user:
+                for e_u in eig_user:
+                    username = e_u['username']
+                    break
+                break
         user = users.get(username=username)
         return user
 
@@ -91,9 +96,8 @@ class Command(BaseCommand):
         all_records = self.getExternalRecords(pds, s_id, lbls)
         return all_records
 
-    def get_record_selection_table (self, record, pds, protocol, s_id):
+    def get_record_selection_table (self, record, pds, protocol, s_id, user):
         form_url = '/dataentry/protocoldatasource/' + str(pds.id) + '/subject/' + str(s_id) + '/record/' + str(record['id'])+ '/form_spec/'
-        user = self.get_protocol_user(protocol)
         driver = DriverUtils.getDriverFor(protocol_data_source=pds, user=user)
         sv = StartView()
         form = sv.generateSubRecordSelectionForm(driver, record['record_id'], form_url, 0, 1)
@@ -106,6 +110,8 @@ class Command(BaseCommand):
         for protocol in protocols:
             # get redcap protocol datasource
             pds = self.get_protocoldatasource(protocol)
+            # get eig user in protocol
+            user = self.get_protocol_user(protocol)
             # get all subjects in protocol
             subject_id_list = self.get_protocol_subjects(protocol, lbls)
 
@@ -115,7 +121,7 @@ class Command(BaseCommand):
                 cache_key = 'protocol{0}_subject'.format(pds.id) + str(s_id) + '_record_table_test3'
                 cache_data = {}
                 for record in records:
-                    record_table = self.get_record_selection_table(record, pds, protocol, s_id)
+                    record_table = self.get_record_selection_table(record, pds, protocol, s_id, user)
                     cache_data[record['id']] = record_table
 
                 cache.set(cache_key, cache_data)
