@@ -56,7 +56,6 @@ class StartView(DataEntryView):
     def get_context_data(self, **kwargs):
         start = time.time()
         context = super(StartView, self).get_context_data(**kwargs)
-
         form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/form_spec/'.format(
             root=self.service_client.self_root_path,
             **kwargs)
@@ -142,7 +141,6 @@ class FormView(DataEntryView):
             1)
         return context
 
-
     #this method is called when users submits forms
     #if there exists any errors, we display elements from
     #pds_dataentry_srf.html and this is called with
@@ -179,7 +177,6 @@ class FormView(DataEntryView):
         else:
             self.request.META['action'] = 'Form processed.'
             self.request.META['subject_id'] = context['subject'].id  #The ehb PK for this subject
-
             # For all processed forms, clear cache for record selection table
             cache_key = 'protocol{pds_id}_subject{subject_id}_record_table_test3'.format(
                 root=self.service_client.self_root_path, **kwargs)
@@ -187,13 +184,6 @@ class FormView(DataEntryView):
                 root=self.service_client.self_root_path, **kwargs)
             record_id = int(record_id)
             self.update_cache(cache_key, record_id)
-
-
-            # cache_key = 'protocoldatasource{pds_id}_subject{subject_id}_record{record_id}_recordselectiontable'.format(
-            #     root=self.service_client.self_root_path, **kwargs)
-            # if (self.check_cache(cache_key)):
-            #     # cache is reset to none
-            #     self.create_cache(cache_key, None)
             return JsonResponse({'status': 'ok'})
 
 
