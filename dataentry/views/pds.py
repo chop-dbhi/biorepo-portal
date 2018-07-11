@@ -60,27 +60,42 @@ class StartView(DataEntryView):
             root=self.service_client.self_root_path,
             **kwargs)
 
-        # cache for record selection table is identified by pds_id, subject id and record id
-        cache_key = 'protocol{pds_id}_subject{subject_id}_record_table_test3'.format(root=self.service_client.self_root_path, **kwargs)
+        cache_key = 'protocoldatasource{pds_id}_record_table_test4'.format(root=self.service_client.self_root_path, **kwargs)
+        subject_id = '{subject_id}'.format(root=self.service_client.self_root_path, **kwargs)
+        subject_id = int (subject_id)
         record_id = '{record_id}'.format(root=self.service_client.self_root_path, **kwargs)
         record_id = int(record_id)
 
         if self.check_cache(cache_key):
             cache_data = cache.get(cache_key)
-            # table exists for that record
-            if record_id in cache_data:
-                # load table in cache
-                context['subRecordSelectionForm'] = cache_data[record_id]
+
+
+            if subject_id in cache_data:
+                subject_records = cache_data[subject_id]
+
+                if record_id in subject_records:
+                    context['subRecordSelectionForm'] = subject_records[record_id]
+
+                else:
+                    # record table hasn't been generated for that subject
+                    context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
+                        self.driver, context['record'].record_id, form_url,0,1)
+                    subject_records = {}
+                    subject_records[record_id] = context['subRecordSelectionForm']
+                    cache_data[subject_id] = subject_records
+                    cache.set (cache_key, cache_data)
+                    cache.persist (cache_key)
             else:
-                # cache key exist but record table doesn't
+                # subject doesn't exist in cache
                 context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-                    self.driver,
-                    context['record'].record_id,
-                    form_url,
-                    0,
-                    1,
-                )
-                self.add_obj_to_cache (cache_key, record_id, context['subRecordSelectionForm'])
+                    self.driver, context['record'].record_id, form_url,0,1)
+
+                record_data = {}
+                record_data[record_id] = context['subRecordSelectionForm']
+                subject_data = record_data
+                cache_data[subject_id] = subject_data
+                cache.set(cache_key, cache_data)
+                cache.persist (cache_key)
 
         else:
             # cache key doesn't exist
@@ -92,14 +107,57 @@ class StartView(DataEntryView):
                 1,
             )
             # create dictionary object for cache key
-            data = {}
-            data[record_id] = context['subRecordSelectionForm']
-            cache.set(cache_key, data)
+            record_data = {}
+            record_data[record_id] = context['subRecordSelectionForm']
+            subj_record_data = {}
+            subj_record_data[subject_id] = record_data
+            cache.set(cache_key, subj_record_data)
             cache.persist(cache_key)
 
         end = time.time()-start
-        print ("time elapsed to load subject data page (improved): " + str(end))
+        print ("time elapsed to load subject data page (with new feature): " + str(end))
         return context
+
+        # # cache for record selection table is identified by pds_id, subject id and record id
+        # cache_key = 'protocol{pds_id}_subject{subject_id}_record_table_test3'.format(root=self.service_client.self_root_path, **kwargs)
+        # record_id = '{record_id}'.format(root=self.service_client.self_root_path, **kwargs)
+        # record_id = int(record_id)
+        #
+        # if self.check_cache(cache_key):
+        #     cache_data = cache.get(cache_key)
+        #     # table exists for that record
+        #     if record_id in cache_data:
+        #         # load table in cache
+        #         context['subRecordSelectionForm'] = cache_data[record_id]
+        #     else:
+        #         # cache key exist but record table doesn't
+        #         context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
+        #             self.driver,
+        #             context['record'].record_id,
+        #             form_url,
+        #             0,
+        #             1,
+        #         )
+        #         self.add_obj_to_cache (cache_key, record_id, context['subRecordSelectionForm'])
+        #
+        # else:
+        #     # cache key doesn't exist
+        #     context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
+        #         self.driver,
+        #         context['record'].record_id,
+        #         form_url,
+        #         0,
+        #         1,
+        #     )
+        #     # create dictionary object for cache key
+        #     data = {}
+        #     data[record_id] = context['subRecordSelectionForm']
+        #     cache.set(cache_key, data)
+        #     cache.persist(cache_key)
+        #
+        # end = time.time()-start
+        # print ("time elapsed to load subject data page (with new feature): " + str(end))
+        # return context
 
 
 class FormView(DataEntryView):
@@ -112,7 +170,9 @@ class FormView(DataEntryView):
                                         form_spec=form_spec,
                                         session=self.request.session)
             self.request.META['action'] = 'Sub record form generated.'
+
             return form
+
         except RecordDoesNotExist:
             return None
 
