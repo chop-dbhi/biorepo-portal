@@ -201,6 +201,19 @@ class FormView(DataEntryView):
             1)
         return context
 
+    # update cache for subrecordselectionform, class StartView
+    def update_cache(self, cache_key, subject_id, record_id):
+        if(self.check_cache(cache_key)):
+            cache_data = cache.get(cache_key)
+            print (cache_data)
+            if subject_id in cache_data:
+                subject_data = cache_data[subject_id]
+                if record_id in subject_data:
+                    del subject_data[record_id]
+                cache_data[subject_id] = subject_data
+            cache.set(cache_key, cache_data)
+            cache.persist(cache_key)
+
     #this method is called when users submits forms
     #if there exists any errors, we display elements from
     #pds_dataentry_srf.html and this is called with
@@ -238,12 +251,17 @@ class FormView(DataEntryView):
             self.request.META['action'] = 'Form processed.'
             self.request.META['subject_id'] = context['subject'].id  #The ehb PK for this subject
             # For all processed forms, clear cache for record selection table
-            cache_key = 'protocol{pds_id}_subject{subject_id}_record_table_test3'.format(
+            cache_key = 'protocoldatasource{pds_id}_record_table_test4'.format(
                 root=self.service_client.self_root_path, **kwargs)
+            subject_id = '{subject_id}'.format(
+                root=self.service_client.self_root_path, **kwargs)
+            subject_id = int(subject_id)
+            print
             record_id = '{record_id}'.format(
                 root=self.service_client.self_root_path, **kwargs)
             record_id = int(record_id)
-            self.update_cache(cache_key, record_id)
+
+            self.update_cache(cache_key, subject_id, record_id)
             return JsonResponse({'status': 'ok'})
 
 
