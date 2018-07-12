@@ -31,12 +31,13 @@ class StartView(DataEntryView):
 
     def generateSubRecordSelectionForm(
             self, driver, record_id, form_url, attempt_count,
-            max_attempts):
+            max_attempts, redcap_form_complete={}):
 
         try:
             form = driver.subRecordSelectionForm(
                 form_url=form_url,
-                record_id=record_id
+                record_id=record_id,
+                redcap_form_complete=redcap_form_complete
             )
             try:
                 self.request.META['action'] = 'Sub record selection form generated.'
@@ -45,6 +46,7 @@ class StartView(DataEntryView):
             return form
         except RecordDoesNotExist:
             return None
+
 
 
     def add_obj_to_cache(self, cache_key, record_id, table_data):
@@ -60,38 +62,33 @@ class StartView(DataEntryView):
             root=self.service_client.self_root_path,
             **kwargs)
 
-        cache_key = 'protocoldatasource{pds_id}_record_table_test4'.format(root=self.service_client.self_root_path, **kwargs)
+        cache_key = 'protocoldatasource{pds_id}_record_table_test5'.format(root=self.service_client.self_root_path, **kwargs)
         subject_id = '{subject_id}'.format(root=self.service_client.self_root_path, **kwargs)
         subject_id = int (subject_id)
         record_id = '{record_id}'.format(root=self.service_client.self_root_path, **kwargs)
         record_id = int(record_id)
 
+        redcap_form_complete_codes={}
+
         if self.check_cache(cache_key):
             cache_data = cache.get(cache_key)
-
-
             if subject_id in cache_data:
                 subject_records = cache_data[subject_id]
-
                 if record_id in subject_records:
-                    context['subRecordSelectionForm'] = subject_records[record_id]
-
+                    redcap_form_complete_codes = subject_records[record_id]
                 else:
                     # record table hasn't been generated for that subject
-                    context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-                        self.driver, context['record'].record_id, form_url,0,1)
+                    redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
                     subject_records = {}
-                    subject_records[record_id] = context['subRecordSelectionForm']
+                    subject_records[record_id] = redcap_form_complete
                     cache_data[subject_id] = subject_records
                     cache.set (cache_key, cache_data)
                     cache.persist (cache_key)
             else:
                 # subject doesn't exist in cache
-                context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-                    self.driver, context['record'].record_id, form_url,0,1)
-
+                redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
                 record_data = {}
-                record_data[record_id] = context['subRecordSelectionForm']
+                record_data[record_id] = redcap_form_complete
                 subject_data = record_data
                 cache_data[subject_id] = subject_data
                 cache.set(cache_key, cache_data)
@@ -99,20 +96,17 @@ class StartView(DataEntryView):
 
         else:
             # cache key doesn't exist
-            context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-                self.driver,
-                context['record'].record_id,
-                form_url,
-                0,
-                1,
-            )
+            redcap_form_complete = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
             # create dictionary object for cache key
             record_data = {}
-            record_data[record_id] = context['subRecordSelectionForm']
+            record_data[record_id] = redcap_form_complete
             subj_record_data = {}
             subj_record_data[subject_id] = record_data
             cache.set(cache_key, subj_record_data)
             cache.persist(cache_key)
+
+        context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
+            self.driver, context['record'].record_id, form_url,0,1, redcap_form_complete)
 
         end = time.time()-start
         print ("time elapsed to load subject data page (with new feature): " + str(end))
