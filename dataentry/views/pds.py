@@ -31,13 +31,13 @@ class StartView(DataEntryView):
 
     def generateSubRecordSelectionForm(
             self, driver, record_id, form_url, attempt_count,
-            max_attempts, redcap_form_complete={}):
+            max_attempts, redcap_form_complete_codes={}):
 
         try:
             form = driver.subRecordSelectionForm(
                 form_url=form_url,
                 record_id=record_id,
-                redcap_form_complete=redcap_form_complete
+                redcap_form_complete_codes=redcap_form_complete_codes
             )
             try:
                 self.request.META['action'] = 'Sub record selection form generated.'
@@ -63,10 +63,12 @@ class StartView(DataEntryView):
             **kwargs)
 
         cache_key = 'protocoldatasource{pds_id}_record_table_test5'.format(root=self.service_client.self_root_path, **kwargs)
-        subject_id = '{subject_id}'.format(root=self.service_client.self_root_path, **kwargs)
-        subject_id = int (subject_id)
-        record_id = '{record_id}'.format(root=self.service_client.self_root_path, **kwargs)
-        record_id = int(record_id)
+        subject_id = context['subject'].id
+        record_id = context ['record'].id
+        # subject_id = '{subject_id}'.format(root=self.service_client.self_root_path, **kwargs)
+        # subject_id = int (subject_id)
+        # record_id = '{record_id}'.format(root=self.service_client.self_root_path, **kwargs)
+        # record_id = int(record_id)
 
         redcap_form_complete_codes={}
 
@@ -80,7 +82,7 @@ class StartView(DataEntryView):
                     # record table hasn't been generated for that subject
                     redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
                     subject_records = {}
-                    subject_records[record_id] = redcap_form_complete
+                    subject_records[record_id] = redcap_form_complete_codes
                     cache_data[subject_id] = subject_records
                     cache.set (cache_key, cache_data)
                     cache.persist (cache_key)
@@ -88,7 +90,7 @@ class StartView(DataEntryView):
                 # subject doesn't exist in cache
                 redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
                 record_data = {}
-                record_data[record_id] = redcap_form_complete
+                record_data[record_id] = redcap_form_complete_codes
                 subject_data = record_data
                 cache_data[subject_id] = subject_data
                 cache.set(cache_key, cache_data)
@@ -96,62 +98,22 @@ class StartView(DataEntryView):
 
         else:
             # cache key doesn't exist
-            redcap_form_complete = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
+            redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
             # create dictionary object for cache key
             record_data = {}
-            record_data[record_id] = redcap_form_complete
+            record_data[record_id] = redcap_form_complete_codes
             subj_record_data = {}
             subj_record_data[subject_id] = record_data
             cache.set(cache_key, subj_record_data)
             cache.persist(cache_key)
 
         context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-            self.driver, context['record'].record_id, form_url,0,1, redcap_form_complete)
+            self.driver, context['record'].record_id, form_url,0,1, redcap_form_complete_codes)
 
         end = time.time()-start
         print ("time elapsed to load subject data page (with new feature): " + str(end))
         return context
 
-        # # cache for record selection table is identified by pds_id, subject id and record id
-        # cache_key = 'protocol{pds_id}_subject{subject_id}_record_table_test3'.format(root=self.service_client.self_root_path, **kwargs)
-        # record_id = '{record_id}'.format(root=self.service_client.self_root_path, **kwargs)
-        # record_id = int(record_id)
-        #
-        # if self.check_cache(cache_key):
-        #     cache_data = cache.get(cache_key)
-        #     # table exists for that record
-        #     if record_id in cache_data:
-        #         # load table in cache
-        #         context['subRecordSelectionForm'] = cache_data[record_id]
-        #     else:
-        #         # cache key exist but record table doesn't
-        #         context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-        #             self.driver,
-        #             context['record'].record_id,
-        #             form_url,
-        #             0,
-        #             1,
-        #         )
-        #         self.add_obj_to_cache (cache_key, record_id, context['subRecordSelectionForm'])
-        #
-        # else:
-        #     # cache key doesn't exist
-        #     context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-        #         self.driver,
-        #         context['record'].record_id,
-        #         form_url,
-        #         0,
-        #         1,
-        #     )
-        #     # create dictionary object for cache key
-        #     data = {}
-        #     data[record_id] = context['subRecordSelectionForm']
-        #     cache.set(cache_key, data)
-        #     cache.persist(cache_key)
-        #
-        # end = time.time()-start
-        # print ("time elapsed to load subject data page (with new feature): " + str(end))
-        # return context
 
 
 class FormView(DataEntryView):
@@ -245,15 +207,18 @@ class FormView(DataEntryView):
             self.request.META['action'] = 'Form processed.'
             self.request.META['subject_id'] = context['subject'].id  #The ehb PK for this subject
             # For all processed forms, clear cache for record selection table
-            cache_key = 'protocoldatasource{pds_id}_record_table_test4'.format(
+            cache_key = 'protocoldatasource{pds_id}_record_table_test5'.format(
                 root=self.service_client.self_root_path, **kwargs)
-            subject_id = '{subject_id}'.format(
-                root=self.service_client.self_root_path, **kwargs)
-            subject_id = int(subject_id)
-            print
-            record_id = '{record_id}'.format(
-                root=self.service_client.self_root_path, **kwargs)
-            record_id = int(record_id)
+            # subject_id = '{subject_id}'.format(
+            #     root=self.service_client.self_root_path, **kwargs)
+            # subject_id = int(subject_id)
+            #
+            # record_id = '{record_id}'.format(
+            #     root=self.service_client.self_root_path, **kwargs)
+            # record_id = int(record_id)
+
+            subject_id = context['subject'].id
+            record_id = context ['record'].id
 
             self.update_cache(cache_key, subject_id, record_id)
             return JsonResponse({'status': 'ok'})
