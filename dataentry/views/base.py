@@ -7,8 +7,6 @@ from api.ehb_service_client import ServiceClient
 from api.utilities import DriverUtils
 from api.models.protocols import ProtocolDataSource
 
-from django.core.cache import cache
-
 log = logging.getLogger(__name__)
 
 
@@ -81,12 +79,3 @@ class DataEntryView(TemplateView):
             context['label_id'] = self.request.GET.get('label_id', 1)
         context['label'] = self.get_label(context)
         return context
-
-    # added caching functions mainly to cache record selection table
-    # can be used for other caching functions though
-    def check_cache(self, cache_key):
-        self.cached_data = cache.get(cache_key)
-        if self.cached_data:
-            return True
-        else:
-            return False
