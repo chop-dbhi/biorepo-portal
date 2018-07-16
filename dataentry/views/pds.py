@@ -33,26 +33,31 @@ class StartView(DataEntryView):
             self, driver, record_id, form_url, attempt_count,
             max_attempts, redcap_form_complete_codes={}):
 
-        try:
-            form = driver.subRecordSelectionForm(
-                form_url=form_url,
-                record_id=record_id,
-                redcap_form_complete_codes=redcap_form_complete_codes
-            )
+        if redcap_form_complete_codes:
             try:
+                form = driver.subRecordSelectionForm(
+                    form_url=form_url,
+                    record_id=record_id,
+                    redcap_form_complete_codes=redcap_form_complete_codes
+                )
+                try:
+                    self.request.META['action'] = 'Sub record selection form generated.'
+                except:
+                    pass
+                return form
+            except RecordDoesNotExist:
+                return None
+        # Nautilus will not have redcap_form_complete_code field
+        else:
+            try:
+                form = driver.subRecordSelectionForm(
+                    form_url=form_url,
+                    record_id=record_id
+                )
                 self.request.META['action'] = 'Sub record selection form generated.'
-            except:
-                pass
-            return form
-        # Nautilus forms will not have redcao_form_complete_code field
-        except NameError:
-            form = driver.subRecordSelectionForm(
-                form_url=form_url,
-                record_id=record_id
-            )
-            self.request.META['action'] = 'Sub record selection form generated.'
-        except RecordDoesNotExist:
-            return None
+                return form
+            except RecordDoesNotExist:
+                return None
 
     # Method to create and load color codes for redcap form tables
     # cache key is by protocoldatasource: 'protocoldatasource#_redcap_completion_codes'
@@ -77,34 +82,25 @@ class StartView(DataEntryView):
                 if record_id in subject_records:
                     # load the completion codes
                     redcap_completion_codes = subject_records[record_id]
-
-                # record table hasn't been generated for that record
-                else:
+                else: # record table hasn't been generated for that record
                     redcap_completion_codes = driver.find_completed_forms(form_url=form_url,record_id=record_name)
                     # add record to the subject
                     subject_records[record_id] = redcap_completion_codes
                     # reload cache
                     add_to_cache(self, cache_data, subject_id, subject_records)
-
-            # subject hasn't been added to cache
-            else:
+            else: # subject hasn't been added to cache
                 redcap_completion_codes = driver.find_completed_forms(form_url=form_url,record_id=record_name)
                 record_codes[record_id] = redcap_completion_codes
                 subject_data = record_codes
                 add_to_cache(self, cache_data, subject_id, subject_data)
-
-        # cache key doesn't exist
-        else:
+        else: # cache key doesn't exist
             redcap_completion_codes = driver.find_completed_forms(form_url=form_url,record_id=record_name)
             # create dictionary object for cache key
             record_codes[record_id] = redcap_completion_codes
             subject_records[subject_id] = record_codes
             cache.set(cache_key, subject_records)
             cache.persist(cache_key)
-
         return redcap_completion_codes
-
-
 
     def get_context_data(self, **kwargs):
         start = time.time()
@@ -112,7 +108,7 @@ class StartView(DataEntryView):
         form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/form_spec/'.format(
             root=self.service_client.self_root_path,
             **kwargs)
-
+        # Get name of driver class to differentiate between Redcap and Nautilus
         driverClass = inspect.getfile(self.driver.__class__)
         if "redcap" in str(driverClass):
             cache_key = 'protocoldatasource{pds_id}_record_table_test5'.format(root=self.service_client.self_root_path, **kwargs)
