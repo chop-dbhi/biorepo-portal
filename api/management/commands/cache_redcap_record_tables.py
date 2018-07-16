@@ -72,7 +72,6 @@ class Command(BaseCommand):
         # find someone on the eig team
         eig_emails = ["felmeistera@email.chop.edu", "gonzalezak@email.chop.edu", "geraces@email.chop.edu", "williamsrm@email.chop.edu", "huangs4@email.chop.edu"]
         for e in eig_emails:
-            print (e)
             eig_user = users.values().filter(email=e)
             if eig_user:
                 for e_u in eig_user:
@@ -90,7 +89,7 @@ class Command(BaseCommand):
             for pds in redcap_pds:
                 return pds
         except:
-            raise
+            raise Exception("No protocol datasource")
 
     def get_subject_records (self, pds, s_id, lbls):
         all_records = self.getExternalRecords(pds, s_id, lbls)
@@ -115,8 +114,11 @@ class Command(BaseCommand):
             user = self.get_protocol_user(protocol)
             # get all subjects in protocol
             subject_id_list = self.get_protocol_subjects(protocol, lbls)
-
-            cache_key = 'protocoldatasource{0}'.format(pds.id) + '_record_table_test5'
+            try:
+                cache_key = 'protocoldatasource{0}'.format(pds.id) + '_redcap_completion_codes'
+            except AttributeError:
+                continue
+                raise Exception("protocoldatasource skipped")
 
             subject_data = {}
             for s_id in subject_id_list:
@@ -124,9 +126,11 @@ class Command(BaseCommand):
                 records = self.get_subject_records(pds,s_id, lbls)
                 record_data = {}
                 for record in records:
+                    start = time.time()
                     r_id = record['id']
                     r_name = record['record_id']
                     self.cache_redcap_form_complete(pds, user, cache_key, s_id, r_id, r_name)
-
+                    end = time.time() - start
+                    print ("this is time it takes to cache" + str(end))
 
         print("caching records table complete")

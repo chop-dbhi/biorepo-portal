@@ -111,7 +111,7 @@ class StartView(DataEntryView):
         # Get name of driver class to differentiate between Redcap and Nautilus
         driverClass = inspect.getfile(self.driver.__class__)
         if "redcap" in str(driverClass):
-            cache_key = 'protocoldatasource{pds_id}_record_table_test5'.format(root=self.service_client.self_root_path, **kwargs)
+            cache_key = 'protocoldatasource{pds_id}_redcap_completion_codes'.format(root=self.service_client.self_root_path, **kwargs)
             subject_id = context['subject'].id
             record_id = context ['record'].id
             record_name = context['record'].record_id
@@ -219,7 +219,7 @@ class FormView(DataEntryView):
             self.request.META['action'] = 'Form processed.'
             self.request.META['subject_id'] = context['subject'].id  #The ehb PK for this subject
             # For all processed forms, clear cache for record selection table
-            cache_key = 'protocoldatasource{pds_id}_record_table_test5'.format(
+            cache_key = 'protocoldatasource{pds_id}_redcap_completion_codes'.format(
                 root=self.service_client.self_root_path, **kwargs)
             subject_id = context['subject'].id
             record_id = context ['record'].id
