@@ -171,7 +171,6 @@ class FormView(DataEntryView):
 
     # update cache for subrecordselectionform, class StartView
     def update_cache(self, cache_key, subject_id, record_id):
-        try:
             cache_data = cache.get(cache_key)
             if cache_data:
                 if subject_id in cache_data:
@@ -181,10 +180,6 @@ class FormView(DataEntryView):
                     cache_data[subject_id] = subject_data
                 cache.set(cache_key, cache_data)
                 cache.persist(cache_key)
-        except:
-            request.META['error'] = True
-            context['errors'].append((
-                'Error in updating redcap completion code.'))
 
 
     #this method is called when users submits forms
@@ -226,18 +221,14 @@ class FormView(DataEntryView):
             # For all processed forms, clear cache for record selection table
             cache_key = 'protocoldatasource{pds_id}_record_table_test5'.format(
                 root=self.service_client.self_root_path, **kwargs)
-            # subject_id = '{subject_id}'.format(
-            #     root=self.service_client.self_root_path, **kwargs)
-            # subject_id = int(subject_id)
-            #
-            # record_id = '{record_id}'.format(
-            #     root=self.service_client.self_root_path, **kwargs)
-            # record_id = int(record_id)
-
             subject_id = context['subject'].id
             record_id = context ['record'].id
-
-            self.update_cache(cache_key, subject_id, record_id)
+            try:
+                self.update_cache(cache_key, subject_id, record_id)
+            except:
+                request.META['error'] = True
+                context['errors'].append((
+                    'Error in updating redcap completion code.'))
             return JsonResponse({'status': 'ok'})
 
 
