@@ -67,9 +67,8 @@ class StartView(DataEntryView):
             cache.set(cache_key, cache_data)
             cache.persist(cache_key)
 
-
-        if self.check_cache(cache_key):
-            cache_data = cache.get(cache_key)
+        cache_data = cache.get(cache_key)
+        if cache_data:
             print ("this is cache")
             print (cache_data)
             if subject_id in cache_data:
@@ -179,16 +178,21 @@ class FormView(DataEntryView):
 
     # update cache for subrecordselectionform, class StartView
     def update_cache(self, cache_key, subject_id, record_id):
-        if(self.check_cache(cache_key)):
+        try:
             cache_data = cache.get(cache_key)
-            print (cache_data)
-            if subject_id in cache_data:
-                subject_data = cache_data[subject_id]
-                if record_id in subject_data:
-                    del subject_data[record_id]
-                cache_data[subject_id] = subject_data
-            cache.set(cache_key, cache_data)
-            cache.persist(cache_key)
+            if cache_data:
+                if subject_id in cache_data:
+                    subject_data = cache_data[subject_id]
+                    if record_id in subject_data:
+                        del subject_data[record_id]
+                    cache_data[subject_id] = subject_data
+                cache.set(cache_key, cache_data)
+                cache.persist(cache_key)
+        except:
+            request.META['error'] = True
+            context['errors'].append((
+                'Error in updating redcap completion code.'))
+
 
     #this method is called when users submits forms
     #if there exists any errors, we display elements from
