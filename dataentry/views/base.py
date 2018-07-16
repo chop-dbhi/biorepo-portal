@@ -90,12 +90,3 @@ class DataEntryView(TemplateView):
             return True
         else:
             return False
-
-    # update cache for subrecordselectionform, class StartView
-    def update_cache(self, cache_key, record_id):
-        if(self.check_cache(cache_key)):
-            cache_data = cache.get(cache_key)
-            if (record_id in cache_data):
-                del cache_data[record_id]
-            cache.set(cache_key, cache_data)
-            cache.persist(cache_key)
