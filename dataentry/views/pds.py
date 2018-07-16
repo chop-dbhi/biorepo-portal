@@ -130,7 +130,6 @@ class StartView(DataEntryView):
         return context
 
 
-
 class FormView(DataEntryView):
 
     template_name = 'pds_dataentry_srf.html'
@@ -141,9 +140,7 @@ class FormView(DataEntryView):
                                         form_spec=form_spec,
                                         session=self.request.session)
             self.request.META['action'] = 'Sub record form generated.'
-
             return form
-
         except RecordDoesNotExist:
             return None
 
