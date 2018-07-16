@@ -47,30 +47,15 @@ class StartView(DataEntryView):
         except RecordDoesNotExist:
             return None
 
-
-
-    def add_obj_to_cache(self, cache_key, record_id, table_data):
-        cache_data = (cache.get(cache_key))
-        cache_data[record_id] = table_data
-        cache.set(cache_key, cache_data)
-        cache.persist(cache_key)
-
-    def get_context_data(self, **kwargs):
-        start = time.time()
-        context = super(StartView, self).get_context_data(**kwargs)
-        form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/form_spec/'.format(
-            root=self.service_client.self_root_path,
-            **kwargs)
-
-        cache_key = 'protocoldatasource{pds_id}_record_table_test5'.format(root=self.service_client.self_root_path, **kwargs)
-        subject_id = context['subject'].id
-        record_id = context ['record'].id
-        # subject_id = '{subject_id}'.format(root=self.service_client.self_root_path, **kwargs)
-        # subject_id = int (subject_id)
-        # record_id = '{record_id}'.format(root=self.service_client.self_root_path, **kwargs)
-        # record_id = int(record_id)
-
+    def redcap_form_complete_caching(self, cache_key, subject_id, record_id, form_url, record_name):
         redcap_form_complete_codes={}
+        subject_records = {}
+        record_table_codes = {}
+
+        def add_to_cache (self, cache_data, new_id, new_value):
+            cache_data[new_id] = new_value
+            cache.set(cache_key, cache_data)
+            cache.persist(cache_key)
 
         if self.check_cache(cache_key):
             cache_data = cache.get(cache_key)
@@ -80,35 +65,52 @@ class StartView(DataEntryView):
                     redcap_form_complete_codes = subject_records[record_id]
                 else:
                     # record table hasn't been generated for that subject
-                    redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
-                    subject_records = {}
+                    redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=record_name)
                     subject_records[record_id] = redcap_form_complete_codes
-                    cache_data[subject_id] = subject_records
-                    cache.set (cache_key, cache_data)
-                    cache.persist (cache_key)
+                    add_to_cache(self, cache_data, subject_id, subject_records)
+
             else:
                 # subject doesn't exist in cache
-                redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
-                record_data = {}
-                record_data[record_id] = redcap_form_complete_codes
-                subject_data = record_data
-                cache_data[subject_id] = subject_data
-                cache.set(cache_key, cache_data)
-                cache.persist (cache_key)
+                redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=record_name)
+                record_table_codes[record_id] = redcap_form_complete_codes
+                subject_data = record_table_codes
+                add_to_cache(self, cache_data, subject_id, subject_data)
 
         else:
             # cache key doesn't exist
-            redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=context['record'].record_id)
+            redcap_form_complete_codes = self.driver.find_completed_forms(form_url=form_url,record_id=record_name)
             # create dictionary object for cache key
-            record_data = {}
-            record_data[record_id] = redcap_form_complete_codes
-            subj_record_data = {}
-            subj_record_data[subject_id] = record_data
-            cache.set(cache_key, subj_record_data)
+            record_table_codes[record_id] = redcap_form_complete_codes
+            subject_records[subject_id] = record_data
+            cache.set(cache_key, subject_records)
             cache.persist(cache_key)
 
-        context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
-            self.driver, context['record'].record_id, form_url,0,1, redcap_form_complete_codes)
+        return redcap_form_complete_codes
+
+
+
+    def get_context_data(self, **kwargs):
+        start = time.time()
+        context = super(StartView, self).get_context_data(**kwargs)
+        form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/form_spec/'.format(
+            root=self.service_client.self_root_path,
+            **kwargs)
+
+        driverClass = inspect.getfile(self.driver.__class__)
+        if "redcap" in str(driverClass):
+            cache_key = 'protocoldatasource{pds_id}_record_table_test5'.format(root=self.service_client.self_root_path, **kwargs)
+            subject_id = context['subject'].id
+            record_id = context ['record'].id
+            record_name = context['record'].record_id
+
+            redcap_form_complete_codes = self.redcap_form_complete_caching(cache_key, subject_id, record_id, form_url, record_name)
+
+            context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
+                self.driver, context['record'].record_id, form_url,0,1, redcap_form_complete_codes)
+
+        else:
+            context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
+                self.driver, context['record'].record_id, form_url,0,1)
 
         end = time.time()-start
         print ("time elapsed to load subject data page (with new feature): " + str(end))
