@@ -96,11 +96,12 @@ class Command(BaseCommand):
         all_records = self.getExternalRecords(pds, s_id, lbls)
         return all_records
 
-    def get_record_selection_table (self, record, pds, protocol, s_id, user):
-        form_url = '/dataentry/protocoldatasource/' + str(pds.id) + '/subject/' + str(s_id) + '/record/' + str(record['id'])+ '/form_spec/'
+    def cache_redcap_form_complete (self, pds, user, cache_key, s_id, r_id, r_name):
+        form_url = '/dataentry/protocoldatasource/' + str(pds.id) + '/subject/' + str(s_id) + '/record/' + str(r_id)+ '/form_spec/'
         driver = DriverUtils.getDriverFor(protocol_data_source=pds, user=user)
         sv = StartView()
-        form = sv.generateSubRecordSelectionForm(driver, record['record_id'], form_url, 0, 1)
+        form = sv.redcap_form_complete_caching(driver, cache_key, s_id, r_id, form_url, r_name)
+        # form = sv.generateSubRecordSelectionForm(driver, record['record_id'], form_url, 0, 1)
         return form
 
     def handle(self, *args, **options):
@@ -115,16 +116,17 @@ class Command(BaseCommand):
             # get all subjects in protocol
             subject_id_list = self.get_protocol_subjects(protocol, lbls)
 
+            cache_key = 'protocoldatasource{0}'.format(pds.id) + '_record_table_test5'
+
+            subject_data = {}
             for s_id in subject_id_list:
                 # for each subject in protocol, get records
                 records = self.get_subject_records(pds,s_id, lbls)
-                cache_key = 'protocol{0}_subject'.format(pds.id) + str(s_id) + '_record_table_test3'
-                cache_data = {}
+                record_data = {}
                 for record in records:
-                    record_table = self.get_record_selection_table(record, pds, protocol, s_id, user)
-                    cache_data[record['id']] = record_table
+                    r_id = record['id']
+                    r_name = record['record_id']
+                    self.cache_redcap_form_complete(pds, user, cache_key, s_id, r_id, r_name)
 
-                cache.set(cache_key, cache_data)
-                cache.persist(cache_key)
 
         print("caching records table complete")
