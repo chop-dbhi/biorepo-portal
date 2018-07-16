@@ -44,6 +44,13 @@ class StartView(DataEntryView):
             except:
                 pass
             return form
+        # Nautilus forms will not have redcao_form_complete_code field
+        except NameError:
+            form = driver.subRecordSelectionForm(
+                form_url=form_url,
+                record_id=record_id
+            )
+            self.request.META['action'] = 'Sub record selection form generated.'
         except RecordDoesNotExist:
             return None
 
