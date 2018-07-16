@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/chop-dbhi/biorepo-portal#README",
   "dependencies": {
-    "eventsource": "^1.0.5",
     "griddle-react": "^0.3.1",
     "history": "1.17.0",
     "isomorphic-fetch": "^2.2.0",
