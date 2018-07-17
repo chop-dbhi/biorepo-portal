@@ -1,6 +1,7 @@
 # encoding: utf-8
 import json
 import time
+import threading
 
 from api.ehb_service_client import ServiceClient
 from api.models.protocols import Protocol
@@ -15,7 +16,6 @@ from django.core.cache import cache
 from dataentry.views.pds import StartView
 from dataentry.views.base import DataEntryView
 
-
 from rest_framework.response import Response
 
 
@@ -24,7 +24,49 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('protocol_id', nargs='+', type=str)
 
-    def getExternalRecords(self, pds, subject, lbls):
+    def get_protocols(self, protocol_id):
+        protocol_id = protocol_id[0]
+        if protocol_id == 'all':
+            protocols = Protocol.objects.all()
+        else:
+            protocols = Protocol.objects.filter(id=int(protocol_id)).all()
+        return protocols
+
+    def get_protocol_subjects (self, protocol, lbls):
+        subjects = protocol.getSubjects()
+        subject_ids = []
+        if subjects:
+            subs = [eHBSubjectSerializer(sub).data for sub in subjects]
+            for s in subs:
+                subject_ids.append(s['id'])
+                # self.cache_records(protocol, s['id'], lbls)
+        return subject_ids
+
+    def get_protocol_user(self, protocol):
+        users = protocol.users.all()
+        # find someone on the eig team
+        eig_emails = ["gonzalezak@email.chop.edu", "krausee@email.chop.edu", "felmeistera@email.chop.edu", "geraces@email.chop.edu", "williamsrm@email.chop.edu", "huangs4@email.chop.edu"]
+        for e in eig_emails:
+            eig_user = users.values().filter(email=e)
+            if eig_user:
+                for e_u in eig_user:
+                    username = e_u['username']
+                    break
+                break
+        user = users.get(username=username)
+        return user
+
+    def get_protocoldatasource (self, protocol):
+        protocoldatasources = protocol.getProtocolDataSources()
+        # assuming redcap data source is always numbered as 1
+        try:
+            redcap_pds = protocoldatasources.filter(data_source_id=1)
+            for pds in redcap_pds:
+                return pds
+        except:
+            raise Exception("No protocol datasource")
+
+    def get_subject_records(self, pds, subject, lbls):
         er_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD)
         try:
             pds_records = er_rh.get(
@@ -48,53 +90,6 @@ class Command(BaseCommand):
             r.append(e)
         return r
 
-    def get_protocols(self, protocol_id):
-        protocol_id = protocol_id[0]
-        if protocol_id == 'all':
-            protocols = Protocol.objects.all()
-        else:
-            protocols = Protocol.objects.filter(id=int(protocol_id)).all()
-        return protocols
-
-    def get_protocol_subjects (self, protocol, lbls):
-        subjects = protocol.getSubjects()
-        subject_ids = []
-        if subjects:
-            subs = [eHBSubjectSerializer(sub).data for sub in subjects]
-            for s in subs:
-                subject_ids.append(s['id'])
-                # self.cache_records(protocol, s['id'], lbls)
-        return subject_ids
-
-
-    def get_protocol_user(self, protocol):
-        users = protocol.users.all()
-        # find someone on the eig team
-        eig_emails = ["felmeistera@email.chop.edu", "gonzalezak@email.chop.edu", "geraces@email.chop.edu", "williamsrm@email.chop.edu", "huangs4@email.chop.edu"]
-        for e in eig_emails:
-            eig_user = users.values().filter(email=e)
-            if eig_user:
-                for e_u in eig_user:
-                    username = e_u['username']
-                    break
-                break
-        user = users.get(username=username)
-        return user
-
-    def get_protocoldatasource (self, protocol):
-        protocoldatasources = protocol.getProtocolDataSources()
-        # assuming redcap data source is always numbered as 1
-        try:
-            redcap_pds = protocoldatasources.filter(data_source_id=1)
-            for pds in redcap_pds:
-                return pds
-        except:
-            raise Exception("No protocol datasource")
-
-    def get_subject_records (self, pds, s_id, lbls):
-        all_records = self.getExternalRecords(pds, s_id, lbls)
-        return all_records
-
     def cache_redcap_form_complete (self, pds, user, cache_key, s_id, r_id, r_name):
         form_url = '/dataentry/protocoldatasource/' + str(pds.id) + '/subject/' + str(s_id) + '/record/' + str(r_id)+ '/form_spec/'
         driver = DriverUtils.getDriverFor(protocol_data_source=pds, user=user)
@@ -104,6 +99,16 @@ class Command(BaseCommand):
         return form
 
     def handle(self, *args, **options):
+
+        def subject_threading(self,pds, s_id, lbls, user, cache_key):
+            records = self.get_subject_records(pds,s_id, lbls)
+            record_data = {}
+            for record in records:
+                r_id = record['id']
+                r_name = record['record_id']
+                self.cache_redcap_form_complete(pds, user, cache_key, s_id, r_id, r_name)
+
+        start = time.time()
         er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
         lbls = er_label_rh.query()
         protocols = self.get_protocols(options['protocol_id'])
@@ -120,17 +125,11 @@ class Command(BaseCommand):
                 continue
                 raise Exception("protocoldatasource skipped")
 
-            subject_data = {}
             for s_id in subject_id_list:
-                # for each subject in protocol, get records
-                records = self.get_subject_records(pds,s_id, lbls)
-                record_data = {}
-                for record in records:
-                    start = time.time()
-                    r_id = record['id']
-                    r_name = record['record_id']
-                    self.cache_redcap_form_complete(pds, user, cache_key, s_id, r_id, r_name)
-                    end = time.time() - start
-                    print ("this is time it takes to cache" + str(end))
+                 # creating threads
+                curr_thread = threading.Thread(target=subject_threading, args=(self, pds, s_id, lbls, user, cache_key,))
+                curr_thread.start()
 
+        elapsed = time.time()-start
+        print ("total caching time" + str (elapsed))
         print("caching records table complete")
