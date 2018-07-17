@@ -73,7 +73,7 @@ class StartView(DataEntryView):
             cache.persist(cache_key)
 
         cache_data = cache.get(cache_key)
-        if cache_data:
+        if cache_data: # cache key exists
             if subject_id in cache_data:
                 # get all records of the subject
                 subject_records = cache_data[subject_id]
@@ -113,13 +113,10 @@ class StartView(DataEntryView):
             subject_id = context['subject'].id
             record_id = context ['record'].id
             record_name = context['record'].record_id
-
             redcap_form_complete_codes = self.redcap_form_complete_caching(self.driver, cache_key, subject_id, record_id, form_url, record_name)
-
             context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
                 self.driver, context['record'].record_id, form_url,0,1, redcap_form_complete_codes)
-
-        else:
+        else: # this is a nonredcap project
             context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
                 self.driver, context['record'].record_id, form_url,0,1)
 
