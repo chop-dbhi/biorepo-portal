@@ -92,21 +92,26 @@ class Command(BaseCommand):
 
     def cache_redcap_form_complete (self, pds, user, cache_key, s_id, r_id, r_name):
         form_url = '/dataentry/protocoldatasource/' + str(pds.id) + '/subject/' + str(s_id) + '/record/' + str(r_id)+ '/form_spec/'
+        # create redcap driver
         driver = DriverUtils.getDriverFor(protocol_data_source=pds, user=user)
+        # instantiate an instance of the Class StartView in pds.py
         sv = StartView()
+        # call the method to cache redcap completion codes
         form = sv.redcap_form_complete_caching(driver, cache_key, s_id, r_id, form_url, r_name)
-        # form = sv.generateSubRecordSelectionForm(driver, record['record_id'], form_url, 0, 1)
         return form
+
 
     def handle(self, *args, **options):
 
         def subject_threading(self,pds, s_id, lbls, user, cache_key):
+            # get all records associated with subject
             records = self.get_subject_records(pds,s_id, lbls)
             record_data = {}
             for record in records:
                 r_id = record['id']
                 r_name = record['record_id']
                 self.cache_redcap_form_complete(pds, user, cache_key, s_id, r_id, r_name)
+            return
 
         start = time.time()
         er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
@@ -121,14 +126,19 @@ class Command(BaseCommand):
             subject_id_list = self.get_protocol_subjects(protocol, lbls)
             try:
                 cache_key = 'protocoldatasource{0}'.format(pds.id) + '_redcap_completion_codes'
-            except AttributeError:
+            except AttributeError: # protocoldatasource wasn't properly configured
                 continue
                 raise Exception("protocoldatasource skipped")
 
-            for s_id in subject_id_list:
+            threads = [] # array to hold all threads, length is # of records per subj
+            for s_id in subject_id_list: # for every subject
                  # creating threads
                 curr_thread = threading.Thread(target=subject_threading, args=(self, pds, s_id, lbls, user, cache_key,))
+                threads.append(curr_thread)
                 curr_thread.start()
+            # make sure every thread has finished
+            for t in threads:
+                t.join()
 
         elapsed = time.time()-start
         print ("total caching time" + str (elapsed))
