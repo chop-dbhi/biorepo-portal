@@ -19,3 +19,5 @@ docs/_build
 *.ipynb*
 htmlcov
 .cache
+.python-version
+src/
