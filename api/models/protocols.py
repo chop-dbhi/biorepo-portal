@@ -71,11 +71,11 @@ class Organization(BaseWithImmutableKey):
         ehb-service, otherwise create it.
         """
 
-            if self.createEhbInstance():
-                super(Organization, self).save(*args, **kwargs)
-            else:
-                raise Exception(
-                    'Unable to create Organization record in ehb-service')
+        if self.createEhbInstance():
+            super(Organization, self).save(*args, **kwargs)
+        else:
+            raise Exception(
+                'Unable to create Organization record in ehb-service')
 
     def getEhbServiceInstance(self):
         """Get the Organization record from the EHB.
