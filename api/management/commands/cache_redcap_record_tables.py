@@ -45,7 +45,7 @@ class Command(BaseCommand):
     def get_protocol_user(self, protocol):
         users = protocol.users.all()
         # find someone on the eig team
-        eig_emails = ["gonzalezak@email.chop.edu", "krausee@email.chop.edu", "felmeistera@email.chop.edu", "geraces@email.chop.edu", "williamsrm@email.chop.edu", "huangs4@email.chop.edu"]
+        eig_emails = ["gonzalezak@email.chop.edu", "felmeistera@email.chop.edu", "krausee@email.chop.edu", "geraces@email.chop.edu", "williamsrm@email.chop.edu", "huangs4@email.chop.edu"]
         for e in eig_emails:
             eig_user = users.values().filter(email=e)
             if eig_user:
@@ -100,7 +100,6 @@ class Command(BaseCommand):
         form = sv.redcap_form_complete_caching(driver, cache_key, s_id, r_id, form_url, r_name)
         return form
 
-
     def handle(self, *args, **options):
 
         def subject_threading(self,pds, s_id, lbls, user, cache_key):
@@ -113,22 +112,23 @@ class Command(BaseCommand):
                 self.cache_redcap_form_complete(pds, user, cache_key, s_id, r_id, r_name)
             return
 
+        def clear_cache(cache_key):
+            cache.delete(cache_key)
+
         start = time.time()
         er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
         lbls = er_label_rh.query()
         protocols = self.get_protocols(options['protocol_id'])
         for protocol in protocols:
-            # get redcap protocol datasource
-            pds = self.get_protocoldatasource(protocol)
-            # get eig user in protocol
-            user = self.get_protocol_user(protocol)
-            # get all subjects in protocol
-            subject_id_list = self.get_protocol_subjects(protocol, lbls)
+            pds = self.get_protocoldatasource(protocol) # get redcap protocol datasource
+            user = self.get_protocol_user(protocol) # get eig user in protocol
+            subject_id_list = self.get_protocol_subjects(protocol, lbls) # get all subjects in protocol
             try:
                 cache_key = 'protocoldatasource{0}'.format(pds.id) + '_redcap_completion_codes'
+                cache.delete(cache_key)
             except AttributeError: # protocoldatasource wasn't properly configured
+                print (str(pds) + ' was skipped')
                 continue
-                raise Exception("protocoldatasource skipped")
 
             threads = [] # array to hold all threads, length is # of records per subj
             for s_id in subject_id_list: # for every subject
