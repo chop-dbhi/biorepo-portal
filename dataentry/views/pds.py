@@ -62,14 +62,70 @@ class StartView(DataEntryView):
     # Method to create and load color codes for redcap form tables
     # cache key is by protocoldatasource: 'protocoldatasource#_redcap_completion_codes'
     # cache value is {subjectid: {recordid: {form_spec: completion_code, form_spec: completion_code}}}
-    def redcap_form_complete_caching(self, driver, cache_key, subject_id, record_id, form_url, record_name):
+    def redcap_form_complete_caching(self, driver, cache_key, subject_id, record_id, record_name):
+
+        def construct_field_names(list_of_forms):
+            form_completion_fields=[]
+            for form in list_of_forms:
+                form_completion_fields.append(form + "_complete")
+            return form_completion_fields
+
+        def assign_form_statuses(driver, record, completion_fields, event_index=-1):
+            form_statuses = {}
+            for field in completion_fields:
+                form_complete_value = record[field]
+                form_name = field[:-9]
+                # key is the form spec according to driver config
+                if event_index == -1: # nonlong study
+                    key = str(driver.form_names.index(form_name))
+                else:
+                    key = str(list(driver.form_data.keys()).index(form_name)) + "_" + str(event_index)
+                if (form_complete_value == '1'):
+                    form_statuses[key] = 1
+                elif (form_complete_value == '2'):
+                    form_statuses[key] = 2
+            return form_statuses
+
         def get_and_cache_completion_codes (self, cache_data={}, subject_records={}):
-            redcap_completion_codes = driver.find_completed_forms(record_id=record_name)
-            subject_records[record_id] = redcap_completion_codes # {recordid: {form_spec: completion_code, form_spec: completion_code}}
+            completion_codes = {}
+            if driver.form_names: # nonlongitudinal studies
+                completion_fields = construct_field_names(driver.form_names)
+                record_set = driver.get(_format=driver.FORMAT_JSON,
+                                  records=[record_name],
+                                  rawResponse=True,
+                                  fields=completion_fields).read().strip()
+                record_set = driver.raw_to_json(record_set)
+                # iterate through the record set to find the completion field
+                for r in record_set:
+                    completion_codes = assign_form_statuses(driver,r, completion_fields)
+
+            else: # longitudinal studies
+                # must specify field study_id for redcap api to return study_id and event name
+                field_names = [driver.record_id_field_name]
+                completion_fields = construct_field_names(list(driver.form_data.keys()))
+                field_names += completion_fields
+                temp = driver.get(_format=driver.FORMAT_JSON, rawResponse=True,
+                            records=[record_name], fields=field_names).read().strip()
+                record_set = driver.raw_to_json(temp)
+                record_set = json.loads(json.dumps(record_set)) # have to reload json in order for the field redcap_event_name to be read
+
+                first_event = True
+                for r in record_set: # iterate through the record set to find the completion field
+                    redcap_eventname = r['redcap_event_name']
+                    if redcap_eventname in driver.unique_event_names:
+                        event_index = driver.unique_event_names.index(redcap_eventname)
+                        if first_event:
+                            completion_codes = assign_form_statuses(driver,r, completion_fields, event_index)
+                            first_event = False
+                        else:
+                            # merge the 2 dictionaries
+                            completion_codes = {**completion_codes, **assign_form_statuses(driver,r, completion_fields, event_index)}
+
+            subject_records[record_id] = completion_codes # {recordid: {form_spec: completion_code, form_spec: completion_code}}
             cache_data[subject_id] = subject_records # {subjectid: {recordid: {form_spec: completion_code, form_spec: completion_code}}}
             cache.set(cache_key, cache_data)
             cache.persist(cache_key)
-            return redcap_completion_codes
+            return completion_codes
 
         cache_data = cache.get(cache_key)
         if cache_data: # cache key exists
@@ -85,8 +141,8 @@ class StartView(DataEntryView):
             redcap_completion_codes = get_and_cache_completion_codes(self)
         return redcap_completion_codes
 
+
     def get_context_data(self, **kwargs):
-        start = time.time()
         context = super(StartView, self).get_context_data(**kwargs)
         form_url = '{root}/dataentry/protocoldatasource/{pds_id}/subject/{subject_id}/record/{record_id}/form_spec/'.format(
             root=self.service_client.self_root_path,
@@ -98,15 +154,12 @@ class StartView(DataEntryView):
             subject_id = context['subject'].id
             record_id = context ['record'].id
             record_name = context['record'].record_id
-            redcap_form_complete_codes = self.redcap_form_complete_caching(self.driver, cache_key, subject_id, record_id, form_url, record_name)
+            redcap_form_complete_codes = self.redcap_form_complete_caching(self.driver, cache_key, subject_id, record_id, record_name)
             context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
                 self.driver, context['record'].record_id, form_url,0,1, redcap_form_complete_codes)
         else: # this is a nonredcap project
             context['subRecordSelectionForm'] = self.generateSubRecordSelectionForm(
                 self.driver, context['record'].record_id, form_url,0,1)
-
-        end = time.time()-start
-        print ("time elapsed to load subject data page (with new feature): " + str(end))
         return context
 
 
