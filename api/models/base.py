@@ -1,5 +1,3 @@
-
-from datetime import datetime
 import random
 import string
 
@@ -21,10 +19,12 @@ class CreatedModified(models.Model):
     """A model with created and modified timestamps."""
 
     date_help_text = "Please use date format: <em>YYYY-MM-DD</em>"
+
     created = models.DateTimeField(
         default=timezone.now,
         verbose_name='Record Creation DateTime',
         help_text=date_help_text)
+
     modified = AutoDateTimeField(
         default=timezone.now,
         verbose_name='Record Last Modified DateTime',

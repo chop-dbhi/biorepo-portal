@@ -12,14 +12,8 @@ from django.core.management.base import BaseCommand
 from django.core.cache import cache
 
 
-from rest_framework.response import Response
-
-
 class Command(BaseCommand):
-    """Cache subjects from given protocols locally.
-
-
-    """
+    """Cache subjects from given protocols locally."""
 
     help = 'Cache subjects from given protocols locally.'
 
@@ -35,16 +29,20 @@ class Command(BaseCommand):
         """
 
         # Get the appropriate request handler for external records.
-        er_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD)
+        er_rh = ServiceClient.get_rh_for(
+            record_type=ServiceClient.EXTERNAL_RECORD)
+
         try:
 
             # Retrieve the external records for the subject/protocol.
             # Path argument is needed for ehb_datasources to make request.
             pds_records = er_rh.get(
-                external_system_url=pds.data_source.url, path=pds.path, subject_id=subject['id'])
+                external_system_url=pds.data_source.url, path=pds.path,
+                subject_id=subject['id'])
 
             # TODO: why is this necessary?
             time.sleep(0.05)
+
         except PageNotFound:
 
             # Return an empty array if the subject/protocol is not found.
@@ -52,6 +50,7 @@ class Command(BaseCommand):
 
         # Result array.
         r = []
+
         for ex_rec in pds_records:
 
             # Convert ehb-client object to JSON and then parse as py dict.
@@ -81,6 +80,7 @@ class Command(BaseCommand):
         # number of protocols at one time. look at why only using first item in
         # list.
         protocol_id = protocol_id[0]
+
         if protocol_id == 'all':
             # Special "all" protocol gets all protocols.
             protocols = Protocol.objects.all()
@@ -88,13 +88,15 @@ class Command(BaseCommand):
             protocols = Protocol.objects.filter(id=int(protocol_id)).all()
 
         # Get external record label request handler.
-        er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
+        er_label_rh = ServiceClient.get_rh_for(
+            record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
 
         # Retrieve the actual external record labels.
         lbls = er_label_rh.query()
 
         # Tell user how many protocols are being cached.
         print('Caching {0} protocol(s)...'.format(len(protocols)))
+
         for protocol in protocols:
 
             # Tell user which protocol is being cached.
@@ -109,7 +111,9 @@ class Command(BaseCommand):
                 subs = [eHBSubjectSerializer(sub).data for sub in subjects]
             else:
                 continue
+
             ehb_orgs = []
+
             # We can't rely on Ids being consistent across apps so we must
             # append the name here for display downstream.
             for o in organizations:
@@ -119,7 +123,6 @@ class Command(BaseCommand):
             # Check if the protocol has external IDs configured.
             # If so, retrieve them.
             manageExternalIDs = False
-
             protocoldatasources = protocol.getProtocolDataSources()
 
             for pds in protocoldatasources:
@@ -131,10 +134,11 @@ class Command(BaseCommand):
                 try:
                     config = json.loads(ExIdSource.driver_configuration)
                     if 'sort_on' in list(config.keys()):
-                        # er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
+                        # er_label_rh = ServiceClient.get_rh_for(
+                        #     record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
                         # lbl = er_label_rh.get(id=config['sort_on'])
                         lbl = ''
-                        addl_id_column = lbl
+                        addl_id_column = lbl  # noqa
                 except:
                     raise
                     pass
@@ -151,7 +155,8 @@ class Command(BaseCommand):
                 # Add external records from all data sources.
                 for pds in protocoldatasources:
                     try:
-                        sub['external_records'].extend(self.getExternalRecords(pds, sub, lbls))
+                        sub['external_records'].extend(
+                            self.getExternalRecords(pds, sub, lbls))
                     except:
                         print("there was an error processing external records")
                         print("subject DB id:")
@@ -159,7 +164,6 @@ class Command(BaseCommand):
                         print("protocol data source:")
                         print(pds)
                         pass
-
 
                 # TODO: Explain this block.
                 if manageExternalIDs:

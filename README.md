@@ -67,7 +67,7 @@ export APP_ENV=test
 Run the unit tests.
 
 ```
-manage.py test
+./manage.py test
 ```
 
 There should only be 5 failing tests, which all relate to LDAP integration.
