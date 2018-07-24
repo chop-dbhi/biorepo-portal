@@ -1,7 +1,6 @@
 import json
 import logging
 import inspect
-import time
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
