@@ -63,9 +63,8 @@ class StartView(DataEntryView):
     # cache key is by protocoldatasource: 'protocoldatasource#_redcap_completion_codes'
     # cache value is {subjectid: {recordid: {form_spec: completion_code, form_spec: completion_code}}}
     def redcap_form_complete_caching(self, driver, cache_key, subject_id, record_id, form_url, record_name):
-
         def get_and_cache_completion_codes (self, cache_data={}, subject_records={}):
-            redcap_completion_codes = driver.find_completed_forms(form_url=form_url,record_id=record_name)
+            redcap_completion_codes = driver.find_completed_forms(record_id=record_name)
             subject_records[record_id] = redcap_completion_codes # {recordid: {form_spec: completion_code, form_spec: completion_code}}
             cache_data[subject_id] = subject_records # {subjectid: {recordid: {form_spec: completion_code, form_spec: completion_code}}}
             cache.set(cache_key, cache_data)
@@ -152,7 +151,8 @@ class FormView(DataEntryView):
 
     # update cache for subrecordselectionform, class StartView
     def update_cache(self, cache_key, subject_id, record_id):
-            cache_data = cache.get(cache_key)
+        cache_data = cache.get(cache_key)
+        try:
             if cache_data:
                 if subject_id in cache_data:
                     subject_data = cache_data[subject_id]
@@ -161,12 +161,14 @@ class FormView(DataEntryView):
                     cache_data[subject_id] = subject_data
                 cache.set(cache_key, cache_data)
                 cache.persist(cache_key)
+        except:
+            raise Exception('Record form was not updated')
 
 
-    #this method is called when users submits forms
-    #if there exists any errors, we display elements from
-    #pds_dataentry_srf.html and this is called with
-    #formBuilderJson.py from ehb_datasources
+    # this method is called when users submits forms
+    # if there exists any errors, we display elements from
+    # pds_dataentry_srf.html and this is called with
+    # formBuilderJson.py from ehb_datasources
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         # have the driver process this request
