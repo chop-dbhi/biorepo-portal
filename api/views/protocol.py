@@ -214,8 +214,7 @@ class ProtocolSubjectDetailView(BRPApiView):
             protocol = Protocol.objects.get(pk=pk)
         except ObjectDoesNotExist:
             return Response({'error': 'Protocol requested not found'}, status=404)
-
-        subject = json.loads(request.body.decode('utf-8'))
+        subject = request.data
         new_subject = Subject(
             first_name=subject['first_name'],
             last_name=subject['last_name'],

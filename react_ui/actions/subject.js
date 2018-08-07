@@ -167,6 +167,7 @@ export function addSubject(protocolId, subject) {
     return fetch(url, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Accept: 'application/json',
         Authorization: `token ${token}`,
         'X-CSRFToken': csrf_token,
