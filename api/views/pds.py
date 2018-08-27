@@ -65,7 +65,7 @@ class PDSRecordLinkDetailView(BRPApiView):
             return Response({'error': 'ProtocolDatasource requested not found'}, status=404)
 
         if pds.protocol.isUserAuthorized(request.user):
-            data = json.loads(request.body.decode('utf-8'))
+            data = request.data
             primary_rec = data['primaryRecord']
             secondary_rec = data['secondaryRecord']
             link_type = data['linkType']

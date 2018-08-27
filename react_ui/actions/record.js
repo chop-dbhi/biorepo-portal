@@ -286,6 +286,8 @@ export function createRecordLink(primaryRecord, secondaryRecord) {
       headers: {
         Accept: 'application/json',
         Authorization: `token ${token}`,
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrf_token,
       },
       body: JSON.stringify(data),
     })
@@ -333,6 +335,7 @@ export function deleteRecordLink(primaryRecord, linkId) {
       headers: {
         Accept: 'application/json',
         Authorization: `token ${token}`,
+        'X-CSRFToken': csrf_token,
       },
       body: JSON.stringify(data),
     })
