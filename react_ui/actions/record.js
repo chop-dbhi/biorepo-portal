@@ -335,6 +335,7 @@ export function deleteRecordLink(primaryRecord, linkId) {
       headers: {
         Accept: 'application/json',
         Authorization: `token ${token}`,
+        'X-CSRFToken': csrf_token,
       },
       body: JSON.stringify(data),
     })
