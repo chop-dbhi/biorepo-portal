@@ -312,7 +312,9 @@ class ProtocolSubjectDetailView(BRPApiView):
         )
 
     def get(self, request, pk, subject, *args, **kwargs):
-        ''' get subject '''
+        ''' get all subject data:
+        external records, Organization, external ids and relationships'''
+        # TODO: add getting relationships for subjects here
         try:
             p = Protocol.objects.get(pk=pk)
         except ObjectDoesNotExist:
