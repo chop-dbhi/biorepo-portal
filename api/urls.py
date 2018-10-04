@@ -9,6 +9,7 @@ router.register(r'organizations', views.OrganizationViewSet)
 router.register(r'protocols', views.ProtocolViewSet)
 router.register(r'datasources', views.DataSourceViewSet)
 router.register(r'protocoldatasources', views.PDSViewSet)
+router.register(r'relationships', views.RelationshipDetailView)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include the login URLs for the browsable API
@@ -49,5 +50,17 @@ urlpatterns = [
         views.PDSAvailableLinksView.as_view(),
         name='pds-links'),
     url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # to create a relationship between subjects
+    url(r'^pedigree/create$',
+        views.RelationshipDetailView.as_view(),
+        name='pedigree-create'),
+    # get relationships by subject id
+    url(r'^pedigree/subject_id/(?P<pk>[0-9]+)/$',
+        views.RelationshipDetailView.as_view(),
+        name='pedigree-get-by-subject-id'),
+    # get relationships by protocol
+    url(r'^pedigree/protocol_id/(?P<pk>[0-9]+)/$',
+        views.RelationshipDetailView.as_view(),
+        name='pedigree-get-by-protocol-id')
 ]
