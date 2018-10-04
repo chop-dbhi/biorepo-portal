@@ -8,3 +8,4 @@ from .protocol import ProtocolViewSet, ProtocolSubjectsView, \
 from .pds import PDSSubjectView, PDSSubjectRecordsView, \
     PDSSubjectRecordDetailView, PDSAvailableLinksView, \
     PDSRecordLinkDetailView, PDSViewSet
+from .relationship import RelationshipDetailView
