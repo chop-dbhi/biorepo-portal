@@ -9,7 +9,6 @@ router.register(r'organizations', views.OrganizationViewSet)
 router.register(r'protocols', views.ProtocolViewSet)
 router.register(r'datasources', views.DataSourceViewSet)
 router.register(r'protocoldatasources', views.PDSViewSet)
-router.register(r'relationships', views.RelationshipDetailView)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include the login URLs for the browsable API
