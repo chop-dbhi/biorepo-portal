@@ -2,7 +2,7 @@ import json
 
 from rest_framework.response import Response
 
-from ehb_client.requests.pedigree_relationship_handler import PedigreeRelationship
+from ehb_client.requests.pedigree_relationships_handler import PedigreeRelationship
 from .base import BRPApiView
 
 
