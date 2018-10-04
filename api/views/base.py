@@ -16,7 +16,7 @@ class BRPApiView(APIView):
     erl_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)  # noqa
     err_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_RELATION)  # noqa
     g_rh = ServiceClient.get_rh_for(record_type=ServiceClient.GROUP)
-    relationship_HB_handler = ServiceClient.get_rh_for(record_type=ServiceClient.PEDIGREERELATIONSHIP)
+    relationship_HB_handler = ServiceClient.get_rh_for(record_type=ServiceClient.RELATIONSHIP)
     # Utility Classes
     subject_utils = SubjectUtils
     record_utils = RecordUtils
