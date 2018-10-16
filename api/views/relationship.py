@@ -22,6 +22,7 @@ class RelationshipDetailView(BRPApiView):
             return {'error': 'Invalid subject Selected'}
         return True
 
+    # will return true if request body is valid, otherwise will return error    
     def validate_req_body(self, relationship):
         try:
             subject_1 = relationship['subject_1']
