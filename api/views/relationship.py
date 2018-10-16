@@ -73,7 +73,7 @@ class RelationshipDetailView(BRPApiView):
                 subject_2=relationship['subject_2'],
                 subject_1_role=relationship['subject_1_role'],
                 subject_2_role=relationship['subject_2_role'],
-                protocol_id=(relationship['protocol_id'], None)
+                protocol_id=relationship['protocol_id']
             )
         except:
             return Response({'error': 'Invalid subject or subject role Selected'}, status=400)
