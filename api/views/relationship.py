@@ -1,10 +1,12 @@
 import json
 
 from rest_framework.response import Response
+from django.core.exceptions import ObjectDoesNotExist
 
 from ehb_client.requests.pedigree_relationships_handler import PedigreeRelationship
 from ehb_client.requests.subject_request_handler import Subject
 from .base import BRPApiView
+from api.models.protocols import Protocol
 
 
 class RelationshipDetailView(BRPApiView):
@@ -22,7 +24,7 @@ class RelationshipDetailView(BRPApiView):
             return {'error': 'Invalid subject Selected'}
         return True
 
-    # will return true if request body is valid, otherwise will return error    
+    # will return true if request body is valid, otherwise will return error
     def validate_req_body(self, relationship):
         try:
             subject_1 = relationship['subject_1']
@@ -100,5 +102,12 @@ class RelationshipDetailView(BRPApiView):
             status=200
         )
 
-    def get(self):
-        pass
+    def get(self, request, pk):
+        # returns list of relationships
+        try:
+            p = Protocol.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            return Response({'error': 'Protocol requested not found'}, status=404)
+        # TODO: when cache added - check for cache data handleRecordClick
+        if p.isUserAuthorized(request.user):
+            print (request.data)
