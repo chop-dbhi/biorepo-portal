@@ -28,6 +28,12 @@ urlpatterns = [
     url(r'^protocols/(?P<pk>[0-9]+)/organizations/$',
         views.ProtocolOrganizationView.as_view(),
         name='protocol-organization-list'),
+    url(r'^protocols/(?P<pk>[0-9]+)/pedigree/subject/(?P<subject>[0-9]+)$',
+        views.ProtocolPedigreeDetailView.as_view(),
+        name='protocol-subject-pedigree'),
+    url(r'^protocols/(?P<pk>[0-9]+)/pedigree/$',
+        views.ProtocolPedigreeDetailView.as_view(),
+        name='protocol-pedigree'),
     url(
         r'^protocoldatasources/(?P<pk>[0-9]+)/subjects/(?P<subject>[0-9]+)/records/$',
         views.PDSSubjectRecordsView.as_view(),
