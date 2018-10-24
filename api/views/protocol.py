@@ -418,19 +418,30 @@ class ProtocolSubjectDetailView(BRPApiView):
 
 
 class ProtocolPedigreeDetailView(BRPApiView):
-    
+
     # will return True if subject inputs are valid
     def check_subject(self, subject_1, subject_2=None):
+        print("subject_1:")
+        print(subject_1)
+        print(self.s_rh.get(id=subject_1))
         try:
             subject_1_response = self.s_rh.get(id=subject_1)
+            print(subject_1_response)
+            print("subject_2")
+            print(subject_2)
             if subject_2:
                 subject_2_response = self.s_rh.get(id=subject_2)
         except:
             return {'error': 'Invalid subject Selected'}
 
         sub1 = json.loads(Subject.json_from_identity(subject_1_response))
-        sub2 = json.loads(Subject.json_from_identity(subject_2_response))
-        if sub1['id'] is None or sub2['id'] is None:
+        if subject_2:
+            sub2 = json.loads(Subject.json_from_identity(subject_2_response))
+        if sub1['id'] is None:
+            print("we are getting error here sub1")
+            return {'error': 'Invalid subject Selected'}
+        if subject_2 is not None and sub2['id'] is None:
+            print("we are getting error here subject2")
             return {'error': 'Invalid subject Selected'}
         return True
 
@@ -519,17 +530,26 @@ class ProtocolPedigreeDetailView(BRPApiView):
         except ObjectDoesNotExist:
             return Response({'error': 'Protocol requested not found'}, status=404)
         # TODO: when cache added - check for cache data handleRecordClick
+        print(request.user)
         if p.isUserAuthorized(request.user):
+            print("here is request data:")
             print (request.data)
             # if subject is not None, then collect all relationships for given subject
             if subject:
                 valid_subject = self.check_subject(subject)
+                print("valid subject:")
+                print(valid_subject)
                 if valid_subject is True:
                     r = self.relationship_HB_handler.get(subject_id=subject)
+                    r = json.loads(PedigreeRelationship.json_from_identity(r))
+                    print("here is r:")
+                    print(r)
                     return Response(
                         {"relationships": r},
                         status=200
                     )
+                else:
+                    return Response(valid_subject, status=400)
         else:
             return Response(
                 {"detail": "You are not authorized to view subjects in this protocol"},
