@@ -19,7 +19,8 @@ RUN apk add --update \
   python3 -m ensurepip && \
     rm -r /usr/lib/python*/ensurepip && \
     pip3 install --upgrade pip setuptools && \
-    rm -r /root/.cache
+    rm -r /root/.cache &&\
+    apk upgrade
 
 RUN pip3 install "Django>=1.9.6,<1.10"
 RUN pip3 install "django-environ>=0.4.0,<0.5"
