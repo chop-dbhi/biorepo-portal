@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM alpine:3.8
 
 RUN apk add --update \
     bash \
@@ -32,7 +32,7 @@ RUN pip3 install "git+https://github.com/chop-dbhi/ehb-client.git@v1.0.2#egg=ehb
 RUN pip3 install "git+https://github.com/chop-dbhi/ehb-datasources.git@d38c2ae36df471bfd26d055efd073af3ea58cac7#egg=ehb_datasources"
 RUN pip3 install "ldap3>=1.4.0,<1.5"
 RUN pip3 install "gunicorn>=19,<20"
-RUN pip3 install "psycopg2>=2.6.1,<2.7"
+RUN pip3 install "psycopg2-binary"
 RUN pip3 install "dj-static>=0.0.6,<0.1.0"
 RUN pip3 install "python-json-logger==0.1.7"
 RUN pip3 install "django-admin-tools"
