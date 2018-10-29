@@ -532,10 +532,11 @@ class ProtocolPedigreeDetailView(BRPApiView):
         # TODO: when cache added - check for cache data handleRecordClick
         print(request.user)
         if p.isUserAuthorized(request.user):
-            print("here is request data:")
-            print (request.data)
+            # print("here is request data:")
+            # print (request.data)
             # if subject is not None, then collect all relationships for given subject
             if subject:
+                print(subject)
                 valid_subject = self.check_subject(subject)
                 print("valid subject:")
                 print(valid_subject)
@@ -550,6 +551,16 @@ class ProtocolPedigreeDetailView(BRPApiView):
                     )
                 else:
                     return Response(valid_subject, status=400)
+            else:
+                r = self.relationship_HB_handler.get(protocol_id=pk)
+                print("this is r:")
+                print(r)
+                r = json.loads(PedigreeRelationship.json_from_identity(r))
+                return Response(
+                    {"relationships": r},
+                    status=200
+                )
+
         else:
             return Response(
                 {"detail": "You are not authorized to view subjects in this protocol"},

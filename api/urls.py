@@ -28,9 +28,11 @@ urlpatterns = [
     url(r'^protocols/(?P<pk>[0-9]+)/organizations/$',
         views.ProtocolOrganizationView.as_view(),
         name='protocol-organization-list'),
+    # get all relationships for a given subject
     url(r'^protocols/(?P<pk>[0-9]+)/pedigree/subject/(?P<subject>[0-9]+)$',
         views.ProtocolPedigreeDetailView.as_view(),
         name='protocol-subject-pedigree'),
+    # get all realtionships in a protocol
     url(r'^protocols/(?P<pk>[0-9]+)/pedigree/$',
         views.ProtocolPedigreeDetailView.as_view(),
         name='protocol-pedigree'),
