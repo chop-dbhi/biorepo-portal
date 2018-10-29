@@ -1,6 +1,6 @@
 FROM alpine:3.3
 
-RUN apk add --update \
+RUN apk add --update && \
     apk update && apk upgrade \
     bash \
     postgresql-dev \
