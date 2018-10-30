@@ -64,6 +64,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     # to create a relationship between subjects
+<<<<<<< HEAD
     url(r'^subj_fam/create$',
         views.RelationshipDetailView.as_view(),
         name='subjFam-create'),
@@ -78,4 +79,17 @@ urlpatterns = [
     url(r'^subj_fam/relationship_types/',
         views.RelationshipDetailView.as_view(),
         name='subjFam-get-rel-types')
+=======
+    url(r'^pedigree/create$',
+        views.RelationshipDetailView.as_view(),
+        name='pedigree-create'),
+    # get relationships by subject id
+    url(r'^pedigree/subject_id/(?P<pk>[0-9]+)/$',
+        views.RelationshipDetailView.as_view(),
+        name='pedigree-get-by-subject-id'),
+    # get relationships by protocol
+    url(r'^pedigree/protocol_id/(?P<pk>[0-9]+)/$',
+        views.RelationshipDetailView.as_view(),
+        name='pedigree-get-by-protocol-id')
+>>>>>>> feature issues: #196, #202, #203
 ]
