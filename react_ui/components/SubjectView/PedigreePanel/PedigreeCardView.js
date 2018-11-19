@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 
 // const SubjectPedigreeCardView = (props) => {
-class SubjectPedigreeCardView extends React.Component {
+class PedigreeCardView extends React.Component {
   // const subject = props.subject.activeSubject;
   render() {
     return (
@@ -24,4 +24,4 @@ class SubjectPedigreeCardView extends React.Component {
 }
 
 // export default connect(SubjectPedigreeCardView);
-export default SubjectPedigreeCardView;
+export default PedigreeCardView;

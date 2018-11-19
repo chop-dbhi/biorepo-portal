@@ -1,5 +1,5 @@
 import React from 'react';
-import SubjectPedigreeCardView from './SubjectPedigreeCardView';
+import PedigreeCardView from './PedigreeCardView';
 import { connect } from 'react-redux';
 
 // const SubjectPedigreePanel = (props) => {
@@ -10,11 +10,11 @@ import { connect } from 'react-redux';
 //   edit: React.PropTypes.string,
 //   path: React.PropTypes.string,
 // };
-class SubjectPedigreePanel extends React.Component {
+class PedigreePanel extends React.Component {
   render() {
-    return (<SubjectPedigreeCardView />);
+    return (<PedigreeCardView />);
   }
 }
 
-export default SubjectPedigreePanel;
+export default PedigreePanel;
 // export default connect(SubjectPedigreePanel);
