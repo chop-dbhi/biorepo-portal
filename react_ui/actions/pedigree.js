@@ -7,7 +7,7 @@ export function requestPedigree() {
   };
 }
 
-xport function receivePedigree(json) {
+export function receivePedigree(json) {
   return {
     type: REQUEST_PEDIGREE_SUCCESS,
     pedigree: json,
