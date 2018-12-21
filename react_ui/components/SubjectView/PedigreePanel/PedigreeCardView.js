@@ -17,10 +17,10 @@ class PedigreeCardView extends React.Component {
   }
   renderRelationships(relationships){
     return (
-      recordNodes ?
+      relationships ?
         <table className="table table-striped">
           <thead>
-            <tr><th>Relation</th><th>Record</th><th>Created</th><th>Modified</th></tr>
+            <tr><th>Relation</th><th>Organization ID</th></tr>
           </thead>
           <tbody>
             {relationships}
