@@ -30,6 +30,24 @@ class PedigreeCardView extends React.Component {
   }
 
   render() {
+    relationships = PedigreeActions.fetchPedigree(
+                            this.props.protocol.activeProtocolId,
+                            this.props.subject.id);
+    if (relationships.length !== 0) {
+      relationships = relationships.map((relationships, i) => {
+        let linkIcon = null;
+        // TODO: Factor out these record lines into their own components.
+        if (this.props.activePedigree != null && (this.props.activePedigree.id === relationship.id)) {
+          return (
+            // TODO: add onclick function to add ability to edit/add a pedigree relationship
+            <tr>
+              <td>{relationship.id}</td>
+              <td>{relationship.subject_1_role}</td>
+            </tr>
+          );
+        }
+
+
     return (
       <div className="col-md-4 col-sm-6">
         <div className="card">
@@ -41,11 +59,26 @@ class PedigreeCardView extends React.Component {
             <p className="description">Mother</p>
             <p className="description">Father</p>
           </div>
+          <tr>
+            <td>{relationship.id}</td>
+            <td>{linkIcon} {relationship.subject_1_role}</td>
+          </tr>
         </div>
       </div>
     );
+  }, this);
+  }
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    relationships: {
+      isFetching: state.record.isFetching,
+    },
+    subject: state.subject.activeSubject,
+    activeRecord: state.record.activeRecord,
+    };
+  }
 // export default connect(SubjectPedigreeCardView);
-export default PedigreeCardView;
+export default connect(mapStateToProps)(PedigreeCardView);
