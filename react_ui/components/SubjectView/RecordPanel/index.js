@@ -33,7 +33,6 @@ class RecordPanel extends React.Component {
     }
     return (
       <div>
-        <div className="col-md-8 col-sm-2">
           <div className="card">
             <div className="content">
               {this.props.linkMode ? <LinkModeBanner /> : null}
@@ -41,7 +40,6 @@ class RecordPanel extends React.Component {
               {pdsNodes}
             </div>
           </div>
-        </div>
         {this.props.activeLinks.length !== 0 && !this.props.isFetching ?
           <LinkedRecords /> : null
         }

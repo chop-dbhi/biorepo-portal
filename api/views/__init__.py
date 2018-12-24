@@ -4,7 +4,8 @@ from .organization import OrganizationViewSet
 from .datasource import DataSourceViewSet
 from .protocol import ProtocolViewSet, ProtocolSubjectsView, \
     ProtocolSubjectDetailView, ProtocolOrganizationView,  \
-    ProtocolDataSourceView
+    ProtocolDataSourceView, ProtocolSubjFamDetailView
 from .pds import PDSSubjectView, PDSSubjectRecordsView, \
     PDSSubjectRecordDetailView, PDSAvailableLinksView, \
     PDSRecordLinkDetailView, PDSViewSet
+from .relationship import RelationshipDetailView

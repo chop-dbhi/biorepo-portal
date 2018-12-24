@@ -2,17 +2,15 @@ version: '2'
 services:
 
   brp_logstash:
-    image: logstash:5.3
+    image: docker.elastic.co/logstash/logstash:6.2.4
     ports:
       - "5000:5000/udp"
     volumes:
-      - ../../logstash.conf:/config-dir/logstash.conf
+      - ../../logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ../../01-input.json:/usr/share/logstash/pipeline/logstash.conf
     restart: always
-    command: logstash -f /config-dir/logstash.conf
-
+    command: bash -c "logstash -l /usr/share/logstash/config/testlog.txt -f /usr/share/logstash/pipeline/logstash.conf"
     network_mode: bridge
-
-    restart: always
 
   brp:
     image: 508852077039.dkr.ecr.us-east-1.amazonaws.com/dbhi/eig/biorepo-portal:latest

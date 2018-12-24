@@ -14,7 +14,7 @@ let initialNewSubject = {
   last_name: null,
   organization_subject_id: null,
   organization_subject_id_validation: null,
-  organization_id_label: 'Organization ID',
+  organization_id_label: 'Subject ID',
 };
 
 const initialState = {

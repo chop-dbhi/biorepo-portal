@@ -43,6 +43,7 @@ class SubjectOrgSelectField extends React.Component {
         style={{ width: '100%', whiteSpace: 'nowrap' }}
         value={this.props.value}
         errorText={errorText}
+        floatingLabelText={'Organization'}
       >
         {orgs ?
           orgs.map((org, i) => (
