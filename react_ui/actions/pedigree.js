@@ -1,5 +1,6 @@
 export const REQUEST_PEDIGREE = 'REQUEST_PEDIGREE';
 export const RECEIVE_PEDIGREE = 'RECEIVE_PEDIGREE';
+export const SET_ACTIVE_PEDIGREE = 'SET_ACTIVE_PEDIGREE'
 
 export function requestPedigree() {
   return {
@@ -27,5 +28,12 @@ export function fetchPedigree(protocolID, subjectId) {
     })
       .then(response => response.json())
       .then(json => dispatch(receivePedigree(json)));
+  };
+}
+
+export function setActivePedigree(pedigree) {
+  return {
+    type: SET_ACTIVE_PEDIGREE,
+    activePedigree: pedigree,
   };
 }
