@@ -16,7 +16,7 @@ export function receivePedigree(json) {
 }
 
 export function fetchPedigree(protocolID, subjectId) {
-  const url = `protocols/${protocolID}/pedigree/subject/${subjectID}/`;
+  const url = `protocols/${protocolID}/pedigree/subject/${subjectId}/`;
   return dispatch => {
     dispatch(requestPedigree());
     return fetch(url, {
@@ -26,8 +26,22 @@ export function fetchPedigree(protocolID, subjectId) {
         Authorization: `token ${token}`,
       },
     })
+      // .then(checkResponse)
       .then(response => response.json())
-      .then(json => dispatch(receivePedigree(json)));
+      .then(json => dispatch(receivePedigree(json)))
+      .catch(error => {
+        dispatch(NotificationActions.addNotification(
+          {
+            message: 'Error Contacting the electronic Honest Broker',
+            level: 'error',
+            error,
+          }
+        ));
+
+        // This is a bit of a hack to get the Notification System to render properly.
+        dispatch(NotificationActions.renderNotification());
+      }
+    );
   };
 }
 
