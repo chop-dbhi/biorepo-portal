@@ -19,15 +19,33 @@ class PedigreeCardView extends React.Component {
       this.props.activeProtocolId,
       this.props.subject.id));
 }
+  organizeRelationshipList() {
+    const relationships = this.props.pedigree.items.items;
+    const subject = this.props.subject;
+    const organizedRelationships = [];
+    relationships.relationships.forEach(function (relationship) {
+      if (relationship.subject_1_id == subject.id) {
+        organizedRelationships.push({"relationship": { "subject_org_id": relationship.subject_2_org_id,
+                                    "subject_role": relationship.subject_2_role}});
+      }
+      else {
+        organizedRelationships.push("relationship": {"subject_org_id": relationship.subject_1_org_id,
+                                    "subject_role": relationship.subject_1_role});
+      }
+    });
+    return organizedRelationships
+  }
+
   render() {
     const protocol = this.props.activeProtocolId;
     const relationships = this.props.pedigree.items.items;
       if (relationships.length != 0){
+        const test = this.organizeRelationshipList();
         return (
           <div className="col-md-4 col-sm-6">
             <div className="card">
               <div className="content">
-                <h5 className="category">Relationships</h5>
+                <h5 className="category">Relationship</h5>
                 <div className="more">
                   <i className="ti-pencil"></i>
                 </div>
@@ -36,10 +54,12 @@ class PedigreeCardView extends React.Component {
                     <tr><th>Relation</th><th>MRN</th></tr>
                   </thead>
 
-                  {relationships.relationships.map((relationship, i) => (
-                      <thead><tr key={i}>
-                        <th  > {relationship.subject_1_role} </th>
-                        <th > {relationship.subject_1} </th></tr></thead>), this)}
+
+                  {test.map((item,i)=> (
+                    <thead><tr key={i}>
+                          <th  > {item.relationship.subject_role} </th>
+                          <th > {item.relationship.subject_org_id} </th></tr>
+                    </thead>))}
 
                 </table>
               </div>
