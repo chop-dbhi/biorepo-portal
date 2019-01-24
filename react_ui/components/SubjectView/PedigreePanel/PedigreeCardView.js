@@ -50,7 +50,7 @@ class PedigreeCardView extends React.Component {
     const protocol = this.props.activeProtocolId;
     const relationships = this.props.pedigree.items.items;
       if (relationships.length != 0){
-        const test = this.organizeRelationshipList();
+        const organizedRelationships = this.organizeRelationshipList();
         return (
           <div className="col-md-4 col-sm-6">
             <div className="card">
@@ -69,11 +69,13 @@ class PedigreeCardView extends React.Component {
                   <thead>
                     <tr><th>Relation</th><th>MRN</th></tr>
                   </thead>
-                  {test.map((item,i)=> (
-                    <thead><tr key={i}>
-                          <th  > {item.relationship.subject_role} </th>
-                          <th > {item.relationship.subject_org_id} </th></tr>
-                    </thead>))}
+                  {organizedRelationships.map((item,i)=> (
+                    <tbody>
+                          <tr key={i}>
+                            <td  > {item.relationship.subject_role} </td>
+                            <td > {item.relationship.subject_org_id} </td>
+                          </tr>
+                    </tbody>))}
 
                 </table>
               </div>
