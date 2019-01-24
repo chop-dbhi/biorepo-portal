@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import * as PedigreeActions from '../../../actions/pedigree';
+import ContentAdd from 'material-ui/lib/svg-icons/content/add';
+import FloatingActionButton from 'material-ui/lib/floating-action-button';
 
 
 class PedigreeCardView extends React.Component {
@@ -40,6 +42,11 @@ class PedigreeCardView extends React.Component {
   }
 
   render() {
+    const addButtonStyle = {
+      marginLeft: '10px',
+      marginTop: '10px',
+      float: 'right',
+    };
     const protocol = this.props.activeProtocolId;
     const relationships = this.props.pedigree.items.items;
       if (relationships.length != 0){
@@ -48,16 +55,20 @@ class PedigreeCardView extends React.Component {
           <div className="col-md-4 col-sm-6">
             <div className="card">
               <div className="content">
-                <h5 className="category">Relationship</h5>
-                <div className="more">
-                  <i className="ti-pencil"></i>
-                </div>
+                <h5 className="category"> Relationships
+                  <FloatingActionButton
+                    onClick={() => this.handleNewRecordClick(this.props.pds)}
+                    backgroundColor={'#7AC29A'}
+                    mini
+                    style={addButtonStyle}
+                    disableTouchRipple={true}>
+                    <ContentAdd />
+                  </FloatingActionButton>
+                </h5>
                 <table className="table table-striped">
                   <thead>
                     <tr><th>Relation</th><th>MRN</th></tr>
                   </thead>
-
-
                   {test.map((item,i)=> (
                     <thead><tr key={i}>
                           <th  > {item.relationship.subject_role} </th>
