@@ -23,6 +23,9 @@ class PedigreeCardView extends React.Component {
     const relationships = this.props.pedigree.items.items;
     const subject = this.props.subject;
     const organizedRelationships = [];
+
+    // get the related subject and the related
+    // subject role to present to the user interface.
     relationships.relationships.forEach(function (relationship) {
       if (relationship.subject_1_id == subject.id) {
         organizedRelationships.push({"relationship": { "subject_org_id": relationship.subject_2_org_id,
