@@ -41,6 +41,12 @@ class PedigreeCardView extends React.Component {
     return organizedRelationships
   }
 
+  handleNewRecordClick(pds) {
+    const { dispatch } = this.props;
+    dispatch(PDSActions.setActivePDS(pds));
+    dispatch(RecordActions.setAddRecordMode(true));
+  }
+
   render() {
     const addButtonStyle = {
       marginLeft: '10px',
