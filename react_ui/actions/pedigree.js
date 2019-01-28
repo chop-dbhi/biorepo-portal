@@ -117,7 +117,7 @@ export function addPedigreeRelFailure(error) {
 export function addPedigreeRel(protocolId, pedigreeRel) {
   return dispatch => {
     dispatch(addPedigreeRelRequest());
-    const url = `api/protocols/${protocolId}/subjects/create`;
+    const url = `api/protocols/${protocolId}/pedigree/create/`;
     return fetch(url, {
       method: 'POST',
       headers: {
