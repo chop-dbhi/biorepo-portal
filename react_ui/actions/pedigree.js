@@ -8,6 +8,7 @@ export const ADD_PEDIGREE_REL_SUCCESS = 'ADD_PEDIGREE_REL_SUCCESS';
 export const ADD_PEDIGREE_REL_REQUEST = 'ADD_PEDIGREE_REL_REQUEST';
 export const ADD_PEDIGREE_REL_FAILURE = 'ADD_PEDIGREE_REL_FAILURE';
 export const SET_ADD_PEDIGREE_REL_MODE = 'SET_ADD_PEDIGREE_REL_MODE';
+export const CLEAR_PEDIGREE_STATE = 'CLEAR_PEDIGREE_STATE';
 
 function checkResponse(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -62,6 +63,11 @@ export function fetchPedigree(protocolID, subjectId) {
     // );
   };
 }
+export function clearPedigreeState() {
+  return {
+    type: CLEAR_PEDIGREE_STATE,
+  };
+}
 
 export function checkAddPedigreeRel(json) {
   const [success, relationship, errors] = json;
@@ -113,7 +119,7 @@ export function addPedigreeRelFailure(error) {
   };
 }
 
-// TODO: add pedigree relationship to the eHB
+//add pedigree relationship to the eHB
 export function addPedigreeRel(protocolId, pedigreeRel) {
   return dispatch => {
     dispatch(addPedigreeRelRequest());

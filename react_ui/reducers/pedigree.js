@@ -1,4 +1,4 @@
-import { REQUEST_PEDIGREE, RECEIVE_PEDIGREE, SET_ACTIVE_PEDIGREE } from '../actions/pedigree';
+import { REQUEST_PEDIGREE, RECEIVE_PEDIGREE, SET_ACTIVE_PEDIGREE, CLEAR_PEDIGREE_STATE } from '../actions/pedigree';
 
 const initialState = {
   isFetching: false,
@@ -21,6 +21,8 @@ function pedigree(state = initialState, action){
       return Object.assign({}, state, {
         activeProtocolId: parseInt(action.pedigreeId, 10),
       });
+    case CLEAR_PEDIGREE_STATE:
+      return initialState;
   default:
     return state;
   }
