@@ -10,32 +10,25 @@ class PedigreeCardView extends React.Component {
 
   constructor(props) {
     super(props);
-    // this.state = { relationships: [],};
-    console.log('we are in constructor')
   }
   componentDidMount() {
-    console.log('we are in componentDidMount')
     const { dispatch } = this.props;
-
     dispatch(PedigreeActions.fetchPedigree(
       this.props.activeProtocolId,
       this.props.subject.id));
 }
 
 componentWillUnmount() {
-  console.log("we are in unmount")
   const { dispatch } = this.props;
   dispatch(PedigreeActions.clearPedigreeState());
 }
+
+  // get the related subject and the related
+  // subject role in json format by filtering out current subject info.
   organizeRelationshipList() {
     const relationships = this.props.pedigree.items.items;
     const subject = this.props.subject;
     const organizedRelationships = [];
-
-    // get the related subject and the related
-    // subject role to present to the user interface.
-    console.log("relationships.length at begining of organizeRel")
-    console.log(relationships.length)
 
     // return null if there are no relationships in the eHB
     if (relationships){
@@ -50,36 +43,27 @@ componentWillUnmount() {
         }
       });
     }
-      else{
-        console.log("we do not have relationships in orgRel")
-      }
-
-    console.log("relationships at end of organizerelationship")
-    console.log(organizedRelationships)
     // return null if there are no relationships in the eHB
     if (organizedRelationships.length == 0){
       return null;
     }
     else{
       return organizedRelationships
-  }
+    }
   }
   renderRelationships(relationships){
     return(
       relationships ?
-
         relationships.map((item, i)=> (
-
-              <tr key={i} >
-                <td > {item.subject_role} </td>
-                <td > {item.subject_org_id} </td>
-              </tr>))
-        :
+          <tr key={i} >
+            <td > {item.subject_role} </td>
+            <td > {item.subject_org_id} </td>
+          </tr>))
+          :
           <tr>
             <td> No Relationships </td>
             <td>  </td>
           </tr>
-
     );
   }
   handleNewRecordClick(pds) {
@@ -87,7 +71,6 @@ componentWillUnmount() {
     dispatch(PDSActions.setActivePDS(pds));
     dispatch(RecordActions.setAddRecordMode(true));
   }
-// TODO create a function to generate tbody if no relationships - say 'no relationships'
   render() {
     const addButtonStyle = {
       marginLeft: '10px',
@@ -97,44 +80,38 @@ componentWillUnmount() {
     const protocol = this.props.activeProtocolId;
     const relationships = this.props.pedigree.items.items;
     let organizedRelationships = null;
-    console.log("relationships")
-    console.log(relationships.length != 0 )
-    console.log("relationships.relationships")
-    console.log(relationships.relationships)
-      if (relationships.length !=0){
-        organizedRelationships = this.organizeRelationshipList();
-        }
-      else {
-        organizedRelationships = null;
+    if (relationships.length !=0){
+      organizedRelationships = this.organizeRelationshipList();
       }
-          return (
-            <div className="card">
-              <div className="content">
-                <h5 className="category"> Relationships
-                  <FloatingActionButton
-                    onClick={() => this.handleNewRecordClick(this.props.pds)}
-                    backgroundColor={'#7AC29A'}
-                    mini
-                    style={addButtonStyle}
-                    disableTouchRipple={true}>
-                    <ContentAdd />
-                  </FloatingActionButton>
-                </h5>
-                <table className="table table-striped">
-                  <thead>
-                    <tr><th>Relation</th><th>MRN</th></tr>
-                  </thead>
-                  <tbody>
-                    {this.renderRelationships(organizedRelationships)}
-                    </tbody>
-                </table>
-              </div>
-            </div>
-          );
-        }
-      // }
-    // }
+    else {
+      organizedRelationships = null;
+    }
+    return (
+      <div className="card">
+        <div className="content">
+          <h5 className="category"> Relationships
+            <FloatingActionButton
+              onClick={() => this.handleNewRecordClick(this.props.pds)}
+              backgroundColor={'#7AC29A'}
+              mini
+              style={addButtonStyle}
+              disableTouchRipple={true}>
+              <ContentAdd />
+            </FloatingActionButton>
+          </h5>
+          <table className="table table-striped">
+            <thead>
+              <tr><th>Relation</th><th>MRN</th></tr>
+            </thead>
+            <tbody>
+              {this.renderRelationships(organizedRelationships)}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
   }
+}
 
 PedigreeCardView.propTypes = {
   dispatch: React.PropTypes.func,
