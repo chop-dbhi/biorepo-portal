@@ -3,12 +3,13 @@ import fetch from 'isomorphic-fetch';
 
 export const REQUEST_PEDIGREE = 'REQUEST_PEDIGREE';
 export const RECEIVE_PEDIGREE = 'RECEIVE_PEDIGREE';
-export const SET_ACTIVE_PEDIGREE = 'SET_ACTIVE_PEDIGREE';
+export const SET_ACTIVE_PEDIGREE_REL = 'SET_ACTIVE_PEDIGREE_REL';
 export const ADD_PEDIGREE_REL_SUCCESS = 'ADD_PEDIGREE_REL_SUCCESS';
 export const ADD_PEDIGREE_REL_REQUEST = 'ADD_PEDIGREE_REL_REQUEST';
 export const ADD_PEDIGREE_REL_FAILURE = 'ADD_PEDIGREE_REL_FAILURE';
 export const SET_ADD_PEDIGREE_REL_MODE = 'SET_ADD_PEDIGREE_REL_MODE';
 export const CLEAR_PEDIGREE_STATE = 'CLEAR_PEDIGREE_STATE';
+export const SET_UPDATE_FORM_ERRORS = 'SET_UPDATE_FORM_ERRORS';
 
 function checkResponse(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -80,7 +81,7 @@ export function checkAddPedigreeRel(json) {
 }
 
 export function setAddPedigreeRelMode(mode = null) {
-  // Update state to enable or disable AddSubject mode
+  // Update state to enable or disable Addrelationship mode
   return {
     type: SET_ADD_PEDIGREE_REL_MODE,
     mode,
@@ -118,6 +119,12 @@ export function addPedigreeRelFailure(error) {
     errors,
   };
 }
+export function setUpdateFormErrors(errors) {
+  return {
+    type: SET_UPDATE_FORM_ERRORS,
+    errors,
+  };
+}
 
 //add pedigree relationship to the eHB
 export function addPedigreeRel(protocolId, pedigreeRel) {
@@ -141,9 +148,9 @@ export function addPedigreeRel(protocolId, pedigreeRel) {
   };
 }
 
-export function setActivePedigree(pedigree) {
+export function setActivePedigreeRel(pedigree) {
   return {
-    type: SET_ACTIVE_PEDIGREE,
+    type: SET_ACTIVE_PEDIGREE_REL,
     activePedigree: pedigree,
   };
 }
