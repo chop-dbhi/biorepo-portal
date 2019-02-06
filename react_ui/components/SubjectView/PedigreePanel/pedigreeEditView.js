@@ -2,6 +2,7 @@
 // jscs:disable maximumLineLength
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import RaisedButton from 'material-ui/lib/raised-button';
 import * as PedigreeActions from '../../../actions/pedigree';
 import * as Colors from 'material-ui/lib/styles/colors';
@@ -27,7 +28,9 @@ class SubjectCardEdit extends React.Component {
 
   handleCancelClick() {
     // TODO: create this function - this.restorePedigree();
-    this.context.history.goBack();
+    const { dispatch } = this.props;
+    dispatch(PedigreeActions.setAddPedigreeRelMode(false));
+    // this.context.history.goBack();
   }
 
 
@@ -67,21 +70,39 @@ class SubjectCardEdit extends React.Component {
       return (
         <section>
           <div style={backdropStyle}></div>
-            <div className="col-sm-3 edit-label-modal" style={modalStyle}>
+            <div className="col-sm-5 edit-label-modal" style={modalStyle}>
               <div className="card" style={cardStyle}>
-                <h6 className="category"> Add a new Relationship </h6>
+                <h3 className="category" style={{ textAlign: 'center' }}> Add a new Relationship </h3>
+                  <row>
+                    <h4> Subject     ___________   Related Subject      _____________ </h4>
+                  </row>
+                  <row>
+                    <h4> Subject Role___________   Related subject Role _____________ </h4>
+                  </row>
+                <RaisedButton
+                  onMouseUp={this.handleNewRecordClick}
+                  label={'Create New'}
+                  labelColor={'#7AC29A'}
+                  type="submit"
+                  style={{ width: '100%' }}
+                />
+                <RaisedButton
+                  style={{ width: '100%' }}
+                  labelColor={Colors.red400}
+                  label="Cancel"
+                  onMouseUp={this.handleCancelClick}
+                />
               </div>
             </div>
         </section>
-
       );
   }
 }
 
 // Provides History to the SubjectCardEdit component
-SubjectCardEdit.contextTypes = {
-  history: React.PropTypes.object,
-};
+// SubjectCardEdit.contextTypes = {
+//   history: React.PropTypes.object,
+// };
 
 SubjectCardEdit.propTypes = {
   dispatch: React.PropTypes.func,
