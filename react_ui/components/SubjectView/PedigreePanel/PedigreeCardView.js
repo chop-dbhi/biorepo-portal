@@ -5,23 +5,23 @@ import * as PedigreeActions from '../../../actions/pedigree';
 import ContentAdd from 'material-ui/lib/svg-icons/content/add';
 import FloatingActionButton from 'material-ui/lib/floating-action-button';
 
-
 class PedigreeCardView extends React.Component {
 
   constructor(props) {
     super(props);
+    this.handleNewPedigreeRelClick = this.handleNewPedigreeRelClick.bind(this);
   }
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(PedigreeActions.fetchPedigree(
       this.props.activeProtocolId,
       this.props.subject.id));
-}
+  }
 
-componentWillUnmount() {
-  const { dispatch } = this.props;
-  dispatch(PedigreeActions.clearPedigreeState());
-}
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(PedigreeActions.clearPedigreeState());
+  }
 
   // get the related subject and the related
   // subject role in json format by filtering out current subject info.
@@ -66,11 +66,13 @@ componentWillUnmount() {
           </tr>
     );
   }
-  handleNewRecordClick(pds) {
+
+  handleNewPedigreeRelClick(pedigree_relationship) {
     const { dispatch } = this.props;
-    dispatch(PDSActions.setActivePDS(pds));
-    dispatch(RecordActions.setAddRecordMode(true));
+    dispatch(PedigreeActions.setActivePedigreeRel(pedigree_relationship));
+    dispatch(PedigreeActions.setAddPedigreeRelMode(true));
   }
+
   render() {
     const addButtonStyle = {
       marginLeft: '10px',
@@ -91,7 +93,7 @@ componentWillUnmount() {
         <div className="content">
           <h5 className="category"> Relationships
             <FloatingActionButton
-              onClick={() => this.handleNewRecordClick(this.props.pds)}
+              onClick={() => this.handleNewPedigreeRelClick(this.props.pedigree)  }
               backgroundColor={'#7AC29A'}
               mini
               style={addButtonStyle}
