@@ -7,13 +7,13 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import * as PedigreeActions from '../../../actions/pedigree';
 import * as Colors from 'material-ui/lib/styles/colors';
 import LoadingGif from '../../LoadingGif';
-import moment from 'moment';
+// import moment from 'moment';
 
-class SubjectCardEdit extends React.Component {
+class PedigreeEditView extends React.Component {
 
   constructor(props) {
     super(props);
-
+    this.handleCloseClick = this.handleCloseClick.bind(this);
   }
 
   restorePedigree() {
@@ -22,11 +22,11 @@ class SubjectCardEdit extends React.Component {
 
   }
 
-  handleSaveClick(e) {
+  handleNewpedRelClick(e) {
     const { dispatch } = this.props;
   }
 
-  handleCancelClick() {
+  handleCloseClick() {
     // TODO: create this function - this.restorePedigree();
     const { dispatch } = this.props;
     dispatch(PedigreeActions.setAddPedigreeRelMode(false));
@@ -80,7 +80,7 @@ class SubjectCardEdit extends React.Component {
                     <h4> Subject Role___________   Related subject Role _____________ </h4>
                   </row>
                 <RaisedButton
-                  onMouseUp={this.handleNewRecordClick}
+                  onClick={this.handleNewpedRelClick}
                   label={'Create New'}
                   labelColor={'#7AC29A'}
                   type="submit"
@@ -90,7 +90,7 @@ class SubjectCardEdit extends React.Component {
                   style={{ width: '100%' }}
                   labelColor={Colors.red400}
                   label="Cancel"
-                  onMouseUp={this.handleCancelClick}
+                  onClick={this.handleCloseClick}
                 />
               </div>
             </div>
@@ -104,7 +104,7 @@ class SubjectCardEdit extends React.Component {
 //   history: React.PropTypes.object,
 // };
 
-SubjectCardEdit.propTypes = {
+PedigreeEditView.propTypes = {
   dispatch: React.PropTypes.func,
   protocol: React.PropTypes.object,
   subject: React.PropTypes.object,
@@ -131,4 +131,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(SubjectCardEdit);
+export default connect(mapStateToProps)(PedigreeEditView);
