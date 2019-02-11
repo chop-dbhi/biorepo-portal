@@ -7,6 +7,7 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import * as PedigreeActions from '../../../actions/pedigree';
 import * as Colors from 'material-ui/lib/styles/colors';
 import LoadingGif from '../../LoadingGif';
+import SelectField from 'material-ui/lib/select-field';
 // import moment from 'moment';
 
 class PedigreeEditView extends React.Component {
@@ -20,6 +21,11 @@ class PedigreeEditView extends React.Component {
     // Restores the current Pedigree view with server's pedigree state
     const { dispatch } = this.props;
 
+  }
+
+  handleRelationshipSelect(e, index, value) {
+    const { dispatch } = this.props;
+    // dispatch(RecordActions.setSelectedRelationship(value));
   }
 
   handleNewpedRelClick(e) {
@@ -74,10 +80,20 @@ class PedigreeEditView extends React.Component {
               <div className="card" style={cardStyle}>
                 <h3 className="category" style={{ textAlign: 'center' }}> Add a new Relationship </h3>
                   <row>
-                    <h4> Subject     ___________   Related Subject      _____________ </h4>
+                    <h4> Subject     ___________   </h4>
+                    <SelectField
+                      onChange={this.handleRecordLabelSelect}
+                      style={{ width: '100%' }}
+                      value={this.props.selectedLabel}
+                    >
+                      {labels.map((label, i) => (
+                        <MenuItem key={i} value={label[0]} primaryText={label[1]} />
+                      ))}
+                    </SelectField>
                   </row>
                   <row>
-                    <h4> Subject Role___________   Related subject Role _____________ </h4>
+
+                    <h4>  Subject Role _____________  Related subject Role _____________ </h4>
                   </row>
                 <RaisedButton
                   onClick={this.handleNewpedRelClick}
