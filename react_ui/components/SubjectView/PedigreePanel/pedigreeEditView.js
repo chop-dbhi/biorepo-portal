@@ -8,6 +8,8 @@ import * as PedigreeActions from '../../../actions/pedigree';
 import * as Colors from 'material-ui/lib/styles/colors';
 import LoadingGif from '../../LoadingGif';
 import SelectField from 'material-ui/lib/select-field';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import TextField from 'material-ui/lib/text-field';
 // import moment from 'moment';
 
 class PedigreeEditView extends React.Component {
@@ -80,20 +82,46 @@ class PedigreeEditView extends React.Component {
               <div className="card" style={cardStyle}>
                 <h3 className="category" style={{ textAlign: 'center' }}> Add a new Relationship </h3>
                   <row>
-                    <h4> Subject     ___________   </h4>
-                    <SelectField
-                      onChange={this.handleRecordLabelSelect}
-                      style={{ width: '100%' }}
-                      value={this.props.selectedLabel}
-                    >
-                      {labels.map((label, i) => (
-                        <MenuItem key={i} value={label[0]} primaryText={label[1]} />
-                      ))}
-                    </SelectField>
+                  <div className="col-md-6">
+                    <TextField
+                      style={{ width: '100%', whiteSpace: 'nowrap' }}
+                      value={this.props.subject.activeSubject.organization_subject_id}
+                      floatingLabelText={'Subject'}
+                    />
+                    </div>
+                    <div className="col-md-6">
+                      <SelectField
+                        floatingLabelText={'Related Subject'}
+                        style={{ width: '100%' }}
+                        value={this.props.subject.activeSubject.organization_subject_id}
+                      >
+                        <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
+                        </MenuItem>
+                      </SelectField>
+                    </div>
                   </row>
-                  <row>
 
-                    <h4>  Subject Role _____________  Related subject Role _____________ </h4>
+                  <row>
+                  <div className="col-md-6">
+                    <SelectField
+                      floatingLabelText={'Subject Role'}
+                      style={{ width: '100%' }}
+                      value={this.props.subject.activeSubject.organization_subject_id}
+                    >
+                      <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
+                      </MenuItem>
+                    </SelectField>
+                  </div>
+                  <div className="col-md-6">
+                    <SelectField
+                      floatingLabelText={'Related Subject Role'}
+                      style={{ width: '100%' }}
+                      value={this.props.subject.activeSubject.organization_subject_id}
+                    >
+                      <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
+                      </MenuItem>
+                    </SelectField>
+                  </div>
                   </row>
                 <RaisedButton
                   onClick={this.handleNewpedRelClick}
