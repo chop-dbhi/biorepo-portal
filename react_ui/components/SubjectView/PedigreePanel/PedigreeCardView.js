@@ -11,17 +11,6 @@ class PedigreeCardView extends React.Component {
     super(props);
     this.handleNewPedigreeRelClick = this.handleNewPedigreeRelClick.bind(this);
   }
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch(PedigreeActions.fetchPedigree(
-      this.props.activeProtocolId,
-      this.props.subject.id));
-  }
-
-  componentWillUnmount() {
-    const { dispatch } = this.props;
-    dispatch(PedigreeActions.clearPedigreeState());
-  }
 
   // get the related subject and the related
   // subject role in json format by filtering out current subject info.
