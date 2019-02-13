@@ -5,11 +5,13 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import RaisedButton from 'material-ui/lib/raised-button';
 import * as PedigreeActions from '../../../actions/pedigree';
+import * as SubjectActions from '../../../actions/subject';
 import * as Colors from 'material-ui/lib/styles/colors';
 import LoadingGif from '../../LoadingGif';
 import SelectField from 'material-ui/lib/select-field';
 import MenuItem from 'material-ui/lib/menus/menu-item';
 import TextField from 'material-ui/lib/text-field';
+
 // import moment from 'moment';
 
 class PedigreeEditView extends React.Component {
@@ -17,6 +19,35 @@ class PedigreeEditView extends React.Component {
   constructor(props) {
     super(props);
     this.handleCloseClick = this.handleCloseClick.bind(this);
+    this.state = {
+      relatedSubject: '',
+      subjectRole: '',
+      relatedSubjectRole: '',
+    }
+  }
+
+
+  // componentWillMount(){
+  //   const { dispatch } = this.props;
+  //   dispatch(SubjectActions.fetchSubjects(this.props.protocol.activeProtocolId));
+  // }
+
+  menuItemsSubjects(){
+    let subjectList = null;
+    const subjects = this.props.subject.items;
+    console.log(subjects !=null)
+    if(subjects !=null){
+      subjectList =
+        subjects.map((subject, i) => (
+          <MenuItem key={i} value={subject[0]} primaryText={subject.organization_subject_id} />
+        ));
+    }
+    else{
+      subjectList = <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
+      </MenuItem>;
+
+    }
+    return subjectList;
   }
 
   restorePedigree() {
@@ -75,6 +106,7 @@ class PedigreeEditView extends React.Component {
       position: 'fixed',
       zIndex: '1000',
     };
+    const { value } = this.state;
       return (
         <section>
           <div style={backdropStyle}></div>
@@ -93,10 +125,10 @@ class PedigreeEditView extends React.Component {
                       <SelectField
                         floatingLabelText={'Related Subject'}
                         style={{ width: '100%' }}
-                        value={this.props.subject.activeSubject.organization_subject_id}
+                        value={value}
+                        onChange={this.handleChange('relatedSubject') }
                       >
-                        <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
-                        </MenuItem>
+                      {this.menuItemsSubjects()}
                       </SelectField>
                     </div>
                   </row>
@@ -117,9 +149,10 @@ class PedigreeEditView extends React.Component {
                       floatingLabelText={'Related Subject Role'}
                       style={{ width: '100%' }}
                       value={this.props.subject.activeSubject.organization_subject_id}
+
                     >
-                      <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
-                      </MenuItem>
+                    <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
+                    </MenuItem>
                     </SelectField>
                   </div>
                   </row>
