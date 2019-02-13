@@ -1,11 +1,12 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
 import { connect } from 'react-redux';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import RaisedButton from 'material-ui/lib/raised-button';
+import PropTypes from 'prop-types';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import RaisedButton from '@material-ui/core/Button';
 import * as RecordActions from '../../../actions/record';
-import * as Colors from 'material-ui/lib/styles/colors';
+import * as Colors from '@material-ui/core/colors';
 
 class EditLabelModal extends React.Component {
 
@@ -75,7 +76,7 @@ class EditLabelModal extends React.Component {
             <div className="more">
             </div>
             <div className="content">
-              <SelectField
+              <Select
                 style={{ width: '100%' }}
                 onChange={this.onChange}
                 value={this.props.activeRecord.label}
@@ -83,7 +84,7 @@ class EditLabelModal extends React.Component {
                 {labels.map((label, i) => (
                   <MenuItem key={i} value={label[0]}>{label[1]}</MenuItem>))
                 }
-              </SelectField>
+              </Select>
             </div>
             <RaisedButton
               style={{ width: '100%' }}
@@ -99,13 +100,13 @@ class EditLabelModal extends React.Component {
 }
 
 EditLabelModal.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  linkMode: React.PropTypes.bool,
-  selectedLabel: React.PropTypes.object,
-  activePDS: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  activeRecord: PropTypes.object,
+  linkMode: PropTypes.bool,
+  selectedLabel: PropTypes.object,
+  activePDS: PropTypes.object,
 };
 
 function mapStateToProps(state) {

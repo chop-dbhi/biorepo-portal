@@ -61,6 +61,8 @@ export function setActiveProtocol(protocolId) {
       dispatch(fetchOrganizations(protocolId));
       // Refresh PDS for the select Protocol
       dispatch(PDSActions.fetchPDS(protocolId));
+      // get protocol details
+      dispatch(fetchProtocol(protocolId));
     }
     // Update our state with the Protocol given
     dispatch({
@@ -78,10 +80,9 @@ export function requestProtocol() {
 
 export function receiveProtocol(json) {
   return dispatch => {
-    dispatch(setActiveProtocol(json.id));
     dispatch({
       type: RECEIVE_PROTOCOL,
-      protocol: json,
+      items: json,
     });
   };
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import * as SubjectActions from '../../../actions/subject';
 
 class LinkModeBanner extends React.Component {
@@ -36,7 +37,7 @@ class LinkModeBanner extends React.Component {
 }
 
 LinkModeBanner.propTypes = {
-  dispatch: React.PropTypes.func,
+  dispatch: PropTypes.func,
 };
 
 function mapStateToProps(state) {

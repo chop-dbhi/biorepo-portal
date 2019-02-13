@@ -1,11 +1,12 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import RaisedButton from 'material-ui/lib/raised-button';
+import PropTypes from 'prop-types';
+import MenuItem from '@material-ui/core/MenuItem';
 import LoadingGif from '../../../LoadingGif';
 import * as RecordActions from '../../../../actions/record';
-import * as Colors from 'material-ui/lib/styles/colors';
+import * as Colors from '@material-ui/core/colors';
+import Button from 'react-bootstrap/Button';
+import Select from 'react-select';
 
 import { connect } from 'react-redux';
 
@@ -13,25 +14,36 @@ class NewRecordLabelSelect extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = { selectedLabel: '',};
     this.handleRecordLabelSelect = this.handleRecordLabelSelect.bind(this);
     this.handleNewRecordClick = this.handleNewRecordClick.bind(this);
     this.handleCloseClick = this.handleCloseClick.bind(this);
   }
 
+  recordLabelOptions() {
+    let labelList = null;
+    let labels = this.props.pds.driver_configuration.labels
+    labelList = labels.map(label => ({
+      value: label[0],
+      label: label[1],
+    }));
+    return labelList
+  }
+
   handleRecordLabelSelect(e, index, value) {
     const { dispatch } = this.props;
-    dispatch(RecordActions.setSelectedLabel(value));
+    this.setState({selectedLabel: e});
   }
 
   handleNewRecordClick() {
     const { dispatch } = this.props;
-    if (this.props.selectedLabel === null) {
+    if (this.state.selectedLabel === null) {
       dispatch(RecordActions.setRecordError('Please select a record label.'));
       return;
     }
     dispatch(RecordActions.createRecordRequest());
     const url = `/dataentry/protocoldatasource/${this.props.pds.id}/subject/` +
-      `${this.props.subject.id}/create/?label_id=${this.props.selectedLabel}`;
+      `${this.props.subject.id}/create/?label_id=${this.state.selectedLabel.value}`;
     window.location.href = url;
   }
 
@@ -87,51 +99,46 @@ class NewRecordLabelSelect extends React.Component {
                   <div className="more">
                   </div>
                   <div className="content">
-                    <SelectField
+                    <Select
                       onChange={this.handleRecordLabelSelect}
                       style={{ width: '100%' }}
-                      value={this.props.selectedLabel}
-                      floatingLabelText={'Select Label'}
-                    >
-                      {labels.map((label, i) => (
-                        <MenuItem key={i} value={label[0]} primaryText={label[1]} />
-                      ))}
-                    </SelectField>
+                      value={this.state.selectedLabel}
+                      options={this.recordLabelOptions()}
+                      placeholder="Search for record Label"
+                    />
                   </div>
-                  <RaisedButton
-                    onMouseUp={this.handleNewRecordClick}
-                    label={'Create New'}
-                    labelColor={'#7AC29A'}
-                    type="submit"
+                  <Button
+                    type='submit'
+                    size="sm"
                     style={{ width: '100%' }}
-                  />
-                  <RaisedButton
+                    onClick={this.handleNewRecordClick}
+                  > Create New </Button>
+                  <Button
                     style={{ width: '100%' }}
-                    labelColor={Colors.red400}
+                    variant="danger"
+                    type='cancel'
+                    size="sm"
                     label="Cancel"
                     onMouseUp={this.handleCloseClick}
-                  />
+                  > Cancel </Button>
                   {this.props.newRecordError != null ?
                     <div className="alert alert-danger">{this.props.newRecordError}</div>
                   : null}
                 </div>
               </div>
             </section>
-
-
           : null
-
     );
   }
 }
 
 NewRecordLabelSelect.propTypes = {
-  dispatch: React.PropTypes.func,
-  subject: React.PropTypes.object,
-  selectedLabel: React.PropTypes.number,
-  pds: React.PropTypes.object,
-  isCreating: React.PropTypes.bool,
-  newRecordError: React.PropTypes.string,
+  dispatch: PropTypes.func,
+  subject: PropTypes.object,
+  selectedLabel: PropTypes.number,
+  pds: PropTypes.object,
+  isCreating: PropTypes.bool,
+  newRecordError: PropTypes.string,
 };
 
 function mapStateToProps(state) {

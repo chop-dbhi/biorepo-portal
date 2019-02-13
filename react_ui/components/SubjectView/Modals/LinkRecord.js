@@ -1,10 +1,11 @@
 import React from 'react';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import RaisedButton from 'material-ui/lib/raised-button';
+import PropTypes from 'prop-types';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import RaisedButton from '@material-ui/core/Button';
 import * as RecordActions from '../../../actions/record';
 import * as SubjectActions from '../../../actions/subject';
-import * as Colors from 'material-ui/lib/styles/colors';
+import * as Colors from '@material-ui/core/colors';
 
 import { connect } from 'react-redux';
 
@@ -114,7 +115,7 @@ class LinkRecord extends React.Component {
                         null}
                     </h6>
                   </div>
-                  <SelectField
+                  <Select
                     onChange={this.onChange}
                     value={this.props.selectedLinkType}
                     style={{ width: '100%' }}
@@ -122,7 +123,7 @@ class LinkRecord extends React.Component {
                     {availableLinkTypes.map((link, i) => (
                       <MenuItem key={i} value={link.id} primaryText={link.desc} />
                       ))}
-                  </SelectField>
+                  </Select>
                   <div style={recordStyle}>
                     <h6>
                       {secondaryRecord ?
@@ -161,14 +162,14 @@ class LinkRecord extends React.Component {
 }
 
 LinkRecord.propTypes = {
-  dispatch: React.PropTypes.func,
-  subject: React.PropTypes.object,
-  selectedLabel: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  pendingLinkedRecord: React.PropTypes.object,
-  selectedLinkType: React.PropTypes.number,
-  linkError: React.PropTypes.string,
-  availableLinkTypes: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  subject: PropTypes.object,
+  selectedLabel: PropTypes.object,
+  activeRecord: PropTypes.object,
+  pendingLinkedRecord: PropTypes.object,
+  selectedLinkType: PropTypes.number,
+  linkError: PropTypes.string,
+  availableLinkTypes: PropTypes.object,
 };
 
 function mapStateToProps(state) {

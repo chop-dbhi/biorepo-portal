@@ -2,11 +2,12 @@
 // jscs:disable maximumLineLength
 import React from 'react';
 import { connect } from 'react-redux';
-import RaisedButton from 'material-ui/lib/raised-button';
+import PropTypes from 'prop-types';
+import RaisedButton from '@material-ui/core/Button';
 import SubjectTextField from './SubjectTextField';
 import SubjectOrgSelectField from './SubjectOrgSelectField';
 import * as SubjectActions from '../../../actions/subject';
-import * as Colors from 'material-ui/lib/styles/colors';
+import * as Colors from '@material-ui/core/colors';
 import ExternalIDs from './ExternalIds';
 import LoadingGif from '../../LoadingGif';
 import moment from 'moment';
@@ -194,15 +195,15 @@ class SubjectCardEdit extends React.Component {
 
 // Provides History to the SubjectCardEdit component
 SubjectCardEdit.contextTypes = {
-  history: React.PropTypes.object,
+  history: PropTypes.object,
 };
 
 SubjectCardEdit.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  pds: React.PropTypes.object,
-  savingSubject: React.PropTypes.bool,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  pds: PropTypes.object,
+  savingSubject: PropTypes.bool,
 };
 
 function mapStateToProps(state) {

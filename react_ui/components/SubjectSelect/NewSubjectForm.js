@@ -1,14 +1,19 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as SubjectActions from '../../actions/subject';
-import RaisedButton from 'material-ui/lib/raised-button';
-import Divider from 'material-ui/lib/divider';
-import * as Colors from 'material-ui/lib/styles/colors';
+import RaisedButton from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import * as Colors from '@material-ui/core/colors';
 import SubjectOrgSelectField from '../SubjectView/SubjectPanel/SubjectOrgSelectField';
 import SubjectTextField from '../SubjectView/SubjectPanel/SubjectTextField';
 import LoadingGif from '../LoadingGif';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import Button from 'react-bootstrap/Button'
+import PureModal from 'react-pure-modal';
+import 'react-pure-modal/dist/react-pure-modal.min.css';
+
 
 // Use named export for unconnected component (for testing)
 export class NewSubjectForm extends React.Component {
@@ -17,6 +22,7 @@ export class NewSubjectForm extends React.Component {
     super(props);
     this.handleSaveClick = this.handleSaveClick.bind(this);
     this.handleCloseClick = this.handleCloseClick.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleSaveClick(e) {
@@ -34,9 +40,20 @@ export class NewSubjectForm extends React.Component {
     dispatch(SubjectActions.setAddSubjectMode());
   }
 
+  componentWillMount() {
+    document.addEventListener('click', this.handleClick);
+  }
+
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch(SubjectActions.fetchSubjects(this.props.protocol.activeProtocolId));
+    document.removeEventListener('click', this.handleClick);
+  }
+
+  handleClick(e) {
+    if (e.target.className === "pure-modal-backdrop") {
+      this.handleCloseClick();
+    }
   }
 
   validateDate(date) {
@@ -105,9 +122,14 @@ export class NewSubjectForm extends React.Component {
   }
 
   renderErrors() {
+    let errors =  '';
     const serverErrors = this.props.newFormErrors.server;
     const formErrors = this.props.newFormErrors.form;
-    const errors = serverErrors.concat(formErrors);
+    if (serverErrors) {
+      errors = serverErrors.concat(formErrors);
+    } else {
+      errors = formErrors;
+    }
     const style = {
       fontSize: '12px',
       marginTop: '15px',
@@ -156,74 +178,82 @@ export class NewSubjectForm extends React.Component {
         <div style={backdropStyle}></div>
         <div className="col-md-12 col-sm-12">
           <div className="col-md-4 col-sm-4" style={newSubFormStyle}>
-            <div className="card" style={cardStyle}>
-              <h6 className="category"><center>Add New Subject</center></h6>
-              <div className="more">
+            <PureModal
+              isOpen
+              header="add a new subject"
+              onCLose={() => {
+                this.handleCloseClick;
+                return true;}}
+                >
+              <div className="card" style={cardStyle}>
+                <h6 className="category"><center>Add New Subject</center></h6>
+                <div className="more">
+                </div>
+                <div className="content">
+                  <form id="subject-form" onSubmit={this.handleSaveClick}>
+                    <SubjectOrgSelectField
+                      new
+                      error={this.props.newFormErrors.form.org}
+                      value={newSub.organization}
+                    />
+                    <SubjectTextField
+                      new
+                      error={this.props.newFormErrors.form.first_name}
+                      label={'First Name'}
+                      value={null}
+                      skey={'first_name'}
+                    />
+                    <SubjectTextField
+                      new
+                      error={this.props.newFormErrors.form.last_name}
+                      label={'Last Name'}
+                      value={null}
+                      skey={'last_name'}
+                    />
+                    <SubjectTextField
+                      new
+                      error={this.props.newFormErrors.form.org_id}
+                      label={`${this.props.subject.newSubject.organization_id_label}`}
+                      value={null}
+                      skey={'organization_subject_id'}
+                    />
+                    <SubjectTextField
+                      new
+                      error={this.props.newFormErrors.form.org_valid}
+                      label={`Verify ${this.props.subject.newSubject.organization_id_label}`}
+                      value={null}
+                      skey={'organization_subject_id_validation'}
+                    />
+                    <SubjectTextField
+                      new
+                      error={this.props.newFormErrors.form.dob}
+                      label={'Date of Birth (YYYY-MM-DD)'}
+                      value={null}
+                      skey={'dob'}
+                    />
+                    {this.props.savingSubject ? <LoadingGif style={{ width: '100%' }} /> :
+                      <div>
+                        <Button
+                          label={'Add Subject'}
+                          labelcolor={'#7AC29A'}
+                          type="submit"
+                          style={{ width: '100%' }}
+                          onClick={this.handleSaveClick}
+                        > Add Subject </Button>
+                        <Divider />
+                        <Button
+                          label={'Cancel'}
+                          labelcolor={Colors.red400}
+                          onClick={this.handleCloseClick}
+                          style={{ width: '100%' }}
+                        > Cancel </Button>
+                      </div>
+                    }
+                  </form>
+                {this.renderErrors()}
+                </div>
               </div>
-              <div className="content">
-                <form id="subject-form" onSubmit={this.handleSaveClick}>
-                  <SubjectOrgSelectField
-                    new
-                    error={this.props.newFormErrors.form.org}
-                    value={newSub.organization}
-                  />
-                  <SubjectTextField
-                    new
-                    error={this.props.newFormErrors.form.first_name}
-                    label={'First Name'}
-                    value={null}
-                    skey={'first_name'}
-                  />
-                  <SubjectTextField
-                    new
-                    error={this.props.newFormErrors.form.last_name}
-                    label={'Last Name'}
-                    value={null}
-                    skey={'last_name'}
-                  />
-                  <SubjectTextField
-                    new
-                    error={this.props.newFormErrors.form.org_id}
-                    label={`${this.props.subject.newSubject.organization_id_label}`}
-                    value={null}
-                    skey={'organization_subject_id'}
-                  />
-                  <SubjectTextField
-                    new
-                    error={this.props.newFormErrors.form.org_valid}
-                    label={`Verify ${this.props.subject.newSubject.organization_id_label}`}
-                    value={null}
-                    skey={'organization_subject_id_validation'}
-                  />
-                  <SubjectTextField
-                    new
-                    error={this.props.newFormErrors.form.dob}
-                    label={'Date of Birth (YYYY-MM-DD)'}
-                    value={null}
-                    skey={'dob'}
-                  />
-                  {this.props.savingSubject ? <LoadingGif style={{ width: '100%' }} /> :
-                    <div>
-                      <RaisedButton
-                        label={'Add Subject'}
-                        labelColor={'#7AC29A'}
-                        type="submit"
-                        style={{ width: '100%' }}
-                      />
-                      <Divider />
-                      <RaisedButton
-                        label={'Cancel'}
-                        labelColor={Colors.red400}
-                        onClick={this.handleCloseClick}
-                        style={{ width: '100%' }}
-                      />
-                    </div>
-                  }
-
-                </form>
-              {this.renderErrors()}
-              </div>
-            </div>
+            </PureModal>
           </div>
         </div>
       </section>
@@ -233,12 +263,12 @@ export class NewSubjectForm extends React.Component {
 }
 
 NewSubjectForm.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  pds: React.PropTypes.object,
-  savingSubject: React.PropTypes.bool,
-  newFormErrors: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  pds: PropTypes.object,
+  savingSubject: PropTypes.bool,
+  newFormErrors: PropTypes.object,
 };
 
 function mapStateToProps(state) {

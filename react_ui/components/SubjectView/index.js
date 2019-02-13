@@ -1,6 +1,7 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 // jscs:disable maximumLineLength
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import BackButton from '../BackButton';
 import LoadingGif from '../LoadingGif';
@@ -16,8 +17,8 @@ class SubjectView extends React.Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    const protocolId = this.props.params.prot_id;
-    const subjectId = this.props.params.sub_id;
+    const protocolId = this.props.match.params.prot_id;
+    const subjectId = this.props.match.params.sub_id;
 
     if (!this.props.subject.activeSubject) {
       dispatch(SubjectActions.fetchSubject(protocolId, subjectId));
@@ -37,7 +38,7 @@ class SubjectView extends React.Component {
         <div className="row">
           <div className="col-md-4">
             <section>
-              <SubjectPanel subject={subject} edit={this.props.params.edit} path={path} />
+              <SubjectPanel subject={subject} edit={this.props.match.params.edit} path={path} />
             </section>
             <section>
               <SubjFamPanel />
@@ -58,13 +59,13 @@ class SubjectView extends React.Component {
 }
 
 SubjectView.propTypes = {
-  dispatch: React.PropTypes.func,
-  subject: React.PropTypes.object,
-  protocol: React.PropTypes.object,
-  editLabelMode: React.PropTypes.bool,
-  addSubjFamRelMode: React.PropTypes.bool,
-  location: React.PropTypes.object,
-  params: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  subject: PropTypes.object,
+  protocol: PropTypes.object,
+  editLabelMode: PropTypes.bool,
+  addSubjFamRelMode: PropTypes.bool,
+  location: PropTypes.object,
+  params: PropTypes.object,
 };
 
 function mapStateToProps(state) {

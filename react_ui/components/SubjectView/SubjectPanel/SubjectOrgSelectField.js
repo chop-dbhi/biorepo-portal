@@ -1,31 +1,45 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
+// import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import * as SubjectActions from '../../../actions/subject';
+import Select from 'react-select';
+
 
 class SubjectOrgSelectField extends React.Component {
   constructor(props) {
     super(props);
+    this.state = { value: '',};
     this.onChange = this.onChange.bind(this);
   }
 
+  orgOptions(){
+    let orgList = null;
+    let orgs = this.props.orgs
+    orgList = orgs.map(org => ({
+      value: org.id,
+      label: org.name,
+    }));
+    return orgList
+  }
   onChange(e, index, value) {
     const { dispatch } = this.props;
     // Check to see if we're editing an existing subject
     if (!this.props.new) {
       // Changing the input fields should update the state of the active subject
       const sub = this.props.subject;
-      sub.organization = value;
+      sub.organization = e.value;
       dispatch(SubjectActions.setActiveSubject(sub));
     } else {
       const newSub = this.props.newSubject;
-      newSub.organization = value;
+      newSub.organization = e.value;
       this.props.orgs.forEach((org) => {
         if (value == org.id) {
           newSub.organization_id_label = org.subject_id_label
         }
       })
+      this.setState({value: e});
       dispatch(SubjectActions.setNewSubject(newSub));
     }
   }
@@ -38,30 +52,27 @@ class SubjectOrgSelectField extends React.Component {
       errorText = 'Please select an organization.';
     }
     return (
-      <SelectField
-        onChange={this.onChange}
-        style={{ width: '100%', whiteSpace: 'nowrap' }}
-        value={this.props.value}
-        errorText={errorText}
-        floatingLabelText={'Organization'}
-      >
-        {orgs ?
-          orgs.map((org, i) => (
-            <MenuItem key={i} value={org.id} primaryText={org.name} />
-          )) : <MenuItem />}
-      </SelectField>
+      <div>
+        <h6 className="category"> Organization </h6>
+          <Select
+            onChange={this.onChange}
+            value={this.props.value}
+            options={this.orgOptions()}
+            placeholder="Search for Organization"
+          />
+      </div>
     );
   }
 }
 
 SubjectOrgSelectField.propTypes = {
-  dispatch: React.PropTypes.func,
-  new: React.PropTypes.bool,
-  orgs: React.PropTypes.array,
-  subject: React.PropTypes.object,
-  newSubject: React.PropTypes.object,
-  error: React.PropTypes.string,
-  value: React.PropTypes.number,
+  dispatch: PropTypes.func,
+  new: PropTypes.bool,
+  orgs: PropTypes.array,
+  subject: PropTypes.object,
+  newSubject: PropTypes.object,
+  error: PropTypes.string,
+  value: PropTypes.number,
 };
 
 function mapStateToProps(state) {
@@ -69,6 +80,7 @@ function mapStateToProps(state) {
     subject: state.subject.activeSubject,
     newSubject: state.subject.newSubject,
     orgs: state.protocol.orgs,
+    value: state.value,
   };
 }
 
