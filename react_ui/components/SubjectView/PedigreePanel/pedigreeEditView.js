@@ -125,8 +125,7 @@ class PedigreeEditView extends React.Component {
                       <SelectField
                         floatingLabelText={'Related Subject'}
                         style={{ width: '100%' }}
-                        value={value}
-                        onChange={this.handleChange('relatedSubject') }
+                        value={this.state.relatedSubject}
                       >
                       {this.menuItemsSubjects()}
                       </SelectField>
