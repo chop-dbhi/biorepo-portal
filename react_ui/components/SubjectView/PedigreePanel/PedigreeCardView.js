@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import * as PedigreeActions from '../../../actions/pedigree';
-import ContentAdd from 'material-ui/lib/svg-icons/content/add';
-import FloatingActionButton from 'material-ui/lib/floating-action-button';
+import Icon from '@material-ui/core/Icon';
+import FloatingActionButton from '@material-ui/core/Button';
 
 class PedigreeCardView extends React.Component {
 
@@ -87,7 +87,7 @@ class PedigreeCardView extends React.Component {
               mini
               style={addButtonStyle}
               disableTouchRipple={true}>
-              <ContentAdd />
+              <Icon className={classes.icon}>add_circle</Icon>
             </FloatingActionButton>
           </h5>
           <table className="table table-striped">

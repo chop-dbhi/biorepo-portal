@@ -3,14 +3,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import RaisedButton from 'material-ui/lib/raised-button';
+import RaisedButton from '@material-ui/core/Button';
 import * as PedigreeActions from '../../../actions/pedigree';
 import * as SubjectActions from '../../../actions/subject';
-import * as Colors from 'material-ui/lib/styles/colors';
+import * as Colors from '@material-ui/core/colors';
 import LoadingGif from '../../LoadingGif';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import TextField from 'material-ui/lib/text-field';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
 
 // import moment from 'moment';
 
@@ -72,7 +72,9 @@ class PedigreeEditView extends React.Component {
     // this.context.history.goBack();
   }
 
-
+  Icons(props) {
+  const { classes } = props;
+  }
   isValid() {
     // validate pedigree relationship form
   }
@@ -122,29 +124,29 @@ class PedigreeEditView extends React.Component {
                     />
                     </div>
                     <div className="col-md-6">
-                      <SelectField
+                      <Select
                         floatingLabelText={'Related Subject'}
                         style={{ width: '100%' }}
                         value={this.state.relatedSubject}
                       >
                       {this.menuItemsSubjects()}
-                      </SelectField>
+                      </Select>
                     </div>
                   </row>
 
                   <row>
                   <div className="col-md-6">
-                    <SelectField
+                    <Select
                       floatingLabelText={'Subject Role'}
                       style={{ width: '100%' }}
                       value={this.props.subject.activeSubject.organization_subject_id}
                     >
                       <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
                       </MenuItem>
-                    </SelectField>
+                    </Select>
                   </div>
                   <div className="col-md-6">
-                    <SelectField
+                    <Select
                       floatingLabelText={'Related Subject Role'}
                       style={{ width: '100%' }}
                       value={this.props.subject.activeSubject.organization_subject_id}
@@ -152,7 +154,7 @@ class PedigreeEditView extends React.Component {
                     >
                     <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
                     </MenuItem>
-                    </SelectField>
+                    </Select>
                   </div>
                   </row>
                 <RaisedButton

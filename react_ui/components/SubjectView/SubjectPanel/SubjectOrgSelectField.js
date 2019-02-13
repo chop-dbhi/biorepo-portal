@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import * as SubjectActions from '../../../actions/subject';
 
 class SubjectOrgSelectField extends React.Component {
@@ -38,7 +38,7 @@ class SubjectOrgSelectField extends React.Component {
       errorText = 'Please select an organization.';
     }
     return (
-      <SelectField
+      <Select
         onChange={this.onChange}
         style={{ width: '100%', whiteSpace: 'nowrap' }}
         value={this.props.value}
@@ -49,7 +49,7 @@ class SubjectOrgSelectField extends React.Component {
           orgs.map((org, i) => (
             <MenuItem key={i} value={org.id} primaryText={org.name} />
           )) : <MenuItem />}
-      </SelectField>
+      </Select>
     );
   }
 }

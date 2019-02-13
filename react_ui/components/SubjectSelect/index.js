@@ -1,7 +1,7 @@
 import React from 'react';
 import Griddle from 'griddle-react';
 import { connect } from 'react-redux';
-import RaisedButton from 'material-ui/lib/raised-button';
+import RaisedButton from '@material-ui/core/Button';
 import BackButton from '../BackButton';
 import NewSubjectForm from './NewSubjectForm';
 import LoadingGif from '../LoadingGif';

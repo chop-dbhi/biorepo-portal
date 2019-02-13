@@ -1,11 +1,11 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import RaisedButton from 'material-ui/lib/raised-button';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import RaisedButton from '@material-ui/core/Button';
 import LoadingGif from '../../../LoadingGif';
 import * as RecordActions from '../../../../actions/record';
-import * as Colors from 'material-ui/lib/styles/colors';
+import * as Colors from '@material-ui/core/colors';
 
 import { connect } from 'react-redux';
 
@@ -87,7 +87,7 @@ class NewRecordLabelSelect extends React.Component {
                   <div className="more">
                   </div>
                   <div className="content">
-                    <SelectField
+                    <Select
                       onChange={this.handleRecordLabelSelect}
                       style={{ width: '100%' }}
                       value={this.props.selectedLabel}
@@ -95,7 +95,7 @@ class NewRecordLabelSelect extends React.Component {
                       {labels.map((label, i) => (
                         <MenuItem key={i} value={label[0]} primaryText={label[1]} />
                       ))}
-                    </SelectField>
+                    </Select>
                   </div>
                   <RaisedButton
                     onMouseUp={this.handleNewRecordClick}

@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import FloatingActionButton from 'material-ui/lib/floating-action-button';
-import RaisedButton from 'material-ui/lib/raised-button';
-import ContentAdd from 'material-ui/lib/svg-icons/content/add';
+import FloatingActionButton from '@material-ui/core/Button';
+import RaisedButton from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 import NewRecordLabelSelect from './NewRecordLabelSelect';
 import * as SubjectActions from '../../../../actions/subject';
 import * as RecordActions from '../../../../actions/record';
@@ -78,6 +78,10 @@ class PDSRecordGroup extends React.Component {
     }, this);
     return linked;
   }
+
+  Icons(props) {
+  const { classes } = props;
+}
 
   renderRecords(recordNodes) {
     return (
@@ -183,7 +187,7 @@ class PDSRecordGroup extends React.Component {
               style={addButtonStyle}
               disableTouchRipple={true}
             >
-              <ContentAdd />
+              <Icon className={classes.icon}>add_circle</Icon>
             </FloatingActionButton>
           :
             <FloatingActionButton
@@ -191,7 +195,7 @@ class PDSRecordGroup extends React.Component {
               mini
               style={addButtonStyle}
             >
-              <ContentAdd />
+              <Icon className={classes.icon}>add_circle</Icon>
             </FloatingActionButton>}
 
         </h5>

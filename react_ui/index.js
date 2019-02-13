@@ -9,9 +9,9 @@ import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { render } from 'react-dom';
 import store from './store';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 
-injectTapEventPlugin();
+
+
 
 /* eslint-disable no-underscore-dangle*/
 // Very manually constraining this to the root path until we establish proper

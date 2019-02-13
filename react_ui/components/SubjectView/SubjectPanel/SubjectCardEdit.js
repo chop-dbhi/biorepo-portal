@@ -2,11 +2,11 @@
 // jscs:disable maximumLineLength
 import React from 'react';
 import { connect } from 'react-redux';
-import RaisedButton from 'material-ui/lib/raised-button';
+import RaisedButton from '@material-ui/core/Button';
 import SubjectTextField from './SubjectTextField';
 import SubjectOrgSelectField from './SubjectOrgSelectField';
 import * as SubjectActions from '../../../actions/subject';
-import * as Colors from 'material-ui/lib/styles/colors';
+import * as Colors from '@material-ui/core/colors';
 import ExternalIDs from './ExternalIds';
 import LoadingGif from '../../LoadingGif';
 import moment from 'moment';

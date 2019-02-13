@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import TextField from 'material-ui/lib/text-field';
+import TextField from '@material-ui/core/TextField';
 import * as SubjectActions from '../../../actions/subject';
 
 class SubjectTextField extends React.Component {
