@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as PedigreeActions from '../../../actions/pedigree';
 import * as SubjectActions from '../../../actions/subject';
 import PedigreeCardView from './PedigreeCardView';
@@ -32,14 +33,14 @@ class PedigreePanel extends React.Component {
     }
 }
 PedigreePanel.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  activeSubject: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  activeProtocolId: React.PropTypes.number,
-  pedigree: React.PropTypes.object,
-  isFetching: React.PropTypes.bool,
-  subjects: React.PropTypes.array,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  activeSubject: PropTypes.object,
+  activeRecord: PropTypes.object,
+  activeProtocolId: PropTypes.number,
+  pedigree: PropTypes.object,
+  isFetching: PropTypes.bool,
+  subjects: PropTypes.array,
 };
 
 function mapStateToProps(state) {

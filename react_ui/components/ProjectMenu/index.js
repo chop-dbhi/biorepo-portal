@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
+import PropTypes from 'prop-types';
 import * as ProtocolActions from '../../actions/protocol';
 
 class ProjectMenu extends React.Component {
 
   componentDidMount() {
+    console.log("we are at least getting into component Did Mount in project index")
     const { dispatch } = this.props;
     dispatch(ProtocolActions.setActiveProtocol(null));
     if (this.props.protocol.items.length === 0 && !this.props.protocol.isFetching) {
@@ -36,8 +38,8 @@ class ProjectMenu extends React.Component {
 }
 
 ProjectMenu.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
 };
 
 function mapStateToProps(state) {

@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class Navbar extends React.Component {
 
@@ -61,7 +62,7 @@ class Navbar extends React.Component {
 }
 
 Navbar.propTypes = {
-  activeProtocolId: React.PropTypes.number,
+  activeProtocolId: PropTypes.number,
 };
 
 function mapStateToProps(state) {

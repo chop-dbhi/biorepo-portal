@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -55,13 +56,13 @@ class SubjectOrgSelectField extends React.Component {
 }
 
 SubjectOrgSelectField.propTypes = {
-  dispatch: React.PropTypes.func,
-  new: React.PropTypes.bool,
-  orgs: React.PropTypes.array,
-  subject: React.PropTypes.object,
-  newSubject: React.PropTypes.object,
-  error: React.PropTypes.string,
-  value: React.PropTypes.number,
+  dispatch: PropTypes.func,
+  new: PropTypes.bool,
+  orgs: PropTypes.array,
+  subject: PropTypes.object,
+  newSubject: PropTypes.object,
+  error: PropTypes.string,
+  value: PropTypes.number,
 };
 
 function mapStateToProps(state) {

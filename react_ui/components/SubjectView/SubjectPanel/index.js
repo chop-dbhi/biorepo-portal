@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import SubjectCardEdit from './SubjectCardEdit';
 import SubjectCardView from './SubjectCardView';
 
@@ -11,7 +12,7 @@ const SubjectPanel = (props) => {
 };
 
 SubjectPanel.propTypes = {
-  edit: React.PropTypes.string,
-  path: React.PropTypes.string,
+  edit: PropTypes.string,
+  path: PropTypes.string,
 };
 export default SubjectPanel;

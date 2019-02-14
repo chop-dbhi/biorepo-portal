@@ -1,6 +1,7 @@
 import React from 'react';
 import Griddle from 'griddle-react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import RaisedButton from '@material-ui/core/Button';
 import BackButton from '../BackButton';
 import NewSubjectForm from './NewSubjectForm';
@@ -149,11 +150,11 @@ class SubjectSelect extends React.Component {
 }
 
 SubjectSelect.propTypes = {
-  dispatch: React.PropTypes.func,
-  history: React.PropTypes.object,
-  params: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  protocol: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  history: PropTypes.object,
+  params: PropTypes.object,
+  subject: PropTypes.object,
+  protocol: PropTypes.object,
 };
 
 function mapStateToProps(state) {

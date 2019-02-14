@@ -2,6 +2,7 @@
 // jscs:disable maximumLineLength
 import React from 'react';
 import { Link } from 'react-router';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ExternalIDs from './ExternalIds';
 
@@ -32,10 +33,10 @@ const SubjectCardView = (props) => {
 };
 
 SubjectCardView.propTypes = {
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  pds: React.PropTypes.object,
-  path: React.PropTypes.string,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  pds: PropTypes.object,
+  path: PropTypes.string,
 };
 
 function mapStateToProps(state) {

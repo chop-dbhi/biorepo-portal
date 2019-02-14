@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import * as PedigreeActions from '../../../actions/pedigree';
 import Icon from '@material-ui/core/Icon';
 import FloatingActionButton from '@material-ui/core/Button';
@@ -105,13 +106,13 @@ class PedigreeCardView extends React.Component {
 }
 
 PedigreeCardView.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  activeProtocolId: React.PropTypes.number,
-  pedigree: React.PropTypes.object,
-  isFetching: React.PropTypes.bool,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  activeRecord: PropTypes.object,
+  activeProtocolId: PropTypes.number,
+  pedigree: PropTypes.object,
+  isFetching: PropTypes.bool,
 };
 
 function mapStateToProps(state) {

@@ -9,11 +9,14 @@ module.exports = {
     path: path.resolve(ROOT_PATH, 'brp/static/js'),
     filename: 'bundle.js',
   },
+  mode: 'development',
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
-        loaders: ['babel'],
+        use: [{
+          loader: 'babel-loader'
+        }],
         exclude: /node_modules/,
       },
     ],
@@ -21,7 +24,7 @@ module.exports = {
   externals: {
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['.js', '.jsx'],
   },
   plugins: [
     new webpack.DefinePlugin({

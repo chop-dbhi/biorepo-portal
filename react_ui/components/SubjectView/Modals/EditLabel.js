@@ -1,6 +1,7 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import RaisedButton from '@material-ui/core/Button';
@@ -99,13 +100,13 @@ class EditLabelModal extends React.Component {
 }
 
 EditLabelModal.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  linkMode: React.PropTypes.bool,
-  selectedLabel: React.PropTypes.object,
-  activePDS: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  activeRecord: PropTypes.object,
+  linkMode: PropTypes.bool,
+  selectedLabel: PropTypes.object,
+  activePDS: PropTypes.object,
 };
 
 function mapStateToProps(state) {

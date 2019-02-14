@@ -1,5 +1,6 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as RecordActions from '../../../actions/record';
 import { connect } from 'react-redux';
 
@@ -49,9 +50,9 @@ class LinkedRecords extends React.Component {
 }
 
 LinkedRecords.propTypes = {
-  dispatch: React.PropTypes.func,
-  activeRecord: React.PropTypes.object,
-  activeLinks: React.PropTypes.array,
+  dispatch: PropTypes.func,
+  activeRecord: PropTypes.object,
+  activeLinks: PropTypes.array,
 };
 
 function mapStateToProps(state) {

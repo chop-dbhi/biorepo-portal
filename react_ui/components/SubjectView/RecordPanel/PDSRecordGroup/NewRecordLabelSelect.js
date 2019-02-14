@@ -1,5 +1,6 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
+import PropTypes from 'prop-types';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import RaisedButton from '@material-ui/core/Button';
@@ -125,12 +126,12 @@ class NewRecordLabelSelect extends React.Component {
 }
 
 NewRecordLabelSelect.propTypes = {
-  dispatch: React.PropTypes.func,
-  subject: React.PropTypes.object,
-  selectedLabel: React.PropTypes.number,
-  pds: React.PropTypes.object,
-  isCreating: React.PropTypes.bool,
-  newRecordError: React.PropTypes.string,
+  dispatch: PropTypes.func,
+  subject: PropTypes.object,
+  selectedLabel: PropTypes.number,
+  pds: PropTypes.object,
+  isCreating: PropTypes.bool,
+  newRecordError: PropTypes.string,
 };
 
 function mapStateToProps(state) {

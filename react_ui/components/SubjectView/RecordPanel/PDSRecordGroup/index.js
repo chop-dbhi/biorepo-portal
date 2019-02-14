@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import FloatingActionButton from '@material-ui/core/Button';
 import RaisedButton from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
@@ -212,20 +213,20 @@ class PDSRecordGroup extends React.Component {
 }
 
 PDSRecordGroup.contextTypes = {
-  history: React.PropTypes.object,
+  history: PropTypes.object,
 };
 
 PDSRecordGroup.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  pds: React.PropTypes.object,
-  record: React.PropTypes.object,
-  records: React.PropTypes.array,
-  subject: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  activeLinks: React.PropTypes.array,
-  linkMode: React.PropTypes.bool,
-  selectedLabel: React.PropTypes.number,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  pds: PropTypes.object,
+  record: PropTypes.object,
+  records: PropTypes.array,
+  subject: PropTypes.object,
+  activeRecord: PropTypes.object,
+  activeLinks: PropTypes.array,
+  linkMode: PropTypes.bool,
+  selectedLabel: PropTypes.number,
 };
 
 function mapStateToProps(state) {

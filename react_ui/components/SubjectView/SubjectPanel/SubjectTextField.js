@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import * as SubjectActions from '../../../actions/subject';
@@ -42,14 +43,14 @@ class SubjectTextField extends React.Component {
 }
 
 SubjectTextField.propTypes = {
-  dispatch: React.PropTypes.func,
-  new: React.PropTypes.bool,
-  subject: React.PropTypes.object,
-  newSubject: React.PropTypes.object,
-  skey: React.PropTypes.string,
-  value: React.PropTypes.string,
-  error: React.PropTypes.string,
-  label: React.PropTypes.string,
+  dispatch: PropTypes.func,
+  new: PropTypes.bool,
+  subject: PropTypes.object,
+  newSubject: PropTypes.object,
+  skey: PropTypes.string,
+  value: PropTypes.string,
+  error: PropTypes.string,
+  label: PropTypes.string,
 };
 
 function mapStateToProps(state) {

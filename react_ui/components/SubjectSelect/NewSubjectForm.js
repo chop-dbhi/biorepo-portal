@@ -1,5 +1,6 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as SubjectActions from '../../actions/subject';
 import RaisedButton from '@material-ui/core/Button';
 import Divider from '@material-ui/core/divider';
@@ -233,12 +234,12 @@ export class NewSubjectForm extends React.Component {
 }
 
 NewSubjectForm.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  pds: React.PropTypes.object,
-  savingSubject: React.PropTypes.bool,
-  newFormErrors: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  pds: PropTypes.object,
+  savingSubject: PropTypes.bool,
+  newFormErrors: PropTypes.object,
 };
 
 function mapStateToProps(state) {

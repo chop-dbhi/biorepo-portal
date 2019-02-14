@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import RaisedButton from '@material-ui/core/Button';
@@ -161,14 +162,14 @@ class LinkRecord extends React.Component {
 }
 
 LinkRecord.propTypes = {
-  dispatch: React.PropTypes.func,
-  subject: React.PropTypes.object,
-  selectedLabel: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  pendingLinkedRecord: React.PropTypes.object,
-  selectedLinkType: React.PropTypes.number,
-  linkError: React.PropTypes.string,
-  availableLinkTypes: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  subject: PropTypes.object,
+  selectedLabel: PropTypes.object,
+  activeRecord: PropTypes.object,
+  pendingLinkedRecord: PropTypes.object,
+  selectedLinkType: PropTypes.number,
+  linkError: PropTypes.string,
+  availableLinkTypes: PropTypes.object,
 };
 
 function mapStateToProps(state) {

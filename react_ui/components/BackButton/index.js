@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 class BackButton extends React.Component {
   constructor(props) {
@@ -42,7 +43,7 @@ class BackButton extends React.Component {
 }
 
 BackButton.contextTypes = {
-  history: React.PropTypes.object,
+  history: PropTypes.object,
 };
 
 export default connect()(BackButton);
