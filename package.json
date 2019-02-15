@@ -29,7 +29,7 @@
     "@material-ui/core": "^3.9.2",
     "acorn": "^6.1.0",
     "griddle-react": "^1.13.1",
-    "history": "1.17.0",
+    "history": "^1.17.0",
     "isomorphic-fetch": "^2.2.0",
     "kleur": "^3.0.2",
     "moment": "^2.24.0",
