@@ -1,14 +1,14 @@
 import { REQUEST_PROTOCOLS, RECEIVE_PROTOCOLS, SET_ACTIVE_PROTOCOL, REQUEST_PROTOCOL_ORGS,
          RECEIVE_PROTOCOL_ORGS } from '../actions/protocol';
 
-const initialState = {
+const initialState = [{
   isFetching: false,
   items: [],
   activeProtocolId: null,
   orgs: [],
-};
+}];
 
-function protocol(state = initialState, action) {
+function protocol(state=initialState, action) {
   switch (action.type) {
     case REQUEST_PROTOCOLS:
       return Object.assign({}, state, {
