@@ -1,5 +1,5 @@
 import { REQUEST_PEDIGREE, RECEIVE_PEDIGREE, SET_ADD_PEDIGREE_REL,
-         CLEAR_PEDIGREE_STATE, SET_ADD_PEDIGREE_REL_MODE,
+         CLEAR_PEDIGREE_STATE, SET_ADD_PEDIGREE_REL_MODE, SET_ACTIVE_PEDIGREE_REL,
          ADD_PEDIGREE_REL_SUCCESS, ADD_PEDIGREE_REL_REQUEST,
          ADD_PEDIGREE_REL_FAILURE, SET_UPDATE_FORM_ERRORS} from '../actions/pedigree';
 
@@ -20,7 +20,7 @@ function pedigree(state = initialState, action){
         isFetching: false,
         items: action.pedigree,
       });
-    case SET_ACTIVE_PEDIGREE:
+    case SET_ACTIVE_PEDIGREE_REL:
       return Object.assign({}, state, {
         activePedigreeId: parseInt(action.pedigreeId, 10),
       });
