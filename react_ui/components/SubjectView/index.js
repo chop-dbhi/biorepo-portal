@@ -6,7 +6,9 @@ import BackButton from '../BackButton';
 import LoadingGif from '../LoadingGif';
 import SubjectPanel from './SubjectPanel';
 import RecordPanel from './RecordPanel';
+import SubjFamPanel from './SubjFamPanel'
 import EditLabelModal from './Modals/EditLabel';
+import SubjFamEditView from './SubjFamPanel/subjFamEditView';
 import * as ProtocolActions from '../../actions/protocol';
 import * as SubjectActions from '../../actions/subject';
 
@@ -32,10 +34,22 @@ class SubjectView extends React.Component {
     const path = this.props.location.pathname;
     return (subject ?
       <div className="subject-view">
-        <BackButton />
-        <SubjectPanel subject={subject} edit={this.props.params.edit} path={path} />
-        {this.props.editLabelMode ? <EditLabelModal /> : null}
-        <RecordPanel subject={subject} />
+        <div className="row">
+          <div className="col-md-4">
+            <section>
+              <SubjectPanel subject={subject} edit={this.props.params.edit} path={path} />
+            </section>
+            <section>
+              <SubjFamPanel />
+              {this.props.subjFam.addSubjFamRelMode ? <SubjFamEditView/> : null}
+            </section>
+          </div>
+          <div className="col-md-8">
+            <RecordPanel subject={subject} />
+            {this.props.editLabelMode ? <EditLabelModal /> : null}
+            <BackButton />
+          </div>
+        </div>
       </div>
       :
       <LoadingGif />
@@ -48,6 +62,7 @@ SubjectView.propTypes = {
   subject: React.PropTypes.object,
   protocol: React.PropTypes.object,
   editLabelMode: React.PropTypes.bool,
+  addSubjFamRelMode: React.PropTypes.bool,
   location: React.PropTypes.object,
   params: React.PropTypes.object,
 };
@@ -60,6 +75,9 @@ function mapStateToProps(state) {
     subject: {
       items: state.subject.items,
       activeSubject: state.subject.activeSubject,
+    },
+    subjFam: {
+      addSubjFamRelMode: state.subjFam.addSubjFamRelMode,
     },
     editLabelMode: state.record.editLabelMode,
   };

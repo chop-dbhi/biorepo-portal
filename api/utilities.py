@@ -178,8 +178,6 @@ class SubjectUtils(object):
 
     @staticmethod
     def add_record_to_subject_record_group(protocol, subject, record):
-        """Add a record to a protocol/subject record group in the EHB."""
-
         grp = SubjectUtils.get_protocol_subject_record_group(
             protocol, subject)
 

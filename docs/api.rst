@@ -881,7 +881,7 @@ GET a List of Records For a Specific Subject Within a Specific Protocols Specifi
         },
         {
             "path": "CBTTC - Specimen Only",
-            "record_id": "QLUBPG4Y0U8Y67TZ:JIEEDIOEP",
+            "record_id": "record id",
             "label": 1,
             "created": "2018-06-04 16:47:40.320305",
             "id": 27871,
@@ -917,7 +917,7 @@ GET a Specific Record for a Specific Subject Within a Specific Protocols Specifi
 
     {
         "path": "CBTTC - Specimen Only",
-        "record_id": "QLUBPG4Y0U8Y67TZ:JIEEDIOEP",
+        "record_id": "record id",
         "label": 1,
         "created": "2018-06-04 16:47:40.320305",
         "id": 27871,
@@ -950,7 +950,7 @@ Typically this endpoint should be cached as it is expensive due to the retrieval
       	"id": 5,
       	"subject": 5,
       	"external_system": 4,
-      	"record_id": "OB5STUA07B55HYP1:U33HD4X4A",
+      	"record_id": "record id",
       	"path": "EIG-COOP-SUBJECT-RECORDS",
       	"label": 1,
       	"modified": "2018-04-16 10:42:37.629522",
@@ -972,7 +972,7 @@ Typically this endpoint should be cached as it is expensive due to the retrieval
         "id": 5,
         "subject": 5,
         "external_system": 4,
-        "record_id": "OB5STUA07B55HYP1:U33HD4X4A",
+        "record_id": "record id",
         "path": "EIG-COOP-SUBJECT-RECORDS",
         "label": 2,
         "created": "2018-04-16 10:42:37.629502"

@@ -157,7 +157,7 @@ export class NewSubjectForm extends React.Component {
         <div className="col-md-12 col-sm-12">
           <div className="col-md-4 col-sm-4" style={newSubFormStyle}>
             <div className="card" style={cardStyle}>
-              <h6 className="category">Add New Subject</h6>
+              <h1 className="category"><center>Add New Subject</center></h1>
               <div className="more">
               </div>
               <div className="content">

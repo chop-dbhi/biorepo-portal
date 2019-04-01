@@ -9,7 +9,6 @@ const SubjectCardView = (props) => {
   const subject = props.subject.activeSubject;
   const editUrl = `${props.path}/edit`;
   return (
-    <div className="col-md-4 col-sm-6">
       <div className="card">
         <div className="more">
           <Link
@@ -29,7 +28,6 @@ const SubjectCardView = (props) => {
           <ExternalIDs externalIds={subject.external_ids} />
         </div>
       </div>
-    </div>
   );
 };
 

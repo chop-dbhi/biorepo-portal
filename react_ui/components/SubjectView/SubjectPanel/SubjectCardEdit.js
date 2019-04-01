@@ -130,7 +130,6 @@ class SubjectCardEdit extends React.Component {
     if (this.props.subject.activeSubject) {
       const subject = this.props.subject.activeSubject;
       return (
-        <div className="col-md-4 col-sm-6">
           <div className="card">
             <div className="more">
             </div>
@@ -186,7 +185,7 @@ class SubjectCardEdit extends React.Component {
               {this.renderErrors()}
             </div>
           </div>
-        </div>
+
       );
     }
     return <div />;
