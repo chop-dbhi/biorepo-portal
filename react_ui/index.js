@@ -16,6 +16,7 @@ import { createBrowserHistory } from 'history';
 import rootReducer from './reducers/index';
 // import { render } from 'react-dom';
 // import store from './store';
+// var ReactDOM = require('react-dom');
 
 
 /* eslint-disable no-underscore-dangle */
@@ -28,20 +29,20 @@ const store = createStore(
 );
 /* eslint-enable */
 
-ReactDOM.render((
+ReactDOM.hydrate(
   <Provider store={store}>
     <BrowserRouter>
        <Switch>
-         <Route exact path="/" component={ProjectMenu}  />
-         <Route path="dataentry/protocol/:id" component={SubjectSelect} />
+         <Route path="/dataentry/protocol/:id" component={SubjectSelect} />
          <Route
-           path="dataentry/protocol/:prot_id/subject/:sub_id(/:edit)"
+           path="/dataentry/protocol/:prot_id/subject/:sub_id(/:edit)"
            component={SubjectView}
            />
+           <Route exact path="/" component={ProjectMenu}  />
        </Switch>
      </BrowserRouter>
-  </Provider>
-), document.getElementById('react'));
+  </Provider>,
+ document.getElementById('react'));
 // class ProjectList extends React.Component {
 //
 // /* eslint-disable no-underscore-dangle*/
