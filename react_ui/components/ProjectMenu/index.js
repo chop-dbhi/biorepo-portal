@@ -10,27 +10,20 @@ class ProjectMenu extends Component {
   constructor(props) {
     super(props);
   }
-  // static mapDispatchToProps (dispatch) {
-  //   return {
-  //     fetchProtocols: (null) => dispatch(fetchProtocols(null))
-  //   };
-  // };
-  componentWillMount() {
-    console.log("we are at least getting into component Did Mount in project index")
+
+  componentDidMount() {
     const { dispatch } = this.props;
-    // dispatch(ProtocolActions.setActiveProtocol(null));
-    // if (this.props.protocol.items.length === 0 && !this.props.protocol.isFetching) {
-    dispatch(ProtocolActions.fetchProtocols());
-    }
+    dispatch(ProtocolActions.setActiveProtocol(null));
+    this.props.dispatch(ProtocolActions.fetchProtocols());
+  }
 
   render(props) {
-    console.log(this.props.protocols)
-    // const { fetchProtocols } = props;
-    return (
+    if (this.props.protocol.items){
+      return (
       <div className="card">
         <p>Welcome Back</p>
         <p><i>Select a project for data entry</i></p>
-        {this.props.protocols.map((protocol, i) => {
+        {this.props.protocol.items.map((protocol, i) => {
           const url = `dataentry/protocol/${protocol.id}`;
           return (
             <div key={i} className="lg-col-12">
@@ -41,10 +34,14 @@ class ProjectMenu extends Component {
                 {protocol.name}
               </Link>
             </div>
-          );
-        }, this)}
-      </div>
-    );
+            );
+          }, this)}
+        </div>
+      );
+    }
+    else {
+      return <div>Loading...</div>;
+    }
   }
 }
 
@@ -53,14 +50,11 @@ ProjectMenu.propTypes = {
   protocol: PropTypes.object,
 };
 
-const mapStateToProps = state => {
-  return {
+const mapStateToProps = state => ({
     protocol: {
       items: state.protocol.items,
-      isFetching: state.protocol.isFetching,
-    }
-  };
-};
-// const Protocol = connect(mapStateToProps, mapDispatchToProps)(ProjectMenu);
+      isFetching: state.protocol.isFetching
+  }
+});
+
 export default connect(mapStateToProps)(ProjectMenu);
-// export default Protocol
