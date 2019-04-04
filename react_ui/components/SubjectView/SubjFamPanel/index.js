@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as SubjFamActions from '../../../actions/subjFam';
 import * as SubjectActions from '../../../actions/subject';
 import SubjFamCardView from './SubjFamCardView';
@@ -25,15 +26,15 @@ class SubjFamPanel extends React.Component {
     }
 }
 SubjFamPanel.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  activeSubject: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  activeProtocolId: React.PropTypes.number,
-  subjFam: React.PropTypes.object,
-  isFetching: React.PropTypes.bool,
-  subjects: React.PropTypes.array,
-  relTypes: React.PropTypes.array,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  activeSubject: PropTypes.object,
+  activeRecord: PropTypes.object,
+  activeProtocolId: PropTypes.number,
+  subjFam: PropTypes.object,
+  isFetching: PropTypes.bool,
+  subjects: PropTypes.array,
+  relTypes: PropTypes.array,
 };
 
 function mapStateToProps(state) {

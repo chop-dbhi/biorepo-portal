@@ -1,14 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import RaisedButton from 'material-ui/lib/raised-button';
+import RaisedButton from '@material-ui/core/Button';
 import * as SubjFamActions from '../../../actions/subjFam';
 import * as SubjectActions from '../../../actions/subject';
-import * as Colors from 'material-ui/lib/styles/colors';
+import * as Colors from '@material-ui/core/colors';
 import LoadingGif from '../../LoadingGif';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import TextField from 'material-ui/lib/text-field';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
 
 class SubjFamEditView extends React.Component {
 
@@ -164,7 +165,7 @@ class SubjFamEditView extends React.Component {
                     />
                     </div>
                     <div className="col-md-6">
-                      <SelectField
+                      <Select
                         floatingLabelText={'Related Subject'}
                         onChange={this.handleRelatedSubjectSelect}
                         error={this.state.dataEntryCorrect}
@@ -172,7 +173,7 @@ class SubjFamEditView extends React.Component {
                         value={this.state.relatedSubject}
                       >
                       {this.menuItemsSubjects()}
-                      </SelectField>
+                      </Select>
                     </div>
                   </row>
                   <row>
@@ -221,13 +222,13 @@ class SubjFamEditView extends React.Component {
 }
 
 SubjFamEditView.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  pds: React.PropTypes.object,
-  savingSubject: React.PropTypes.bool,
-  relTypes: React.PropTypes.array,
-  updateFormErrors: React.PropTypes.string,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  pds: PropTypes.object,
+  savingSubject: PropTypes.bool,
+  relTypes: PropTypes.array,
+  updateFormErrors: PropTypes.string,
 };
 
 function mapStateToProps(state) {

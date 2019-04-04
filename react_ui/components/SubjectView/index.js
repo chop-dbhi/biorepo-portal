@@ -63,7 +63,7 @@ SubjectView.propTypes = {
   subject: PropTypes.object,
   protocol: PropTypes.object,
   editLabelMode: PropTypes.bool,
-  addPedigreeRelMode: PropTypes.bool,
+  addSubjFamRelMode: PropTypes.bool,
   location: PropTypes.object,
   params: PropTypes.object,
 };
