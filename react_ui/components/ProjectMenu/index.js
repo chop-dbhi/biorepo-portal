@@ -24,7 +24,7 @@ class ProjectMenu extends Component {
         <p>Welcome Back</p>
         <p><i>Select a project for data entry</i></p>
         {this.props.protocol.items.map((protocol, i) => {
-          const url = `dataentry/protocol/${protocol.id}`;
+          const url = `/dataentry/protocol/${protocol.id}`;
           return (
             <div key={i} className="lg-col-12">
               <Link

@@ -19,9 +19,9 @@ class SubjectSelect extends React.Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch(ProtocolActions.setActiveProtocol(this.props.params.id));
+    this.props.dispatch(ProtocolActions.setActiveProtocol(this.props.params.id));
     // Check to see if subjects are loaded, if not fetch them
-    dispatch(SubjectActions.fetchSubjects(this.props.params.id));
+    this.props.dispatch(SubjectActions.fetchSubjects(this.props.params.id));
   }
 
   getActiveProtocol() {
@@ -39,7 +39,7 @@ class SubjectSelect extends React.Component {
   handleNewSubject() {
     const { dispatch } = this.props;
     dispatch(SubjectActions.setAddSubjectMode(true));
-    dispatch(ProtocolActions.setActiveProtocol(this.props.protocol.activeProtocolId));
+    this.props.dispatch(ProtocolActions.setActiveProtocol(this.props.protocol.activeProtocolId));
   }
 
   handleClick(row) {
@@ -68,7 +68,8 @@ class SubjectSelect extends React.Component {
       color: '#7a7a7a',
       fontWeight: 'bold',
     };
-    if (protocol != null) {
+    console.log( this.props.activeProtocolId )
+    if (this.props.activeProtocolId) {
       if (parseInt(this.props.params.id, 10) === parseInt(protocol.id, 10)) {
         this.props.protocol.activeProtocol = protocol;
         protocol.data_sources.forEach((ds) => {
@@ -105,7 +106,6 @@ class SubjectSelect extends React.Component {
         return row
       });
     }
-
     return (
       protocol ?
         <div>
