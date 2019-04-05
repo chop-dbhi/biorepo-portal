@@ -12,7 +12,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import ReactDOM from 'react-dom';
 import { createBrowserHistory } from 'history';
-
+import { HashRouter } from 'react-router-dom'
 import rootReducer from './reducers/index';
 // import { render } from 'react-dom';
 // import store from './store';
@@ -29,9 +29,12 @@ const store = createStore(
 );
 /* eslint-enable */
 
+const state = window.__STATE__;
+delete window.__STATE__;
+
 ReactDOM.hydrate(
   <Provider store={store}>
-    <BrowserRouter>
+    <HashRouter>
        <Switch>
          <Route path="/dataentry/protocol/:id" component={SubjectSelect} />
          <Route
@@ -40,7 +43,7 @@ ReactDOM.hydrate(
            />
            <Route exact path="/" component={ProjectMenu}  />
        </Switch>
-     </BrowserRouter>
+     </HashRouter>
   </Provider>,
  document.getElementById('react'));
 // class ProjectList extends React.Component {
