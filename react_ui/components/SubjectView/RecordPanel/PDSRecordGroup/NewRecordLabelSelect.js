@@ -91,6 +91,7 @@ class NewRecordLabelSelect extends React.Component {
                       onChange={this.handleRecordLabelSelect}
                       style={{ width: '100%' }}
                       value={this.props.selectedLabel}
+                      floatingLabelText={'Select Label'}
                     >
                       {labels.map((label, i) => (
                         <MenuItem key={i} value={label[0]} primaryText={label[1]} />
