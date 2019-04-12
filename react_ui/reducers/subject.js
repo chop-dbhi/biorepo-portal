@@ -4,7 +4,7 @@ import { REQUEST_SUBJECTS, RECEIVE_SUBJECTS, SET_ACTIVE_SUBJECT,
          SET_LINK_MODE, ADD_SUBJECT_SUCCESS, ADD_SUBJECT_FAILURE,
          SET_ADD_SUBJECT_MODE, SET_NEW_SUBJECT, REQUEST_SUBJECT_SUCCESS,
          SET_NEW_SUBJECT_FORM_ERRORS, SET_UPDATE_FORM_ERRORS,
-         UPDATE_SUBJECT_FAILURE, ADD_SUBJECT_REQUEST } from '../actions/subject';
+         UPDATE_SUBJECT_FAILURE, ADD_SUBJECT_REQUEST, CLEAR_SUBJECTS_STATE } from '../actions/subject';
 
 let initialNewSubject = {
   organization: null,
@@ -161,6 +161,8 @@ function subject(state = initialState, action) {
           form: action.errors,
         },
       });
+    case CLEAR_SUBJECTS_STATE:
+      return initialState;
     default:
       return state;
   }

@@ -21,6 +21,7 @@ export const REQUEST_SUBJECT_RECORDS = 'REQUEST_SUBJECT_RECORDS';
 export const RECEIVE_SUBJECT_RECORDS = 'RECEIVE_SUBJECT_RECORDS';
 export const SET_NEW_SUBJECT_FORM_ERRORS = 'SET_NEW_SUBJECT_FORM_ERRORS';
 export const SET_UPDATE_FORM_ERRORS = 'SET_UPDATE_FORM_ERRORS';
+export const CLEAR_SUBJECTS_STATE = 'CLEAR_SUBJECTS_STATE';
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -282,5 +283,11 @@ export function setUpdateFormErrors(errors) {
   return {
     type: SET_UPDATE_FORM_ERRORS,
     errors,
+  };
+}
+
+export function clearSubjectsState() {
+  return {
+    type: CLEAR_SUBJECTS_STATE,
   };
 }
