@@ -16,6 +16,10 @@ module.exports = {
         rules: ['babel'],
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
     ],
   },
   externals: {
