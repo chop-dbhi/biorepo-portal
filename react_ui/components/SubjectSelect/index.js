@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactTable from "react-table";
+import 'react-table/react-table.css'
 import Griddle, { pageProperties, plugins, RowDefinition, ColumnDefinition}from 'griddle-react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -8,6 +10,7 @@ import NewSubjectForm from './NewSubjectForm';
 import LoadingGif from '../LoadingGif';
 import * as ProtocolActions from '../../actions/protocol';
 import * as SubjectActions from '../../actions/subject';
+
 
 class SubjectSelect extends React.Component {
 
@@ -25,6 +28,11 @@ class SubjectSelect extends React.Component {
     if(this.props.subject.items.length == 0){
       this.props.dispatch(SubjectActions.fetchSubjects(this.props.match.params.id));
     }
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(SubjectActions.clearSubjectsState());
   }
 
   getActiveProtocol() {
@@ -89,7 +97,7 @@ class SubjectSelect extends React.Component {
     // If this view is navigated to directly. Get active protocol based on param
     const subjects = this.props.subject.items;
     const protocol = this.getActiveProtocol();
-    const rows = this.griddleFrendlySubjects();
+    // const rows = this.griddleFrendlySubjects(); //This is not needed for react-table
 
     let manageExternalIDs = false;
     const subjectCountStyle = {
@@ -112,10 +120,34 @@ class SubjectSelect extends React.Component {
       }
     }
     let orgIdLabel = 'Identifier';
-    let columns = ['Organization', orgIdLabel, 'First Name', 'Last Name', 'Birth Date'];
-    if (manageExternalIDs) {
-      columns.push('External IDs');
-    }
+
+    const columns = [{
+      Header: 'Subjects',
+      columns: [{
+        Header: 'Organization',
+        accessor: 'organization_name', // String-based value accessors!
+        style: { 'whiteSpace': 'unset' },
+        Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
+                       onChange={event => onChange(event.target.value)} />),
+        },
+        {
+          Header: 'Identifier',
+        accessor: 'organization_subject_id' // String-based value accessors!
+        },
+        {
+          Header: 'First Name',
+        accessor: 'first_name' // String-based value accessors!
+        },
+        {
+          Header: 'Last Name',
+        accessor: 'last_name' // String-based value accessors!
+        },
+        {
+          Header: 'Birth Date',
+        accessor: 'dob' // String-based value accessors!
+        }]
+      }]
+
 
     return (
       this.props.protocol ?
@@ -144,23 +176,12 @@ class SubjectSelect extends React.Component {
           <div style={subjectCountStyle}>{this.props.subject.items.length} Subjects</div>
           <div className="subject-table">
             {(this.props.subject.items.length>0) ?
-              <Griddle
-                onRowClick={this.handleClick}
-                data={rows}
-                >
-                pageProperties={{
-                  currentPage: 1,
-                  pageSize: 10,
-                  recordCount: 10000,
-                }}
-                <RowDefinition>
-                  <ColumnDefinition id="organization_name" title="Organization" />
-                  <ColumnDefinition id="organization_subject_id" title="Identifier" />
-                  <ColumnDefinition id="first_name" title="First Name" />
-                  <ColumnDefinition id="last_name" title="Last Name" />
-                  <ColumnDefinition id="dob" title="Birth Date" />
-                </RowDefinition>
-                </Griddle>
+
+              <ReactTable
+                data={this.props.subject.items}
+                columns={columns}
+                filterable = {true}
+                />
                : <LoadingGif />}
           </div>
         </div> :
