@@ -131,20 +131,28 @@ class SubjectSelect extends React.Component {
                        onChange={event => onChange(event.target.value)} />),
         },
         {
-          Header: 'Identifier',
-        accessor: 'organization_subject_id' // String-based value accessors!
+        Header: 'Identifier',
+        accessor: 'organization_subject_id', // String-based value accessors!
+        Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
+                       onChange={event => onChange(event.target.value)} />),
         },
         {
           Header: 'First Name',
-        accessor: 'first_name' // String-based value accessors!
+        accessor: 'first_name', // String-based value accessors!
+        Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
+                       onChange={event => onChange(event.target.value)} />),
         },
         {
           Header: 'Last Name',
-        accessor: 'last_name' // String-based value accessors!
+        accessor: 'last_name', // String-based value accessors!
+        Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
+                       onChange={event => onChange(event.target.value)} />),
         },
         {
-          Header: 'Birth Date',
-        accessor: 'dob' // String-based value accessors!
+        Header: 'Birth Date',
+        accessor: 'dob', // String-based value accessors!
+        Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
+                       onChange={event => onChange(event.target.value)} />),
         }]
       }]
 
