@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactTable from "react-table";
+import { Link } from 'react-router-dom';
 import 'react-table/react-table.css'
 import Griddle, { pageProperties, plugins, RowDefinition, ColumnDefinition}from 'griddle-react';
 import { connect } from 'react-redux';
@@ -12,7 +13,7 @@ import * as ProtocolActions from '../../actions/protocol';
 import * as SubjectActions from '../../actions/subject';
 
 
-class SubjectSelect extends React.Component {
+class SubjectSelect extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -81,16 +82,16 @@ class SubjectSelect extends React.Component {
   }
 
   handleClick(row) {
-    const subject = row.props.data.subject;
+    const subject = row.original;
     const { dispatch } = this.props;
 
     // Update state with new active subject
     dispatch(SubjectActions.setActiveSubject(subject));
 
     // Push to the correct pathname (and therefore view)
-    this.props.history.push({
-      pathname: `dataentry/protocol/${this.props.protocol.activeProtocolId}/subject/${subject.id}`,
-    });
+    this.props.history.push(
+      `${this.props.protocol.activeProtocolId}/subject/${subject.id}`
+    );
   }
 
   render() {
@@ -189,6 +190,14 @@ class SubjectSelect extends React.Component {
                 data={this.props.subject.items}
                 columns={columns}
                 filterable = {true}
+                className="-highlight"
+                getTdProps={(state, rowInfo) => {
+                  return {
+                    onClick: (e, handleOrigional) => {
+                      this.handleClick(rowInfo);
+                    }
+                  }}
+                }
                 />
                : <LoadingGif />}
           </div>

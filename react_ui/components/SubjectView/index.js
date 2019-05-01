@@ -17,8 +17,8 @@ class SubjectView extends React.Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    const protocolId = this.props.params.prot_id;
-    const subjectId = this.props.params.sub_id;
+    const protocolId = this.props.match.params.prot_id;
+    const subjectId = this.props.match.params.sub_id;
 
     if (!this.props.subject.activeSubject) {
       dispatch(SubjectActions.fetchSubject(protocolId, subjectId));
@@ -38,7 +38,7 @@ class SubjectView extends React.Component {
         <div className="row">
           <div className="col-md-4">
             <section>
-              <SubjectPanel subject={subject} edit={this.props.params.edit} path={path} />
+              <SubjectPanel subject={subject} edit={this.props.match.params.edit} path={path} />
             </section>
             <section>
               <SubjFamPanel />

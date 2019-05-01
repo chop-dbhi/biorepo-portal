@@ -36,12 +36,12 @@ ReactDOM.hydrate(
   <Provider store={store}>
     <HashRouter>
        <Switch>
-         <Route path="/dataentry/protocol/:id" component={SubjectSelect} />
          <Route
-           path="/dataentry/protocol/:prot_id/subject/:sub_id(/:edit)"
+           path="/dataentry/protocol/:prot_id/subject/:sub_id"
            component={SubjectView}
            />
-           <Route exact path="/" component={ProjectMenu}  />
+         <Route path="/dataentry/protocol/:id" component={SubjectSelect} />
+         <Route exact path="/" component={ProjectMenu}  />
        </Switch>
      </HashRouter>
   </Provider>,
