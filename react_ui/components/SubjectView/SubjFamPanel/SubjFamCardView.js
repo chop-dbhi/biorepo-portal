@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import * as SubjFamActions from '../../../actions/subjFam';
+import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
 import FloatingActionButton from '@material-ui/core/Button';
+import AddButton from '../../addButton'
 
 class SubjFamCardView extends React.Component {
 
@@ -82,14 +84,9 @@ class SubjFamCardView extends React.Component {
       <div className="card">
         <div className="content">
           <h5 className="category"> Relationships
-            <FloatingActionButton
-              onClick={() => this.handleNewSubjFamRelClick(this.props.subjFam)  }
-              backgroundColor={'#7AC29A'}
-              mini
-              style={addButtonStyle}
-              disableTouchRipple={true}>
-                <Icon className={classes.icon}>add_circle</Icon>
-            </FloatingActionButton>
+          <div className="font-icon-wrapper" onClick={() => this.handleNewSubjFamRelClick(this.props.subjFam)}>
+            <AddButton/>
+          </div>
           </h5>
           <table className="table table-striped">
             <thead>

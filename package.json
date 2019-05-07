@@ -27,6 +27,7 @@
   "homepage": "https://github.com/chop-dbhi/biorepo-portal#README",
   "dependencies": {
     "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
     "acorn": "^6.1.0",
     "braces": "^2.3.2",
     "griddle-react": "^1.13.1",

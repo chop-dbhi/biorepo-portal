@@ -8,6 +8,7 @@ import NewRecordLabelSelect from './NewRecordLabelSelect';
 import * as SubjectActions from '../../../../actions/subject';
 import * as RecordActions from '../../../../actions/record';
 import * as PDSActions from '../../../../actions/pds';
+import AddButton from '../../../addButton'
 
 class PDSRecordGroup extends React.Component {
 
@@ -181,25 +182,13 @@ class PDSRecordGroup extends React.Component {
         <NewRecordLabelSelect pds={this.props.pds} />
         <h5 className="category">{this.props.pds.display_label}
           {this.props.pds.authorized ?
-            <FloatingActionButton
-              onClick={() => this.handleNewRecordClick(this.props.pds)}
-              backgroundColor={'#7AC29A'}
-              mini
-              style={addButtonStyle}
-              disableTouchRipple={true}
-            >
-              <Icon className={classes.icon}>add_circle</Icon>
-            </FloatingActionButton>
-          :
-            <FloatingActionButton
-              disabled
-              mini
-              style={addButtonStyle}
-            >
-              <Icon className={classes.icon}>add_circle</Icon>
-            </FloatingActionButton>}
-
+            <div className="font-icon-wrapper" onClick={() => this.handleNewRecordClick(this.props.pds)}>
+              <AddButton/>
+            </div>
+            : <div/>
+          }
         </h5>
+
         <div className="PDSRecords">
           {this.props.pds.authorized ?
             this.renderRecords(recordNodes)
