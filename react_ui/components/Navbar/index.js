@@ -8,13 +8,15 @@ class Navbar extends React.Component {
 
   render() {
     const brandStyle = {
-      color: '#7a7a7a',
+      color: '#337ab7',
       marginTop: '0px',
     };
     const navbarStyle = {
-      backgroundColor: '#E9F5FD',
-      paddingRight: '20px',
-      boxShadow: '0 3px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.12)',
+      backgroundColor: '#f2efec',
+      marginBottom: '0 !important',
+      border: '0',
+      fontFamily: ' "TPRubrik-Regular", sans-serif',
+      color: '#337ab7',
     };
     const protocol = this.props.activeProtocolId;
 
