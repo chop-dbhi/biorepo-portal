@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as SubjectActions from '../../actions/subject';
 import RaisedButton from '@material-ui/core/Button';
-import Divider from '@material-ui/core/divider';
+import Divider from '@material-ui/core/Divider';
 import * as Colors from '@material-ui/core/colors';
 import SubjectOrgSelectField from '../SubjectView/SubjectPanel/SubjectOrgSelectField';
 import SubjectTextField from '../SubjectView/SubjectPanel/SubjectTextField';
