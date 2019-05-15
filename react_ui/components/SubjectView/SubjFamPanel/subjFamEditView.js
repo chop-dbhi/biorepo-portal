@@ -2,24 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-// import Button from '@material-ui/core/Button';
+
 import * as SubjFamActions from '../../../actions/subjFam';
 import * as SubjectActions from '../../../actions/subject';
-import * as Colors from '@material-ui/core/colors';
 import LoadingGif from '../../LoadingGif';
-import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import { Container, Row, Col } from 'reactstrap';
-import Divider from '@material-ui/core/Divider';
-import Select from 'react-select';
-import NoSsr from '@material-ui/core/NoSsr';
-// import { Divider } from 'semantic-ui-react';
+// import Button from '@material-ui/core/Button';
 
+import { Container, Row, Col } from 'reactstrap';
+import Select from 'react-select';
 import Button from 'react-bootstrap/Button'
-import classNames from 'classnames';
 
 
 class SubjFamEditView extends React.Component {
@@ -74,15 +67,15 @@ class SubjFamEditView extends React.Component {
   }
 
   handleRelatedSubjectSelect(e, index, value) {
-    this.setState({relatedSubject: value});
+    this.setState({relatedSubject: e});
   }
 
   handleSubject1RoleSelect(e, index, value){
-    this.setState({subjectRole: value});
+    this.setState({subjectRole: e});
   }
 
   handleSubject2RoleSelect(e, index, value){
-    this.setState({relatedSubjectRole: value});
+    this.setState({relatedSubjectRole: e});
   }
 
   checkRelDataEntry(){
@@ -103,26 +96,22 @@ class SubjFamEditView extends React.Component {
       return false;
     }
     else
-      console.log("related subject does not equal ''")
       this.setState({dataEntryCorrect: true});
-      console.log(this.state.dataEntryCorrect);
       return true;
   }
   handleNewPedRelClick(e) {
-    console.log("we are in handleNewPedRelClick")
     const { dispatch } = this.props;
-    console.log(this.state.dataEntryCorrect)
     if (this.checkRelDataEntry()) {
-      console.log(this.state.dataEntryCorrect)
       const newRel = {
           "subject_1": this.props.subject.activeSubject.id,
-          "subject_2": this.state.relatedSubject,
-          "subject_1_role": this.state.subjectRole,
-          "subject_2_role": this.state.relatedSubjectRole,
+          "subject_2": this.state.relatedSubject.value,
+          "subject_1_role": this.state.subjectRole.value,
+          "subject_2_role": this.state.relatedSubjectRole.value,
           "protocol_id": this.props.protocol.activeProtocolId,
       }
       dispatch(SubjFamActions.addSubjFamRel(this.props.protocol.activeProtocolId, newRel))
       .then(dispatch(SubjFamActions.fetchSubjFam(this.props.protocol.activeProtocolId, newRel.subject_1)))
+      this.handleCloseClick();
     }
   }
 
@@ -173,7 +162,7 @@ class SubjFamEditView extends React.Component {
     const { value } = this.state;
       return (
         <section>
-        <div className={classes.root}>
+
           <div style={backdropStyle}></div>
             <div className="col-md-12 edit-label-modal" style={modalStyle}>
               <div className="card" style={cardStyle}>
@@ -204,9 +193,6 @@ class SubjFamEditView extends React.Component {
                         >
                         </Select>
                       </div>
-                    </Row>
-                    <Row>
-                    <Divider hidden />
                     </Row>
                     <Row>
                       <div className="col-md-6">
@@ -248,16 +234,15 @@ class SubjFamEditView extends React.Component {
                   <Button
                     variant="contained"
                     label={'Create New'}
-                    color={Colors.green500}
                     type='submit'
                     variant="success"
                     size="sm"
+                    onClick={this.handleNewPedRelClick}
                   > create New </Button>
 
 
                   <Button
                     variant="contained"
-
                     onClick={this.handleCloseClick}
                     type='reset'
                     variant="danger"
@@ -271,7 +256,7 @@ class SubjFamEditView extends React.Component {
                 </Row>
               </div>
             </div>
-            </div>
+
         </section>
       );
     }
