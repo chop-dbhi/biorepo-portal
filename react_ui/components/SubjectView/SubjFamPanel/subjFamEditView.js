@@ -167,9 +167,7 @@ class SubjFamEditView extends React.Component {
             <div className="col-md-12 edit-label-modal" style={modalStyle}>
               <div className="card" style={cardStyle}>
                 <h3 className="category" style={{ textAlign: 'center' }}> Add a new Relationship </h3>
-                <br/>
-
-                    <Row>
+                  <Row>
                     <div className="col-md-6">
                       <label> Subject: </label>
                       <TextField
@@ -184,14 +182,10 @@ class SubjFamEditView extends React.Component {
                           error={this.state.dataEntryCorrect}
                           styles={{ width: '100%' }}
                           value={this.state.relatedSubject}
-                          placeholder="Search for related Subject"
+                          placeholder="Search for Related Subject"
                           isClearable
                           options={subjects}
-                          textFieldProps={{
-                            label: 'Related Subject',
-                          }}
-                        >
-                        </Select>
+                        />
                       </div>
                     </Row>
                     <Row>
@@ -203,60 +197,48 @@ class SubjFamEditView extends React.Component {
                           onChange={this.handleSubject1RoleSelect}
                           options={relTypes}
                           placeholder="Search for Subject Role Types"
-                          name="Subject Role"
-                          textFieldProps={{
-                            label: 'Subject Role',
-                          }}
                           isClearable
                         />
                       </div>
                       <div className="col-md-6">
-                    <label> Related Subject Role: </label>
-                      <Select
-                        isClearable
-                        options={relTypes}
-                        styles={{ width: '100%', overflowWrap: 'normal', fontSize: '16'}}
-                        value={this.state.relatedSubjectRole}
-                        onChange={this.handleSubject2RoleSelect}
-                        placeholder="Search for related Subject Role Types"
-                        textFieldProps={{
-                          label: 'Related Subject Role',
-                        }}
-                      />
-
-                    </div>
-
+                        <label> Related Subject Role: </label>
+                        <Select
+                          isClearable
+                          options={relTypes}
+                          styles={{ width: '100%', overflowWrap: 'normal', fontSize: '16'}}
+                          value={this.state.relatedSubjectRole}
+                          onChange={this.handleSubject2RoleSelect}
+                          placeholder="Search for Related Subject Role Types"
+                        />
+                        </div>
                     </Row>
-                <Row>
+                  <Row>
+                    <center>
 
-                  <center>
-
-                  <Button
-                    variant="contained"
-                    label={'Create New'}
-                    type='submit'
-                    variant="success"
-                    size="sm"
-                    onClick={this.handleNewPedRelClick}
-                  > create New </Button>
+                      <Button
+                        variant="contained"
+                        label={'Create New'}
+                        type='submit'
+                        variant="success"
+                        size="sm"
+                        onClick={this.handleNewPedRelClick}
+                      > create New </Button>
 
 
-                  <Button
-                    variant="contained"
-                    onClick={this.handleCloseClick}
-                    type='reset'
-                    variant="danger"
-                    size="sm"
-                  > Cancel </Button>
-                {this.props.updateFormErrors != null ?
-                  <div className="alert alert-danger">{this.props.updateFormErrors}</div>
-                : null}
-
-</center>
+                      <Button
+                        variant="contained"
+                        onClick={this.handleCloseClick}
+                        type='reset'
+                        variant="danger"
+                        size="sm"
+                      > Cancel </Button>
+                    {this.props.updateFormErrors != null ?
+                      <div className="alert alert-danger">{this.props.updateFormErrors}</div>
+                    : null}
+                  </center>
                 </Row>
               </div>
             </div>
-
         </section>
       );
     }
