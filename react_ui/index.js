@@ -8,7 +8,7 @@ import SubjectView from './components/SubjectView';
 
 import { Provider } from 'react-redux';
 import { Switch, Route, BrowserRouter} from 'react-router-dom';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import ReactDOM from 'react-dom';
 import { createBrowserHistory } from 'history';
