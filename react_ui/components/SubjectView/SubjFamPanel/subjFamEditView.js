@@ -2,14 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import RaisedButton from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 import * as SubjFamActions from '../../../actions/subjFam';
 import * as SubjectActions from '../../../actions/subject';
 import * as Colors from '@material-ui/core/colors';
 import LoadingGif from '../../LoadingGif';
-import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import { Container, Row, Col } from 'reactstrap';
+import Divider from '@material-ui/core/Divider';
+import Select from 'react-select';
+import NoSsr from '@material-ui/core/NoSsr';
+// import { Divider } from 'semantic-ui-react';
+
+import Button from 'react-bootstrap/Button'
+import classNames from 'classnames';
+
 
 class SubjFamEditView extends React.Component {
 
@@ -34,15 +45,15 @@ class SubjFamEditView extends React.Component {
     let subjectList = null;
     const subjects = this.props.subject.items;
     if(subjects !=null){
-      subjectList =
-        subjects.map((subject, i) => (
-          <MenuItem key={i} value={subject.id} primaryText={subject.organization_subject_id} />
-        ));
+      subjectList = subjects.map(subject =>({
+          value: subject.id,
+          label: subject.organization_subject_id + " - " + subject.last_name +
+            ", " + subject.first_name,
+        }));
     }
     else{
-      subjectList = <MenuItem primaryText={this.props.subject.activeSubject.organization_subject_id}>
-      </MenuItem>;
-
+      subjectList = <option primaryText={this.props.subject.activeSubject.organization_subject_id}>{this.props.subject.activeSubject.organization_subject_id}
+      </option>;
     }
     return subjectList;
   }
@@ -50,13 +61,11 @@ class SubjFamEditView extends React.Component {
   menuItemsRelTypes(){
     let relTypeList = null;
     const relTypes = this.props.relTypes[0];
-    console.log(relTypes)
-    relTypeList =
-      relTypes.map((rel, i) => (
-        <MenuItem key={i} value={rel.id} primaryText={rel.desc} />
-      ))
-
-      return relTypeList;
+    relTypeList = relTypes.map(relType =>({
+        value: relType.id,
+        label: relType.desc,
+      }));
+    return relTypeList;
   }
 
   restoreSubjFam() {
@@ -125,7 +134,18 @@ class SubjFamEditView extends React.Component {
   renderErrors() {
 
   }
+
   render() {
+    // options for the select forms
+    const subjects = this.menuItemsSubjects();
+    const relTypes = this.menuItemsRelTypes();
+
+    const root = {
+
+        flexGrow: 1,
+        height: 250,
+      };
+
     const backdropStyle = {
       position: 'fixed',
       top: '0px',
@@ -149,77 +169,114 @@ class SubjFamEditView extends React.Component {
       position: 'fixed',
       zIndex: '1000',
     };
+
     const { value } = this.state;
       return (
         <section>
+        <div className={classes.root}>
           <div style={backdropStyle}></div>
             <div className="col-md-12 edit-label-modal" style={modalStyle}>
               <div className="card" style={cardStyle}>
                 <h3 className="category" style={{ textAlign: 'center' }}> Add a new Relationship </h3>
-                  <row>
-                  <div className="col-md-6">
-                    <TextField
-                      style={{ width: '100%', whiteSpace: 'nowrap' }}
-                      value={this.props.subject.activeSubject.organization_subject_id}
-                      floatingLabelText={'Subject'}
-                    />
-                    </div>
+                <br/>
+
+                    <Row>
                     <div className="col-md-6">
+                      <label> Subject: </label>
+                      <TextField
+                        style={{ width: '100%', whiteSpace: 'nowrap',  fontSize: '16'}}
+                        value={this.props.subject.activeSubject.organization_subject_id}
+                      />
+                      </div>
+                      <div className="col-md-6">
+                      <label> Related Subject: </label>
+                        <Select
+                          onChange={this.handleRelatedSubjectSelect}
+                          error={this.state.dataEntryCorrect}
+                          styles={{ width: '100%' }}
+                          value={this.state.relatedSubject}
+                          placeholder="Search for related Subject"
+                          isClearable
+                          options={subjects}
+                          textFieldProps={{
+                            label: 'Related Subject',
+                          }}
+                        >
+                        </Select>
+                      </div>
+                    </Row>
+                    <Row>
+                    <Divider hidden />
+                    </Row>
+                    <Row>
+                      <div className="col-md-6">
+                        <label> Subject Role: </label>
+                        <Select
+                          styles={{ width: '100%',  }}
+                          value={this.state.subjectRole}
+                          onChange={this.handleSubject1RoleSelect}
+                          options={relTypes}
+                          placeholder="Search for Subject Role Types"
+                          name="Subject Role"
+                          textFieldProps={{
+                            label: 'Subject Role',
+                          }}
+                          isClearable
+                        />
+                      </div>
+                      <div className="col-md-6">
+                    <label> Related Subject Role: </label>
                       <Select
-                        floatingLabelText={'Related Subject'}
-                        onChange={this.handleRelatedSubjectSelect}
-                        error={this.state.dataEntryCorrect}
-                        style={{ width: '100%' }}
-                        value={this.state.relatedSubject}
-                      >
-                      {this.menuItemsSubjects()}
-                      </Select>
+                        isClearable
+                        options={relTypes}
+                        styles={{ width: '100%', overflowWrap: 'normal', fontSize: '16'}}
+                        value={this.state.relatedSubjectRole}
+                        onChange={this.handleSubject2RoleSelect}
+                        placeholder="Search for related Subject Role Types"
+                        textFieldProps={{
+                          label: 'Related Subject Role',
+                        }}
+                      />
+
                     </div>
-                  </row>
-                  <row>
-                  <div className="col-md-6">
-                    <SelectField
-                      floatingLabelText={'Subject Role'}
-                      style={{ width: '100%',  }}
-                      value={this.state.subjectRole}
-                      onChange={this.handleSubject1RoleSelect}
-                    >
-                      {this.menuItemsRelTypes()}
-                    </SelectField>
-                  </div>
-                  <div className="col-md-6">
-                    <SelectField
-                      floatingLabelText={'Related Subject Role'}
-                      style={{ width: '100%', overflowWrap: 'normal'}}
-                      value={this.state.relatedSubjectRole}
-                      onChange={this.handleSubject2RoleSelect}
-                    >
-                    {this.menuItemsRelTypes()}
-                    </SelectField>
-                  </div>
-                  </row>
-                <RaisedButton
-                  onClick={this.handleNewPedRelClick}
-                  label={'Create New'}
-                  labelColor={'#7AC29A'}
-                  type="submit"
-                  style={{ width: '100%' }}
-                />
-                <RaisedButton
-                  style={{ width: '100%' }}
-                  labelColor={Colors.red400}
-                  label="Cancel"
-                  onClick={this.handleCloseClick}
-                />
+
+                    </Row>
+                <Row>
+
+                  <center>
+
+                  <Button
+                    variant="contained"
+                    label={'Create New'}
+                    color={Colors.green500}
+                    type='submit'
+                    variant="success"
+                    size="sm"
+                  > create New </Button>
+
+
+                  <Button
+                    variant="contained"
+
+                    onClick={this.handleCloseClick}
+                    type='reset'
+                    variant="danger"
+                    size="sm"
+                  > Cancel </Button>
                 {this.props.updateFormErrors != null ?
                   <div className="alert alert-danger">{this.props.updateFormErrors}</div>
                 : null}
+
+</center>
+                </Row>
               </div>
+            </div>
             </div>
         </section>
       );
+    }
   }
-}
+
 
 SubjFamEditView.propTypes = {
   dispatch: PropTypes.func,
