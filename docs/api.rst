@@ -1010,18 +1010,19 @@ GET a list of relationships in a protocol
       {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6740,"subject_2_org_id":"12222228","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":10},
       {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6739,"subject_2_org_id":"0128398","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":14}]}
 
+
 GET a list of relationships for a subject
 ----------------------------------------------------------------
 
 **URLS:**
 
-.. http:get:: /api/protocols/(int: protocol_id (pk))/subj_fam/
+.. http:get:: /api/protocols/(int: protocol_id (pk))/subj_fam/subject/(int: subject_id (pk))
 
 **Example Request**:
 
 .. sourcecode:: http
 
-    GET /api/protocols/1/subj_fam HTTP/1.1
+    GET /api/protocols/1/subj_fam/subject/1 HTTP/1.1
     Host: example.com
     Accept: application/json
     Authorization: "token <your API token>"
@@ -1034,11 +1035,70 @@ GET a list of relationships for a subject
     Vary: Accept
     Content-Type: application/json
 
-    {"relationships":
-      [{"subject_1_id":10286,"subject_1_org_id":"123","subject_2_id":6536,"subject_2_org_id":"123456","subject_1_role":"Maternal","subject_2_role":"Maternal","protocol_id":null,"id":2},
-      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6740,"subject_2_org_id":"12222228","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":10},
-      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6739,"subject_2_org_id":"0128398","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":14}]}
-
+    {
+    "relationships": [
+        {
+            "subject_1_id": 8633,
+            "subject_1_org_id": "test1",
+            "subject_2_id": 7694,
+            "subject_2_org_id": "11001100",
+            "subject_1_role": "Paternal Female First Cousin Once Removed",
+            "subject_2_role": "Paternal Female First Cousin Once Removed",
+            "protocol_id": null,
+            "id": 84
+        },
+        {
+            "subject_1_id": 8633,
+            "subject_1_org_id": "test1",
+            "subject_2_id": 6776,
+            "subject_2_org_id": "30000008",
+            "subject_1_role": "Brother",
+            "subject_2_role": "Sister",
+            "protocol_id": null,
+            "id": 73
+        },
+        {
+            "subject_1_id": 8633,
+            "subject_1_org_id": "test1",
+            "subject_2_id": 9011,
+            "subject_2_org_id": "Test2",
+            "subject_1_role": "Brother",
+            "subject_2_role": "Sister",
+            "protocol_id": null,
+            "id": 72
+        },
+        {
+            "subject_1_id": 8633,
+            "subject_1_org_id": "test1",
+            "subject_2_id": 6594,
+            "subject_2_org_id": "as",
+            "subject_1_role": "Brother",
+            "subject_2_role": "Sister",
+            "protocol_id": null,
+            "id": 25
+        },
+        {
+            "subject_1_id": 8633,
+            "subject_1_org_id": "test1",
+            "subject_2_id": 6023,
+            "subject_2_org_id": "JULYTEST",
+            "subject_1_role": "Brother",
+            "subject_2_role": "Brother",
+            "protocol_id": null,
+            "id": 22
+        },
+        {
+            "subject_1_id": 8081,
+            "subject_1_org_id": "kjsdflkjdkf",
+            "subject_2_id": 8633,
+            "subject_2_org_id": "test1",
+            "subject_1_role": "Brother",
+            "subject_2_role": "Sister",
+            "protocol_id": null,
+            "id": 47
+        }
+    ]
+}
 
 Contents:
 
