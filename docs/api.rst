@@ -1006,9 +1006,9 @@ GET a list of relationships in a protocol
     Content-Type: application/json
 
     {"relationships":
-      [{"subject_1_id":10286,"subject_1_org_id":"123","subject_2_id":6536,"subject_2_org_id":"123456","subject_1_role":"Maternal","subject_2_role":"Maternal","protocol_id":null,"id":2},
-      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6740,"subject_2_org_id":"12222228","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":10},
-      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6739,"subject_2_org_id":"0128398","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":14}]}
+      [{"subject_1_id":10286,"subject_1_org_id":"test123","subject_2_id":6536,"subject_2_org_id":"test123456","subject_1_role":"Maternal","subject_2_role":"Maternal","protocol_id":null,"id":2},
+      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6740,"subject_2_org_id":"test22228","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":10},
+      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6739,"subject_2_org_id":"test0128398","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":14}]}
 
 
 GET a list of relationships for a subject
@@ -1041,7 +1041,7 @@ GET a list of relationships for a subject
             "subject_1_id": 8633,
             "subject_1_org_id": "test1",
             "subject_2_id": 7694,
-            "subject_2_org_id": "11001100",
+            "subject_2_org_id": "test11001100",
             "subject_1_role": "Paternal Female First Cousin Once Removed",
             "subject_2_role": "Paternal Female First Cousin Once Removed",
             "protocol_id": null,
@@ -1051,7 +1051,7 @@ GET a list of relationships for a subject
             "subject_1_id": 8633,
             "subject_1_org_id": "test1",
             "subject_2_id": 6776,
-            "subject_2_org_id": "30000008",
+            "subject_2_org_id": "test00008",
             "subject_1_role": "Brother",
             "subject_2_role": "Sister",
             "protocol_id": null,
@@ -1071,7 +1071,7 @@ GET a list of relationships for a subject
             "subject_1_id": 8633,
             "subject_1_org_id": "test1",
             "subject_2_id": 6594,
-            "subject_2_org_id": "as",
+            "subject_2_org_id": "testas",
             "subject_1_role": "Brother",
             "subject_2_role": "Sister",
             "protocol_id": null,
@@ -1089,7 +1089,7 @@ GET a list of relationships for a subject
         },
         {
             "subject_1_id": 8081,
-            "subject_1_org_id": "kjsdflkjdkf",
+            "subject_1_org_id": "testflkjdkf",
             "subject_2_id": 8633,
             "subject_2_org_id": "test1",
             "subject_1_role": "Brother",
