@@ -978,6 +978,68 @@ Typically this endpoint should be cached as it is expensive due to the retrieval
         "created": "2018-04-16 10:42:37.629502"
     }]
 
+Familial Relationships
+=========
+
+GET a list of relationships in a protocol
+----------------------------------------------------------------
+
+**URLS:**
+
+.. http:get:: /api/protocols/(int: protocol_id (pk))/subj_fam/
+
+**Example Request**:
+
+.. sourcecode:: http
+
+    GET /api/protocols/1/subj_fam HTTP/1.1
+    Host: example.com
+    Accept: application/json
+    Authorization: "token <your API token>"
+
+**Example Response:**
+
+.. sourcecode:: http
+
+    HTTP/1.1 200 OK
+    Vary: Accept
+    Content-Type: application/json
+
+    {"relationships":
+      [{"subject_1_id":10286,"subject_1_org_id":"123","subject_2_id":6536,"subject_2_org_id":"123456","subject_1_role":"Maternal","subject_2_role":"Maternal","protocol_id":null,"id":2},
+      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6740,"subject_2_org_id":"12222228","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":10},
+      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6739,"subject_2_org_id":"0128398","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":14}]}
+
+GET a list of relationships for a subject
+----------------------------------------------------------------
+
+**URLS:**
+
+.. http:get:: /api/protocols/(int: protocol_id (pk))/subj_fam/
+
+**Example Request**:
+
+.. sourcecode:: http
+
+    GET /api/protocols/1/subj_fam HTTP/1.1
+    Host: example.com
+    Accept: application/json
+    Authorization: "token <your API token>"
+
+**Example Response:**
+
+.. sourcecode:: http
+
+    HTTP/1.1 200 OK
+    Vary: Accept
+    Content-Type: application/json
+
+    {"relationships":
+      [{"subject_1_id":10286,"subject_1_org_id":"123","subject_2_id":6536,"subject_2_org_id":"123456","subject_1_role":"Maternal","subject_2_role":"Maternal","protocol_id":null,"id":2},
+      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6740,"subject_2_org_id":"12222228","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":10},
+      {"subject_1_id":6738,"subject_1_org_id":"Test1","subject_2_id":6739,"subject_2_org_id":"0128398","subject_1_role":"Brother","subject_2_role":"Sister","protocol_id":null,"id":14}]}
+
+
 Contents:
 
 .. toctree::
