@@ -5,7 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import LoadingGif from '../../../LoadingGif';
 import * as RecordActions from '../../../../actions/record';
 import * as Colors from '@material-ui/core/colors';
-import Button from 'react-bootstrap/Button'
+import Button from 'react-bootstrap/Button';
 import Select from 'react-select';
 
 import { connect } from 'react-redux';
