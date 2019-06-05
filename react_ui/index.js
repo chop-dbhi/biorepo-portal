@@ -44,7 +44,6 @@ if (window.location.pathname.match(/^\/dataentry\/protocoldatasource/ )){
     <Provider store={store}>
       <HashRouter>
          <Switch>
-           <Route path="/dataentry/protocoldatasource/" component={Navbar} />
            <Route
              path="/dataentry/protocol/:prot_id/subject/:sub_id"
              component={SubjectView}
