@@ -11,6 +11,7 @@ import NewSubjectForm from './NewSubjectForm';
 import LoadingGif from '../LoadingGif';
 import * as ProtocolActions from '../../actions/protocol';
 import * as SubjectActions from '../../actions/subject';
+import Button from 'react-bootstrap/Button'
 
 
 class SubjectSelect extends React.PureComponent {
@@ -173,12 +174,11 @@ class SubjectSelect extends React.PureComponent {
           <div id="toolbar">
             <ul className="list-unstyled">
               <li>
-                <RaisedButton
-                  mini
+                <Button
                   labelcolor={'#7AC29A'}
                   onClick={this.handleNewSubject}
                   label={'New Subject'}
-                />
+                > New Subject </Button>
               </li>
             </ul>
           </div>
