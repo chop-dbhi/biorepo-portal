@@ -32,77 +32,25 @@ const store = createStore(
 const state = window.__STATE__;
 delete window.__STATE__;
 
-ReactDOM.hydrate(
-  <Provider store={store}>
-    <HashRouter>
-       <Switch>
-         <Route
-           path="/dataentry/protocol/:prot_id/subject/:sub_id"
-           component={SubjectView}
-           />
-         <Route path="/dataentry/protocol/:id" component={SubjectSelect} />
-         <Route exact path="/" component={ProjectMenu}  />
-       </Switch>
-     </HashRouter>
-  </Provider>,
- document.getElementById('react'));
-// class ProjectList extends React.Component {
-//
-// /* eslint-disable no-underscore-dangle*/
-// // Very manually constraining this to the root path until we establish proper
-// // routing and views. This allows us to bounce out of the single page app paradigm
-// // and into existing ehb-datasource url paths
-//
-//   // constructor() {
-//   //   const history = createBrowserHistory();
-//   //   // console.log("ummm ok ")
-//   // }
-//
-//     render(){
-//       console.log("we are in render")
-//       return (
-//         <Provider store={createStore(App)}>
-//           <BrowserRouter>
-//             <Switch>
-//               <Route exact path="/" component={ProjectMenu}  />
-//               <Route path="dataentry/protocol/:id" component={SubjectSelect} />
-//               <Route
-//                 path="dataentry/protocol/:prot_id/subject/:sub_id(/:edit)"
-//                 component={SubjectView}
-//                 />
-//             </Switch>
-//           </BrowserRouter>
-//         </Provider>,
-//         document.getElementById('react')
-//       );
-//     }
-//
-//   //   render(){
-//   //     if ( history.location.pathname === '/' ) {
-//   //       console.log("ummm ok ")
-//   //       return (
-//   //         <Provider store={store}>
-//   //           <Router history={browserHistory}>
-//   //
-//   //               <Route path="/" exact component={ProjectMenu} />
-//   //               <Route path="dataentry/protocol/:id" component={SubjectSelect} />
-//   //               <Route
-//   //                 path="dataentry/protocol/:prot_id/subject/:sub_id(/:edit)"
-//   //                 component={SubjectView}
-//   //               />
-//   //
-//   //           </Router>
-//   //         </Provider>,
-//   //         document.getElementById('react')
-//   //       );
-//   //   } else {
-//   //     console.log("ummm ok 2")
-//   //   return(
-//   //     <Provider store={store}>
-//   //       <Navbar />
-//   //     </Provider>,
-//   //     document.getElementById('react'));
-//   //   }
-//   // }
-// }
-// export default ProjectList;
+if (window.location.pathame === '/') {
+  ReactDOM.hydrate(
+    <Provider store={store}>
+      <HashRouter>
+         <Switch>
+           <Route
+             path="/dataentry/protocol/:prot_id/subject/:sub_id"
+             component={SubjectView}
+             />
+           <Route path="/dataentry/protocol/:id" component={SubjectSelect} />
+           <Route exact path="/" component={ProjectMenu}  />
+         </Switch>
+       </HashRouter>
+    </Provider>,
+   document.getElementById('react'));
+} else {
+  ReactDOM.hydrate(
+    <Provider store={store}>
+      <Navbar />
+    </Provider>,
+    document.getElementById('react'));
+}
