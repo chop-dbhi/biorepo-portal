@@ -32,11 +32,19 @@ const store = createStore(
 const state = window.__STATE__;
 delete window.__STATE__;
 
-if (window.location.pathame === '/') {
+// if using exiting html from ehb-datasources then just use navbar react component
+if (window.location.pathname.match(/^\/dataentry\/protocoldatasource/ )){
+  ReactDOM.hydrate(
+    <Provider store={store}>
+      <Navbar />
+    </Provider>,
+    document.getElementById('react'));
+} else {
   ReactDOM.hydrate(
     <Provider store={store}>
       <HashRouter>
          <Switch>
+           <Route path="/dataentry/protocoldatasource/" component={Navbar} />
            <Route
              path="/dataentry/protocol/:prot_id/subject/:sub_id"
              component={SubjectView}
@@ -47,10 +55,4 @@ if (window.location.pathame === '/') {
        </HashRouter>
     </Provider>,
    document.getElementById('react'));
-} else {
-  ReactDOM.hydrate(
-    <Provider store={store}>
-      <Navbar />
-    </Provider>,
-    document.getElementById('react'));
-}
+ }
