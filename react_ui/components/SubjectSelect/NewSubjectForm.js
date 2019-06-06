@@ -11,9 +11,12 @@ import LoadingGif from '../LoadingGif';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import Button from 'react-bootstrap/Button'
+<<<<<<< HEAD
 import PureModal from 'react-pure-modal';
 import 'react-pure-modal/dist/react-pure-modal.min.css';
 
+=======
+>>>>>>> 7c53c4b... adding react-boostrap buttons for issue #232
 
 // Use named export for unconnected component (for testing)
 export class NewSubjectForm extends React.Component {
