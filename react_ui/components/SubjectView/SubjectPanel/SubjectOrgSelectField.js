@@ -24,7 +24,6 @@ class SubjectOrgSelectField extends React.Component {
     return orgList
   }
   onChange(e, index, value) {
-    console.log(e.value)
     const { dispatch } = this.props;
     // Check to see if we're editing an existing subject
     if (!this.props.new) {
