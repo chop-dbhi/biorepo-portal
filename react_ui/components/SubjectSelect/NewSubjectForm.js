@@ -18,6 +18,7 @@ import 'react-pure-modal/dist/react-pure-modal.min.css';
 =======
 >>>>>>> 7c53c4b... adding react-boostrap buttons for issue #232
 
+
 // Use named export for unconnected component (for testing)
 export class NewSubjectForm extends React.Component {
 
