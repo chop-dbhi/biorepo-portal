@@ -40,12 +40,8 @@ class SubjectSelect extends React.PureComponent {
   getActiveProtocol() {
     let activeProtocol = {};
     if (this.props.protocol.items) {
-      this.props.protocol.items.forEach((protocol) => {
-        if (protocol.id === parseInt(this.props.protocol.activeProtocolId, 10)) {
-          activeProtocol = protocol;
-        }
-      }, this);
-    }
+      activeProtocol = this.props.protocol;
+      }
     return activeProtocol;
   }
 
@@ -160,7 +156,7 @@ class SubjectSelect extends React.PureComponent {
 
 
     return (
-      this.props.protocol ?
+      this.props.protocol.items ?
         <div>
           {this.props.subject.addSubjectMode ?
             <NewSubjectForm orgs={this.props.protocol.orgs} /> :
@@ -170,7 +166,7 @@ class SubjectSelect extends React.PureComponent {
             <BackButton /> :
             <div />
           }
-          <h3>Project: {this.props.protocol.name}</h3>
+          <h3>Project: {this.props.protocol.items.name}</h3>
           <div id="toolbar">
             <ul className="list-unstyled">
               <li>

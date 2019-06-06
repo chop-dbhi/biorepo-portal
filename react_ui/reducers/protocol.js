@@ -1,5 +1,5 @@
 import { REQUEST_PROTOCOLS, RECEIVE_PROTOCOLS, SET_ACTIVE_PROTOCOL, REQUEST_PROTOCOL_ORGS,
-         RECEIVE_PROTOCOL_ORGS } from '../actions/protocol';
+         RECEIVE_PROTOCOL_ORGS, RECEIVE_PROTOCOL } from '../actions/protocol';
 
 const initialState = [{
   isFetching: false,
@@ -32,6 +32,10 @@ function protocol(state=initialState, action) {
       return Object.assign({}, state, {
         orgs: action.organizations,
         isFetching: false,
+      });
+    case RECEIVE_PROTOCOL:
+      return Object.assign({}, state, {
+        items: action.items,
       });
 
     default:
