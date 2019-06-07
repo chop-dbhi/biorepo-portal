@@ -44,7 +44,6 @@ class BackButton extends React.Component {
 }
 
 BackButton.propTypes = {
-  //router: PropTypes.object,
   history: PropTypes.object,
 };
 
