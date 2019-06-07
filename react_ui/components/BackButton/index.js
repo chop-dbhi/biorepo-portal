@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Link, browserHistory, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 
 class BackButton extends React.Component {
   constructor(props) {
