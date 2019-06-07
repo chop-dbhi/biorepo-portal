@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link, browserHistory, withRouter } from 'react-router';
 
 class BackButton extends React.Component {
   constructor(props) {
@@ -9,7 +10,7 @@ class BackButton extends React.Component {
   }
 
   handleClick() {
-    this.context.history.goBack();
+    this.props.history.goBack();
   }
 
   render() {
@@ -42,8 +43,9 @@ class BackButton extends React.Component {
   }
 }
 
-BackButton.contextTypes = {
+BackButton.propTypes = {
+  //router: PropTypes.object,
   history: PropTypes.object,
 };
 
-export default connect()(BackButton);
+export default withRouter(connect()(BackButton));

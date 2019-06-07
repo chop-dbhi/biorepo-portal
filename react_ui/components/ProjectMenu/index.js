@@ -18,7 +18,7 @@ class ProjectMenu extends Component {
   }
 
   render(props) {
-    if (this.props.protocol.items){
+    if (this.props.protocol.items && this.props.protocol.items.length){
       return (
       <div className="card">
         <p>Welcome Back</p>
