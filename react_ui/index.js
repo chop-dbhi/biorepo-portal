@@ -42,6 +42,7 @@ if (window.location.pathname.match(/^\/dataentry\/protocoldatasource/ )){
 } else {
   ReactDOM.hydrate(
     <Provider store={store}>
+      <Navbar />
       <HashRouter>
          <Switch>
            <Route

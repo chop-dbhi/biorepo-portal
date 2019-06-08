@@ -1,7 +1,9 @@
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import React from 'react';
+import ProjectMenu from '../ProjectMenu'
 import PropTypes from 'prop-types';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
 
 class Navbar extends React.Component {
 
@@ -11,6 +13,7 @@ class Navbar extends React.Component {
       color: '#337ab7',
       marginTop: '0px',
     };
+
     const navbarStyle = {
       backgroundColor: '#f2efec',
       marginBottom: '0 !important',
@@ -18,45 +21,40 @@ class Navbar extends React.Component {
       fontFamily: ' "TPRubrik-Regular", sans-serif',
       color: '#337ab7',
     };
+
     const protocol = this.props.activeProtocolId;
 
     let subjectSelectUrl = null;
     let inDs = false;
 
     if (protocol) {
-      subjectSelectUrl = `dataentry/protocol/${protocol}`;
+      subjectSelectUrl = `#/dataentry/protocol/${protocol}`;
     } else {
       inDs = true;
     }
-    if (!inDs) {
+    
+     if (!inDs) {
       return (
-        <div
-          style={navbarStyle}
-          className="navbar navbar-ct-primary navbar-fixed-top"
-          role="navigation"
-        >
+        <Router>
+        <div style={navbarStyle}
+        className="navbar navbar-ct-primary navbar-fixed-top"
+        role="navigation" >
           <div className="navbar-header">
             <div className="navbar-brand">
-              <Link style={brandStyle} className="navbar-text" to={'/'}>
-                Biorepository Portal
-              </Link>
+              <a href="/" style={brandStyle} className="navbar-text">Biorepository Portal</a>
             </div>
           </div>
+
           <div className="collapse navbar-collapse navbar-ex1-collapse">
             <ul className="nav navbar-nav navbar-right pull-right">
-                {subjectSelectUrl ?
-                  <li><Link to={subjectSelectUrl}>Subjects</Link></li> :
-                  <div />
-                }{
-                  protocol ?
-                    <li><Link to={'/'}>Projects</Link></li>
-                   :
-                  null
-                }
+              <li><a href={subjectSelectUrl}>Subjects</a></li>
+              <li><a href="/">Projects</a></li>
               <li><a href="/logout">Logout</a></li>
             </ul>
           </div>
         </div>
+
+        </Router>
       );
     }
     return null;
