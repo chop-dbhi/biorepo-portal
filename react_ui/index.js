@@ -7,12 +7,12 @@ import SubjectSelect from './components/SubjectSelect';
 import SubjectView from './components/SubjectView';
 
 import { Provider } from 'react-redux';
-import { Switch, Route, BrowserRouter} from 'react-router-dom';
+import { Switch, Route} from 'react-router-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import ReactDOM from 'react-dom';
 import { createBrowserHistory } from 'history';
-import { HashRouter } from 'react-router-dom'
+import { HashRouter} from 'react-router-dom';
 import rootReducer from './reducers/index';
 // import { render } from 'react-dom';
 // import store from './store';
@@ -45,10 +45,7 @@ if (window.location.pathname.match(/^\/dataentry\/protocoldatasource/ )){
       <Navbar />
       <HashRouter>
          <Switch>
-           <Route
-             path="/dataentry/protocol/:prot_id/subject/:sub_id"
-             component={SubjectView}
-             />
+           <Route path="/dataentry/protocol/:prot_id/subject/:sub_id" component={SubjectView} />
            <Route path="/dataentry/protocol/:id" component={SubjectSelect} />
            <Route exact path="/" component={ProjectMenu}  />
          </Switch>

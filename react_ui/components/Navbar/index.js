@@ -2,7 +2,8 @@ import { connect } from 'react-redux';
 import React from 'react';
 import ProjectMenu from '../ProjectMenu'
 import PropTypes from 'prop-types';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { HashRouter } from 'react-router-dom';
 
 
 class Navbar extends React.Component {
@@ -15,7 +16,7 @@ class Navbar extends React.Component {
     };
 
     const navbarStyle = {
-      backgroundColor: '#f2efec',
+      backgroundColor: '#E9F5FD',
       marginBottom: '0 !important',
       border: '0',
       fontFamily: ' "TPRubrik-Regular", sans-serif',
@@ -28,33 +29,32 @@ class Navbar extends React.Component {
     let inDs = false;
 
     if (protocol) {
-      subjectSelectUrl = `#/dataentry/protocol/${protocol}`;
+      subjectSelectUrl = `/dataentry/protocol/${protocol}`;
     } else {
       inDs = true;
     }
-    
+
      if (!inDs) {
       return (
-        <Router>
+        <HashRouter>
         <div style={navbarStyle}
         className="navbar navbar-ct-primary navbar-fixed-top"
         role="navigation" >
           <div className="navbar-header">
             <div className="navbar-brand">
-              <a href="/" style={brandStyle} className="navbar-text">Biorepository Portal</a>
+              <Link to="/" style={brandStyle} className="navbar-text">Biorepository Portal</Link>
             </div>
           </div>
 
           <div className="collapse navbar-collapse navbar-ex1-collapse">
             <ul className="nav navbar-nav navbar-right pull-right">
-              <li><a href={subjectSelectUrl}>Subjects</a></li>
-              <li><a href="/">Projects</a></li>
+              <li><Link to={subjectSelectUrl}>Subjects</Link></li>
+              <li><Link to="/">Projects</Link></li>
               <li><a href="/logout">Logout</a></li>
             </ul>
           </div>
         </div>
-
-        </Router>
+        </HashRouter>
       );
     }
     return null;
