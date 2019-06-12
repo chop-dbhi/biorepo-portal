@@ -170,7 +170,7 @@ class ProtocolSubjectsView(BRPApiView):
                         # er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
                         # lbl = er_label_rh.get(id=config['sort_on'])
                         lbl = ''
-                        addl_id_column = l
+                        addl_id_column = lbl
                 except:
                     pass
 
