@@ -129,7 +129,14 @@ class ProtocolSubjectsView(BRPApiView):
         # Check cache
         cache_data = cache.get('protocol{0}_sub_data'.format(p.id))
         if cache_data:
-            subs = sorted(json.loads(cache_data), key=lambda i: i['id'], reverse=True)
+            # if all subjects have a modified date in cache then sort using modified date
+            try:
+                subs = sorted(json.loads(cache_data), key=lambda i: datetime.strptime(i['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
+                logger.info("subjects sorted by modified date")
+            # if some subjects do not have modified date then sort by PK
+            except:
+                logger.info("subjects sorted by primary Key")
+                subs = sorted(json.loads(cache_data), key=lambda i: (i['id'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
             return Response(
                 subs,
                 headers={'Access-Control-Allow-Origin': '*'}
@@ -163,7 +170,7 @@ class ProtocolSubjectsView(BRPApiView):
                         # er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
                         # lbl = er_label_rh.get(id=config['sort_on'])
                         lbl = ''
-                        addl_id_column = lbl
+                        addl_id_column = l
                 except:
                     pass
 
