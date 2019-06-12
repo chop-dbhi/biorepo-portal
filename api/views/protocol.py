@@ -1,7 +1,7 @@
 import logging
 import json
-
 from datetime import datetime
+
 from copy import deepcopy
 
 from django.core.cache import cache
@@ -129,8 +129,15 @@ class ProtocolSubjectsView(BRPApiView):
         # Check cache
         cache_data = cache.get('protocol{0}_sub_data'.format(p.id))
         if cache_data:
+            # if all subjects have a modified date in cache then sort using modified date
+            try:
+                subs = sorted(json.loads(cache_data), key=lambda i: datetime.strptime(i['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
+            # if some subjects do not have modified date then sort by PK
+            except:
+                logger.info('subjects sorted by primary key for protocol {protocol}'.format(protocol=p.id))
+                subs = sorted(json.loads(cache_data), key=lambda i: (i['id'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
             return Response(
-                json.loads(cache_data),
+                subs,
                 headers={'Access-Control-Allow-Origin': '*'}
             )
         if p.isUserAuthorized(request.user):
@@ -189,6 +196,7 @@ class ProtocolSubjectsView(BRPApiView):
             )
 
         if subjects:
+            subs = sorted(subs, key=lambda kv: datetime.strptime(kv['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
             return Response(
                 subs,
                 headers={'Access-Control-Allow-Origin': '*'}
