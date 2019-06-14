@@ -1,0 +1,21 @@
+.divStyle  {
+    background-color: white;
+    opacity: 0.7;
+    width: 75px;
+    position: fixed;
+    z-index: 99;
+    left: 90px;
+    bottom: 10px;
+    height: 75px;
+    text-align: center;
+    border-radius: 50%;
+    box-shadow: 5px 5px 5px rgba(204, 197, 185, 0.7);
+    cursor: pointer;
+  }
+.tiArrowLeft  {
+    margin-top: 10px;
+    font-size:  2em;
+    color: #7AC29A;
+    position: relative;
+    top: 20px;
+}
