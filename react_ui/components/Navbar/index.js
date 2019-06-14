@@ -4,25 +4,13 @@ import ProjectMenu from '../ProjectMenu'
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 import { HashRouter } from 'react-router-dom';
-
+import styles from './Navbar.css';
 
 class Navbar extends React.Component {
 
 
   render() {
-    const brandStyle = {
-      color: '#337ab7',
-      marginTop: '0px',
-    };
-
-    const navbarStyle = {
-      backgroundColor: '#E9F5FD',
-      marginBottom: '0 !important',
-      border: '0',
-      fontFamily: ' "TPRubrik-Regular", sans-serif',
-      color: '#337ab7',
-    };
-
+   
     const protocol = this.props.activeProtocolId;
 
     let subjectSelectUrl = null;
@@ -37,12 +25,12 @@ class Navbar extends React.Component {
      if (!inDs) {
       return (
         <HashRouter>
-        <div style={navbarStyle}
+        <div className={styles.navbarStyle}
         className="navbar navbar-ct-primary navbar-fixed-top"
         role="navigation" >
           <div className="navbar-header">
             <div className="navbar-brand">
-              <Link to="/" style={brandStyle} className="navbar-text">Biorepository Portal</Link>
+              <Link to="/" className={styles.brandStyle}>Biorepository Portal</Link>
             </div>
           </div>
 

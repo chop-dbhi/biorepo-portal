@@ -1,0 +1,17 @@
+.navbarText { 
+    color: #337ab7;
+    margin-top: 0px;
+}
+
+.navbarStyle  {
+    background-color: #f2efec;
+    margin-bottom: 0 !important;
+    border: 0;
+    font-family:  "TPRubrik-Regular", sans-serif;
+    color: #337ab7;
+  }
+
+.brandStyle {
+    color: '#337ab7';
+    margin-top: '0px';
+  }
