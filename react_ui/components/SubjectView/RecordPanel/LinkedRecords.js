@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as RecordActions from '../../../actions/record';
 import { connect } from 'react-redux';
+import styles from './RecordPanel.css';
 
 class LinkedRecords extends React.Component {
 
@@ -23,11 +24,7 @@ class LinkedRecords extends React.Component {
 
   render() {
     const activeRecord = this.props.activeRecord;
-    const removeLinkStyle = {
-      fontSize: '.8em',
-      paddingLeft: '7px',
-      cursor: 'pointer',
-    };
+
     return (
       <div className="col-md-8 col-sm-2 col-md-offset-4">
         <div className="card">
@@ -36,7 +33,7 @@ class LinkedRecords extends React.Component {
             {this.props.activeLinks.map((link, i) => (
               <div key={i}>
                 {this.linkText(activeRecord, link)}
-                <span style={removeLinkStyle}>
+                <span className={styles.removeLinkStyle}>
                   <a onClick={() => this.removeLink(activeRecord, link.id)}>
                     remove link
                   </a>
