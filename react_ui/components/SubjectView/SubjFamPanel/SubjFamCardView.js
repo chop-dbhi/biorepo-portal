@@ -66,11 +66,7 @@ class SubjFamCardView extends React.Component {
   }
 
   render() {
-    const addButtonStyle = {
-      marginLeft: '10px',
-      marginTop: '10px',
-      float: 'right',
-    };
+
     const protocol = this.props.activeProtocolId;
     const relationships = this.props.subjFam.items.items;
     let organizedRelationships = null;

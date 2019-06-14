@@ -9,7 +9,7 @@ import LoadingGif from '../../LoadingGif';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 // import Button from '@material-ui/core/Button';
-
+import styles from './SubjFamPanel.css';
 import { Container, Row, Col } from 'reactstrap';
 import Select from 'react-select';
 import Button from 'react-bootstrap/Button'
@@ -135,37 +135,13 @@ class SubjFamEditView extends React.Component {
         height: 250,
       };
 
-    const backdropStyle = {
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      width: '100%',
-      height: '100%',
-      zIndex: 99,
-      display: 'block',
-      backgroundColor: 'rgba(0, 0, 0, 0.298039)',
-    };
-    const cardStyle = {
-      padding: '15px',
-      boxShadow: '3px 3px 14px rgba(204, 197, 185, 0.5)',
-      backgroundColor: 'white',
-      width: '90%',
-    };
-    const modalStyle = {
-      right: '0%',
-      top: '20%',
-      width: '90%',
-      position: 'fixed',
-      zIndex: '1000',
-    };
-
     const { value } = this.state;
       return (
         <section>
 
-          <div style={backdropStyle}></div>
-            <div className="col-md-12 edit-label-modal" style={modalStyle}>
-              <div className="card" style={cardStyle}>
+          <div className={styles.backdropStyle}></div>
+            <div className={styles.modalStyle}>
+              <div className={styles.cardStyle}>
                 <h3 className="category" style={{ textAlign: 'center' }}> Add a new Relationship </h3>
                   <Row>
                     <div className="col-md-6">
