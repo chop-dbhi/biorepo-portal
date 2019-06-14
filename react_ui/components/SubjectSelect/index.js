@@ -2,6 +2,7 @@ import React from 'react';
 import ReactTable from "react-table";
 import { Link } from 'react-router-dom';
 import 'react-table/react-table.css'
+import "!style-loader!css-loader!react-table/react-table.css";
 import Griddle, { pageProperties, plugins, RowDefinition, ColumnDefinition}from 'griddle-react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
