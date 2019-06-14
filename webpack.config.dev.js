@@ -9,7 +9,7 @@ module.exports = {
     path: path.resolve(ROOT_PATH, 'brp/static/js'),
     filename: 'bundle.js',
   },
-  mode: 'development',
+  mode: 'production',
   module: {
     rules: [
       {
@@ -32,7 +32,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"development"',
+      'process.env.NODE_ENV': '"production"',
     }),
   ],
 };
