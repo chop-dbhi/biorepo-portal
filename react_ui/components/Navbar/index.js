@@ -22,12 +22,11 @@ class Navbar extends React.Component {
       inDs = true;
     }
 
+
      if (!inDs) {
       return (
         <HashRouter>
-        <div className={styles.navbarStyle}
-        className="navbar navbar-ct-primary navbar-fixed-top"
-        role="navigation" >
+        <div className = {styles.navbarStyle} role="navigation">
           <div className="navbar-header">
             <div className="navbar-brand">
               <Link to="/" className={styles.brandStyle}>Biorepository Portal</Link>
