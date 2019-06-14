@@ -7,6 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import RaisedButton from '@material-ui/core/Button';
 import * as RecordActions from '../../../actions/record';
 import * as Colors from '@material-ui/core/colors';
+import styles from './Modals.css';
 
 class EditLabelModal extends React.Component {
 
@@ -44,34 +45,12 @@ class EditLabelModal extends React.Component {
 
   render() {
     const labels = this.props.activePDS.driver_configuration.labels;
-    const editLabelModalStyle = {
-      left: '45%',
-      top: '25%',
-      marginLeft: '-5em',
-      marginBottom: '3em',
-      position: 'fixed',
-      zIndex: '1000',
-    };
-    const cardStyle = {
-      padding: '15px',
-      boxShadow: '3px 3px 14px rgba(204, 197, 185, 0.5)',
-      backgroundColor: 'white',
-    };
-    const backdropStyle = {
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      width: '100%',
-      height: '100%',
-      zIndex: 99,
-      display: 'block',
-      backgroundColor: 'rgba(0, 0, 0, 0.298039)',
-    };
+  
     return (
       <section>
-        <div style={backdropStyle}></div>
-        <div className="col-sm-3 edit-label-modal" style={editLabelModalStyle}>
-          <div className="card" style={cardStyle}>
+        <div className={styles.backdropStyle}></div>
+        <div className={styles.editLabelModalStyle}>
+          <div className={styles.cardStyle}>
             <h6 className="category">Edit Record Label</h6>
             <div className="more">
             </div>

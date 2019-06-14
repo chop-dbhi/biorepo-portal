@@ -1,0 +1,60 @@
+.backdropStyle { 
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+    display: block;
+    background-color: rgba(0, 0, 0, 0.298039);
+
+}
+
+.cardStyle { 
+    padding: 15px;
+    box-shadow: 3px 3px 14px rgba(204, 197, 185, 0.5);
+    background-color: white;
+
+}
+
+.editLabelModalStyle {
+    left: 45%;
+    top: 25%;
+    margin-left: -5em;
+    margin-bottom: 3em;
+    position: fixed;
+    z-index: 1000;
+
+}
+
+.linkModeBanner { 
+    position: fixed;
+    top: 52px;
+    z-index: 98;
+    margin-left: -20px;
+    background-color: #FFE28C;
+    color: #BB992F;
+    width: 100%;
+    padding: 10px;
+}
+
+.modalStyle {
+    left: 45%;
+    margin-left: -5em;
+    margin-bottom: 3em;
+    position: fixed;
+    z-index: 1000;
+  }
+
+ .recordStyle {
+    padding: 5px;
+    margin: 15px;
+    border: solid;
+    border-width: 1px;
+    border-color: #DDD;
+  }
+
+  .linkErrorStyle {
+    padding: 5px;
+    margin: 15px;
+  }

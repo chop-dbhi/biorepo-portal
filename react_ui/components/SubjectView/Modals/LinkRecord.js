@@ -6,6 +6,7 @@ import RaisedButton from '@material-ui/core/Button';
 import * as RecordActions from '../../../actions/record';
 import * as SubjectActions from '../../../actions/subject';
 import * as Colors from '@material-ui/core/colors';
+import styles from './Modals.css';
 
 import { connect } from 'react-redux';
 
@@ -61,54 +62,21 @@ class LinkRecord extends React.Component {
   render() {
     const primaryRecord = this.props.activeRecord;
     const secondaryRecord = this.props.pendingLinkedRecord;
-    const modalStyle = {
-      left: '45%',
-      marginLeft: '-5em',
-      marginBottom: '3em',
-      position: 'fixed',
-      zIndex: '1000',
-    };
-    const cardStyle = {
-      padding: '15px',
-      boxShadow: '3px 3px 14px rgba(204, 197, 185, 0.5)',
-      backgroundColor: 'white',
-    };
-    const backdropStyle = {
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      width: '100%',
-      height: '100%',
-      zIndex: 99,
-      display: 'block',
-      backgroundColor: 'rgba(0, 0, 0, 0.298039)',
-    };
-    const recordStyle = {
-      padding: '5px',
-      margin: '15px',
-      borderStyle: 'solid',
-      borderWidth: '1px',
-      borderColor: '#DDD',
-    };
-    const linkErrorStyle = {
-      padding: '5px',
-      margin: '15px',
-    };
     const activePds = this.props.activeRecord.pds;
     const availableLinkTypes = this.props.availableLinkTypes[activePds];
     const canLink = availableLinkTypes.length > 0;
     return (
       <section>
-        <div style={backdropStyle}></div>
-        <div className="col-sm-3 edit-label-modal" style={modalStyle}>
-          <div className="card" style={cardStyle}>
+        <div className={styles.backdropStyle}></div>
+        <div className={styles.modalStyle}>
+          <div className={styles.cardStyle}>
             <h6 className="category"> Select Link Type</h6>
             <div className="more">
             </div>
             <div className="content">
               {canLink ?
                 <div>
-                  <div style={recordStyle}>
+                  <div className={styles.recordStyle}>
                     <h6>
                       {primaryRecord ?
                         <span>{primaryRecord.label_desc} ID: {primaryRecord.id}</span> :
@@ -124,7 +92,7 @@ class LinkRecord extends React.Component {
                       <MenuItem key={i} value={link.id} primaryText={link.desc} />
                       ))}
                   </Select>
-                  <div style={recordStyle}>
+                  <div className={styles.recordStyle}>
                     <h6>
                       {secondaryRecord ?
                         <span>{secondaryRecord.label_desc} ID: {secondaryRecord.id}</span> :
@@ -133,7 +101,7 @@ class LinkRecord extends React.Component {
                     </h6>
                   </div>
                   {this.props.linkError != null ?
-                    <div style={linkErrorStyle}>Error: {this.props.linkError}</div> :
+                    <div className={styles.linkErrorStyle}>Error: {this.props.linkError}</div> :
                     null
                   }
                   <RaisedButton
