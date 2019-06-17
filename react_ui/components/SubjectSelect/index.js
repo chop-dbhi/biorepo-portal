@@ -84,11 +84,8 @@ class SubjectSelect extends React.PureComponent {
 
     // Update state with new active subject
     dispatch(SubjectActions.setActiveSubject(subject));
-
     // Push to the correct pathname (and therefore view)
-    this.props.history.push(
-      `${this.props.protocol.activeProtocolId}/subject/${subject.id}`
-    );
+    this.props.history.push(`${this.props.match.url}/subject/${subject.id}`);
   }
 
   render() {
@@ -156,7 +153,7 @@ class SubjectSelect extends React.PureComponent {
 
 
     return (
-      this.props.subject.items.length>0 ?
+      this.props.subject.items.length>0 && this.props.protocol.items ?
         <div>
           {this.props.subject.addSubjectMode ?
             <NewSubjectForm orgs={this.props.protocol.orgs} /> :
