@@ -160,16 +160,15 @@ class SubjectCardEdit extends React.Component {
       return (
         <section>
           <div style={backdropStyle}/>
-          <div className="col-md-12 col-sm-12">
-            <div className="col-md-4 col-sm-4" style={newSubFormStyle}>
               <PureModal
                 isOpen
-                header="add a new subject"
-                onCLose={() => {
-                  this.handleCloseClick;
+                width='700px'
+                onClose={() => {
+                  this.handleCancelClick();
                   return true;}}
                 >
                 <div className="card">
+                  <h6 className="category"><center>Edit Subject</center></h6>
                   <div className="more"/>
                     <div className="content">
                       <form id="subject-form" onSubmit={this.handleSaveClick}>
@@ -224,8 +223,7 @@ class SubjectCardEdit extends React.Component {
               </div>
             </div>
           </PureModal>
-        </div>
-      </div>
+
     </section>
     );
     }
