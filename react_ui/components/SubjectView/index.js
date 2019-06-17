@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import BackButton from '../BackButton';
 import LoadingGif from '../LoadingGif';
 import SubjectPanel from './SubjectPanel';
+import SubjectCardEdit from './SubjectPanel/SubjectCardEdit'
 import RecordPanel from './RecordPanel';
 import SubjFamPanel from './SubjFamPanel'
 import EditLabelModal from './Modals/EditLabel';
@@ -38,7 +39,8 @@ class SubjectView extends React.Component {
         <div className="row">
           <div className="col-md-4">
             <section>
-              <SubjectPanel subject={subject} edit={this.props.match.params.edit} path={path} />
+              <SubjectPanel subject={subject} path={path} />
+              {this.props.subject.editSubjectMode ? <SubjectCardEdit subject={subject}/> : null}
             </section>
             <section>
               <SubjFamPanel />
@@ -76,6 +78,7 @@ function mapStateToProps(state) {
     subject: {
       items: state.subject.items,
       activeSubject: state.subject.activeSubject,
+      editSubjectMode: state.subject.editSubjectMode,
     },
     subjFam: {
       addSubjFamRelMode: state.subjFam.addSubjFamRelMode,
