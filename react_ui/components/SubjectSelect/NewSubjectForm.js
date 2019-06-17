@@ -22,7 +22,6 @@ export class NewSubjectForm extends React.Component {
     super(props);
     this.handleSaveClick = this.handleSaveClick.bind(this);
     this.handleCloseClick = this.handleCloseClick.bind(this);
-    this.handleClick = this.handleClick.bind(this);
   }
 
   handleSaveClick(e) {
@@ -50,11 +49,6 @@ export class NewSubjectForm extends React.Component {
     document.removeEventListener('click', this.handleClick);
   }
 
-  handleClick(e) {
-    if (e.target.className === "pure-modal-backdrop") {
-      this.handleCloseClick();
-    }
-  }
 
   validateDate(date) {
     const { dispatch } = this.props;
@@ -179,10 +173,8 @@ export class NewSubjectForm extends React.Component {
             <PureModal
               isOpen
               width='700px'
-              onClose={() => {
-                this.handleCloseClick();
-                return true;}}
-                >
+              onClose={() => {return false;}}
+              >
               <div className="card" style={cardStyle}>
                 <h6 className="category"><center>Add New Subject</center></h6>
                 <div className="more">

@@ -163,9 +163,7 @@ class SubjectCardEdit extends React.Component {
               <PureModal
                 isOpen
                 width='700px'
-                onClose={() => {
-                  this.handleCancelClick();
-                  return true;}}
+                onClose={() => {return false;}}
                 >
                 <div className="card">
                   <h6 className="category"><center>Edit Subject</center></h6>
