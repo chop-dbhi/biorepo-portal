@@ -15,7 +15,7 @@ class BackButton extends React.Component {
 
   render() {
     const divStyle = {
-      backgroundColor: 'white',
+      backgroundColor: '#7AC29A',
       opacity: '0.7',
       width: '75px',
       position: 'fixed',
@@ -31,7 +31,7 @@ class BackButton extends React.Component {
     const arrowStyle = {
       marginTop: '10px',
       fontSize: '2em',
-      color: '#7AC29A',
+      color: 'white',
       position: 'relative',
       top: '20px',
     };
