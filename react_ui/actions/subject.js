@@ -16,6 +16,7 @@ export const ADD_SUBJECT_FAILURE = 'ADD_SUBJECT_FAILURE';
 export const ADD_SUBJECT_SUCCESS = 'ADD_SUBJECT_SUCCESS';
 export const SET_LINK_MODE = 'SET_LINK_MODE';
 export const SET_ADD_SUBJECT_MODE = 'SET_ADD_SUBJECT_MODE';
+export const SET_EDIT_SUBJECT_MODE = 'SET_EDIT_SUBJECT_MODE';
 export const SET_NEW_SUBJECT = 'SET_NEW_SUBJECT';
 export const REQUEST_SUBJECT_RECORDS = 'REQUEST_SUBJECT_RECORDS';
 export const RECEIVE_SUBJECT_RECORDS = 'RECEIVE_SUBJECT_RECORDS';
@@ -76,6 +77,14 @@ export function setAddSubjectMode(mode = null) {
   // Update state to enable or disable AddSubject mode
   return {
     type: SET_ADD_SUBJECT_MODE,
+    mode,
+  };
+}
+
+export function setEditSubjectMode(mode = null) {
+  // Update state to enable or disable Edit Subject mode
+  return {
+    type: SET_EDIT_SUBJECT_MODE,
     mode,
   };
 }

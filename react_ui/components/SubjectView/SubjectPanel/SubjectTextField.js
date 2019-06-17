@@ -29,7 +29,6 @@ class SubjectTextField extends React.Component {
     if (this.props.error) {
       errorText = 'This field is required.';
     }
-
     return (
       <div className="form-group">
         <label htmlFor="formGroupExampleInput">{this.props.label}</label>
@@ -38,6 +37,7 @@ class SubjectTextField extends React.Component {
             className="form-control"
             id="formGroupExampleInput"
             onChange={this.onChange}
+            value={this.props.value}
           />
     </div>
     );

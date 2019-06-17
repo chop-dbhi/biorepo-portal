@@ -23,6 +23,15 @@ class SubjectOrgSelectField extends React.Component {
     }));
     return orgList
   }
+
+  setOrgDefaltValue(){
+    let defaultValue = null;
+    defaultValue = {
+      value: this.props.value,
+      label: this.props.label,
+    };
+    return defaultValue
+  }
   onChange(e, index, value) {
     const { dispatch } = this.props;
     // Check to see if we're editing an existing subject
@@ -54,12 +63,19 @@ class SubjectOrgSelectField extends React.Component {
     return (
       <div>
         <h6 className="category"> Organization </h6>
+        {this.props.editSubjectMode ?
           <Select
             onChange={this.onChange}
-            value={this.props.value}
+            defaultValue={this.setOrgDefaltValue()}
             options={this.orgOptions()}
             placeholder="Search for Organization"
           />
+          :
+          <Select
+            onChange={this.onChange}
+            options={this.orgOptions()}
+            placeholder="Search for Organization"
+          />}
       </div>
     );
   }
@@ -73,6 +89,8 @@ SubjectOrgSelectField.propTypes = {
   newSubject: PropTypes.object,
   error: PropTypes.string,
   value: PropTypes.number,
+  label: PropTypes.string,
+  editSubjectMode: PropTypes.bool,
 };
 
 function mapStateToProps(state) {
@@ -80,7 +98,7 @@ function mapStateToProps(state) {
     subject: state.subject.activeSubject,
     newSubject: state.subject.newSubject,
     orgs: state.protocol.orgs,
-    value: state.value,
+    editSubjectMode: state.subject.editSubjectMode,
   };
 }
 

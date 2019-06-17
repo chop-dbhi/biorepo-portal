@@ -4,7 +4,8 @@ import { REQUEST_SUBJECTS, RECEIVE_SUBJECTS, SET_ACTIVE_SUBJECT,
          SET_LINK_MODE, ADD_SUBJECT_SUCCESS, ADD_SUBJECT_FAILURE,
          SET_ADD_SUBJECT_MODE, SET_NEW_SUBJECT, REQUEST_SUBJECT_SUCCESS,
          SET_NEW_SUBJECT_FORM_ERRORS, SET_UPDATE_FORM_ERRORS,
-         UPDATE_SUBJECT_FAILURE, ADD_SUBJECT_REQUEST, CLEAR_SUBJECTS_STATE } from '../actions/subject';
+         UPDATE_SUBJECT_FAILURE, ADD_SUBJECT_REQUEST, CLEAR_SUBJECTS_STATE,
+         SET_EDIT_SUBJECT_MODE } from '../actions/subject';
 
 let initialNewSubject = {
   organization: null,
@@ -26,6 +27,7 @@ const initialState = {
   showInfoPanel: false,
   showActionPanel: false,
   addRecordMode: false,
+  editSubjectMode: false,
   linkMode: false,
   newFormErrors: {
     server: [],
@@ -165,6 +167,16 @@ function subject(state = initialState, action) {
       return initialState;
     default:
       return state;
+    case SET_EDIT_SUBJECT_MODE:
+      if (action.mode != null) {
+        return Object.assign({}, state, {
+          editSubjectMode: action.mode,
+        });
+      }
+      return Object.assign({}, state, {
+        editSubjectMode: !state.editSubjectMode,
+      });
+
   }
 }
 

@@ -11,6 +11,7 @@ import * as Colors from '@material-ui/core/colors';
 import ExternalIDs from './ExternalIds';
 import LoadingGif from '../../LoadingGif';
 import moment from 'moment';
+import Button from 'react-bootstrap/Button'
 
 class SubjectCardEdit extends React.Component {
 
@@ -39,8 +40,9 @@ class SubjectCardEdit extends React.Component {
   }
 
   handleCancelClick() {
+    const { dispatch } = this.props;
     this.restoreSubject();
-    this.context.history.goBack();
+    dispatch(SubjectActions.setEditSubjectMode(false));
   }
 
   validateDate(date) {
@@ -136,7 +138,10 @@ class SubjectCardEdit extends React.Component {
             </div>
             <div className="content">
               <form id="subject-form" onSubmit={this.handleSaveClick}>
-                <SubjectOrgSelectField value={subject.organization} />
+                <SubjectOrgSelectField
+                  value={subject.organization}
+                  label={subject.organization_name}
+                />
                 <SubjectTextField
                   label={'First Name'}
                   value={subject.first_name}
@@ -165,19 +170,17 @@ class SubjectCardEdit extends React.Component {
                 <ExternalIDs externalIds={subject.external_ids} />
               {!this.props.savingSubject ?
                 <div className="subject-form-button-group">
-                  <RaisedButton
-                    labelColor={'#7AC29A'}
-                    mini
+                  <Button
+                    labelcolor={'#7AC29A'}
                     type="submit"
-                    label={'Save'}
-                  />
-                  <RaisedButton
+                    label={'Save'} > Save </Button>
+
+                  <Button
                     onClick={this.handleCancelClick}
-                    labelColor={Colors.red400}
+                    labelcolor={Colors.red400}
                     style={{ marginLeft: '10px' }}
-                    mini
-                    label={'Close'}
-                  />
+                    label={'Close'}> Cancel </Button>
+
                 </div>
                 :
                 <LoadingGif />
@@ -217,6 +220,7 @@ function mapStateToProps(state) {
       items: state.subject.items,
       activeSubject: state.subject.activeSubject,
       updateFormErrors: state.subject.updateFormErrors,
+      editSubjectMode: state.subject.editSubjectMode,
     },
     pds: {
       items: state.pds.items,
