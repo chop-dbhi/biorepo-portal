@@ -26,10 +26,14 @@ class SubjectView extends React.Component {
     }
 
     if (!this.props.protocol.activeProtocol) {
-      dispatch(ProtocolActions.fetchProtocol(protocolId));
+      dispatch(ProtocolActions.setActiveProtocol(protocolId));
     }
   }
 
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(ProtocolActions.setActiveProtocol(null));
+  }
   render() {
     // Checks for empty subject state and updates it if necessary
     const subject = this.props.subject.activeSubject;
@@ -74,6 +78,7 @@ function mapStateToProps(state) {
   return {
     protocol: {
       activeProtocol: state.protocol.activeProtocol,
+      items: state.protocol.items,
     },
     subject: {
       items: state.subject.items,
