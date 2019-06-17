@@ -12,6 +12,8 @@ import ExternalIDs from './ExternalIds';
 import LoadingGif from '../../LoadingGif';
 import moment from 'moment';
 import Button from 'react-bootstrap/Button'
+import PureModal from 'react-pure-modal';
+import 'react-pure-modal/dist/react-pure-modal.min.css';
 
 class SubjectCardEdit extends React.Component {
 
@@ -130,67 +132,102 @@ class SubjectCardEdit extends React.Component {
   }
 
   render() {
+    const newSubFormStyle = {
+      left: '50%',
+      marginLeft: '-15em',
+      marginBottom: '3em',
+      position: 'fixed',
+      zIndex: '1000',
+    };
+    const cardStyle = {
+      padding: '15px',
+      boxShadow: '3px 3px 14px rgba(204, 197, 185, 0.5)',
+      backgroundColor: 'white',
+    };
+    const backdropStyle = {
+      position: 'fixed',
+      top: '0px',
+      left: '0px',
+      width: '100%',
+      height: '100%',
+      zIndex: 99,
+      display: 'block',
+      backgroundColor: 'rgba(0, 0, 0, 0.298039)',
+    };
+
     if (this.props.subject.activeSubject) {
       const subject = this.props.subject.activeSubject;
       return (
-          <div className="card">
-            <div className="more">
+        <section>
+          <div style={backdropStyle}/>
+          <div className="col-md-12 col-sm-12">
+            <div className="col-md-4 col-sm-4" style={newSubFormStyle}>
+              <PureModal
+                isOpen
+                header="add a new subject"
+                onCLose={() => {
+                  this.handleCloseClick;
+                  return true;}}
+                >
+                <div className="card">
+                  <div className="more"/>
+                    <div className="content">
+                      <form id="subject-form" onSubmit={this.handleSaveClick}>
+                        <SubjectOrgSelectField
+                          value={subject.organization}
+                          label={subject.organization_name}
+                        />
+                        <SubjectTextField
+                          label={'First Name'}
+                          value={subject.first_name}
+                          skey={'first_name'}
+                        />
+                        <SubjectTextField
+                          label={'Last Name'}
+                          value={subject.last_name}
+                          skey={'last_name'}
+                        />
+                        <SubjectTextField
+                          label={subject.organization_id_label}
+                          value={subject.organization_subject_id}
+                          skey={'organization_subject_id'}
+                        />
+                        <SubjectTextField
+                          label={`Verify ${subject.organization_id_label}`}
+                          value={subject.organization_subject_id_validation}
+                          skey={'organization_subject_id_validation'}
+                        />
+                        <SubjectTextField
+                          label={'Date of Birth (YYYY-MM-DD)'}
+                          value={subject.dob}
+                          skey={'dob'}
+                        />
+                        <ExternalIDs externalIds={subject.external_ids} />
+                      {!this.props.savingSubject ?
+                        <div className="subject-form-button-group">
+                          <Button
+                            labelcolor={'#7AC29A'}
+                            type="submit"
+                            label={'Save'} > Save </Button>
+
+                          <Button
+                            onClick={this.handleCancelClick}
+                            labelcolor={Colors.red400}
+                            style={{ marginLeft: '10px' }}
+                            label={'Close'}> Cancel </Button>
+                        </div>
+                  :
+                  <LoadingGif />
+                }
+                </form>
+                {this.renderErrors()}
+              </div>
             </div>
-            <div className="content">
-              <form id="subject-form" onSubmit={this.handleSaveClick}>
-                <SubjectOrgSelectField
-                  value={subject.organization}
-                  label={subject.organization_name}
-                />
-                <SubjectTextField
-                  label={'First Name'}
-                  value={subject.first_name}
-                  skey={'first_name'}
-                />
-                <SubjectTextField
-                  label={'Last Name'}
-                  value={subject.last_name}
-                  skey={'last_name'}
-                />
-                <SubjectTextField
-                  label={subject.organization_id_label}
-                  value={subject.organization_subject_id}
-                  skey={'organization_subject_id'}
-                />
-                <SubjectTextField
-                  label={`Verify ${subject.organization_id_label}`}
-                  value={subject.organization_subject_id_validation}
-                  skey={'organization_subject_id_validation'}
-                />
-                <SubjectTextField
-                  label={'Date of Birth (YYYY-MM-DD)'}
-                  value={subject.dob}
-                  skey={'dob'}
-                />
-                <ExternalIDs externalIds={subject.external_ids} />
-              {!this.props.savingSubject ?
-                <div className="subject-form-button-group">
-                  <Button
-                    labelcolor={'#7AC29A'}
-                    type="submit"
-                    label={'Save'} > Save </Button>
-
-                  <Button
-                    onClick={this.handleCancelClick}
-                    labelcolor={Colors.red400}
-                    style={{ marginLeft: '10px' }}
-                    label={'Close'}> Cancel </Button>
-
-                </div>
-                :
-                <LoadingGif />
-              }
-              </form>
-              {this.renderErrors()}
-            </div>
-          </div>
-
-      );
+          </PureModal>
+        </div>
+      </div>
+    </section>
+    );
     }
     return <div />;
   }
