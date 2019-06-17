@@ -216,14 +216,11 @@ class SubjFamEditView extends React.Component {
                     <center>
 
                       <Button
-                        variant="contained"
                         label={'Create New'}
                         type='submit'
-                        variant="success"
                         size="sm"
                         onClick={this.handleNewPedRelClick}
-                      > create New </Button>
-
+                      > Create New </Button>
 
                       <Button
                         variant="contained"
