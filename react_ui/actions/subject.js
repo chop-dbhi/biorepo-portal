@@ -213,6 +213,7 @@ export function updateSubjectSuccess(subject) {
       isFetching: false,
       subject,
     });
+    dispatch(setEditSubjectMode(false));
   //   dispatch(NotificationActions.addNotification(
   //     {
   //       message: 'Subject Updated',
