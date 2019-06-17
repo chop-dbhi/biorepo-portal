@@ -213,15 +213,15 @@ export function updateSubjectSuccess(subject) {
       isFetching: false,
       subject,
     });
-    dispatch(NotificationActions.addNotification(
-      {
-        message: 'Subject Updated',
-        level: 'success',
-        autoDismiss: 2,
-      }
-    ));
-    dispatch(NotificationActions.renderNotification());
-  };
+  //   dispatch(NotificationActions.addNotification(
+  //     {
+  //       message: 'Subject Updated',
+  //       level: 'success',
+  //       autoDismiss: 2,
+  //     }
+  //   ));
+  //   dispatch(NotificationActions.renderNotification());
+  // };
 }
 
 export function updateSubject(protocolId, subject) {
