@@ -221,7 +221,7 @@ export function updateSubjectSuccess(subject) {
   //     }
   //   ));
   //   dispatch(NotificationActions.renderNotification());
-  // };
+  };
 }
 
 export function updateSubject(protocolId, subject) {
