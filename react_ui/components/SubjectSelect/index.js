@@ -156,7 +156,7 @@ class SubjectSelect extends React.PureComponent {
 
 
     return (
-      this.props.protocol.items ?
+      this.props.subject.items.length>0 ?
         <div>
           {this.props.subject.addSubjectMode ?
             <NewSubjectForm orgs={this.props.protocol.orgs} /> :
