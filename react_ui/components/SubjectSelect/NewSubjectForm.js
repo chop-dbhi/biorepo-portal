@@ -180,10 +180,6 @@ export class NewSubjectForm extends React.Component {
           <div className="col-md-4 col-sm-4" style={newSubFormStyle}>
             <PureModal
               isOpen
-              header="add a new subject"
-              onCLose={() => {
-                this.handleCloseClick;
-                return true;}}
                 >
               <div className="card" style={cardStyle}>
                 <h6 className="category"><center>Add New Subject</center></h6>
@@ -200,35 +196,35 @@ export class NewSubjectForm extends React.Component {
                       new
                       error={this.props.newFormErrors.form.first_name}
                       label={'First Name'}
-                      value={null}
+                      value={''}
                       skey={'first_name'}
                     />
                     <SubjectTextField
                       new
                       error={this.props.newFormErrors.form.last_name}
                       label={'Last Name'}
-                      value={null}
+                      value={''}
                       skey={'last_name'}
                     />
                     <SubjectTextField
                       new
                       error={this.props.newFormErrors.form.org_id}
                       label={`${this.props.subject.newSubject.organization_id_label}`}
-                      value={null}
+                      value={''}
                       skey={'organization_subject_id'}
                     />
                     <SubjectTextField
                       new
                       error={this.props.newFormErrors.form.org_valid}
                       label={`Verify ${this.props.subject.newSubject.organization_id_label}`}
-                      value={null}
+                      value={''}
                       skey={'organization_subject_id_validation'}
                     />
                     <SubjectTextField
                       new
                       error={this.props.newFormErrors.form.dob}
                       label={'Date of Birth (YYYY-MM-DD)'}
-                      value={null}
+                      value={''}
                       skey={'dob'}
                     />
                     {this.props.savingSubject ? <LoadingGif style={{ width: '100%' }} /> :
