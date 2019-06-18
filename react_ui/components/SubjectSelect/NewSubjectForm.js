@@ -7,6 +7,7 @@ import Divider from '@material-ui/core/Divider';
 import * as Colors from '@material-ui/core/colors';
 import SubjectOrgSelectField from '../SubjectView/SubjectPanel/SubjectOrgSelectField';
 import SubjectTextField from '../SubjectView/SubjectPanel/SubjectTextField';
+import SubjectDOBField from '../SubjectView/SubjectPanel/SubjectDOBField';
 import LoadingGif from '../LoadingGif';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -48,7 +49,6 @@ export class NewSubjectForm extends React.Component {
     dispatch(SubjectActions.fetchSubjects(this.props.protocol.activeProtocolId));
     document.removeEventListener('click', this.handleClick);
   }
-
 
   validateDate(date) {
     const { dispatch } = this.props;
@@ -172,7 +172,7 @@ export class NewSubjectForm extends React.Component {
         <div style={backdropStyle}></div>
             <PureModal
               isOpen
-              width='700px'
+              width='500px'
               onClose={() => {return false;}}
               >
               <div className="card" style={cardStyle}>
@@ -221,6 +221,7 @@ export class NewSubjectForm extends React.Component {
                       value={''}
                       skey={'dob'}
                     />
+                    <SubjectDOBField/>
                     {this.props.savingSubject ? <LoadingGif style={{ width: '100%' }} /> :
                       <div>
                         <Button
@@ -244,8 +245,6 @@ export class NewSubjectForm extends React.Component {
                 </div>
               </div>
             </PureModal>
-
-
       </section>
     );
   }
