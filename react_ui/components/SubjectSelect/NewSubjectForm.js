@@ -125,20 +125,14 @@ export class NewSubjectForm extends React.Component {
   }
 
   renderErrors() {
-    let errors =  '';
     const serverErrors = this.props.newFormErrors.server;
-    const formErrors = this.props.newFormErrors.form;
-    if (serverErrors) {
-      errors = serverErrors.concat(formErrors);
-    } else {
-      errors = formErrors;
-    }
+  
     const style = {
       fontSize: '12px',
       marginTop: '15px',
     };
-    if (errors) {
-      return errors.map((error, i) => (
+    if (serverErrors) {
+      return serverErrors.map((error, i) => (
         <div key={i} style={style} className="alert alert-danger">
           <div className="container">
             {error}
