@@ -221,7 +221,9 @@ export class NewSubjectForm extends React.Component {
                       value={''}
                       skey={'dob'}
                     />
-                    <SubjectDOBField/>
+                    <SubjectDOBField
+                      value={''}
+                    />
                     {this.props.savingSubject ? <LoadingGif style={{ width: '100%' }} /> :
                       <div>
                         <Button

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import * as SubjectActions from '../../../actions/subject';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
@@ -11,17 +12,24 @@ class SubjectDOBField extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state={value: ''};
+    this.state={value: this.props.value};
     this.onChange = this.onChange.bind(this);
   }
 
   onChange(e) {
-    const sub = this.props.newSubject;
+    const { dispatch } = this.props;
     let date= moment(e);
-
     this.setState({value: e});
-    sub.dob = date.format('YYYY-MM-DD');
-
+    // Check to see if we're editing an existing subject
+    if (!this.props.new) {
+      // Changing the input fields should update the state of the active subject
+      const sub = this.props.subject;
+      sub.dob = date.format('YYYY-MM-DD');
+      dispatch(SubjectActions.setActiveSubject(sub));
+    } else {
+      const sub = this.props.newSubject;
+      sub.dob = date.format('YYYY-MM-DD');
+    }
   }
 
   render() {
@@ -34,7 +42,8 @@ class SubjectDOBField extends React.Component {
         <div className="form-group">
           <h5 className="category" style={{fontWeight: "bold"}} > Date of Birth (YYYY-MM-DD) </h5>
           <DatePicker
-              selected={this.state.value}
+              openToDate={new Date(this.props.value)}
+              selected={new Date(this.state.value)}
               onChange={this.onChange}
               peekNextMonth
               showMonthDropdown
@@ -42,6 +51,7 @@ class SubjectDOBField extends React.Component {
               scrollableYearDropdown
               dropdownMode="select"
               dateFormat="yyyy-MM-dd"
+              maxDate={(new Date())}
           />
         </div>
 
