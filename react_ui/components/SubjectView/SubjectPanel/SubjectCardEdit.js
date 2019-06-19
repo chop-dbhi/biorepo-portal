@@ -112,7 +112,6 @@ class SubjectCardEdit extends React.Component {
 
       valid = false;
     }
-    console.log(new_errs.length);
     dispatch(SubjectActions.setUpdateFormErrors(new_errs));
     return valid;
   }
@@ -151,7 +150,6 @@ class SubjectCardEdit extends React.Component {
 
     if (this.props.subject.activeSubject) {
       const subject = this.props.subject.activeSubject;
-      console.log(this.props.subject);
       return (
         <section>
           <div style={backdropStyle}/>
