@@ -100,20 +100,20 @@ export class NewSubjectForm extends React.Component {
 
     if(!subject.dob){
       new_errs['dobR']= 'Date of birth field is required.'
-      valid = false; 
+      valid = false;
     }else if (!this.validateDate(subject.dob)) {
       new_errs['dobR']= 'Must be a valid date (YYYY-MM-DD).';
-      valid = false; 
+      valid = false;
     }
     if (!subject.organization_subject_id) {
       new_errs['oidReq']= 'Organization subject ID is required.';
 
       valid = false;
     }
-    
+
     if(!subject.organization_subject_id_validation){
       new_errs['oidNoMatch'] = 'Organization subject ID verification is required.';
-      valid = false; 
+      valid = false;
     } else if (subject.organization_subject_id !== subject.organization_subject_id_validation) {
       new_errs['oidNoMatch']= 'Organization subject IDs do not match.';
 
@@ -126,7 +126,7 @@ export class NewSubjectForm extends React.Component {
 
   renderErrors() {
     const serverErrors = this.props.newFormErrors.server;
-  
+
     const style = {
       fontSize: '12px',
       marginTop: '15px',
@@ -193,35 +193,35 @@ export class NewSubjectForm extends React.Component {
                       new
                       error={this.props.newFormErrors.form['fnReq']}
                       label={'First Name'}
-                      value={null}
+                      value={''}
                       skey={'first_name'}
                     />
                     <SubjectTextField
                       new
                       error={this.props.newFormErrors.form['lnReq']}
                       label={'Last Name'}
-                      value={null}
+                      value={''}
                       skey={'last_name'}
                     />
                     <SubjectTextField
                       new
                       error={this.props.newFormErrors.form['oidReq']}
                       label={`${this.props.subject.newSubject.organization_id_label}`}
-                      value={null}
+                      value={''}
                       skey={'organization_subject_id'}
                     />
                     <SubjectTextField
                       new
                       error={this.props.newFormErrors.form['oidNoMatch']}
                       label={`Verify ${this.props.subject.newSubject.organization_id_label}`}
-                      value={null}
+                      value={''}
                       skey={'organization_subject_id_validation'}
                     />
                     <SubjectTextField
                       new
                       error={this.props.newFormErrors.form['dobR']}
                       label={'Date of Birth (YYYY-MM-DD)'}
-                      value={null}
+                      value={''}
                       skey={'dob'}
                     />
                     {this.props.savingSubject ? <LoadingGif style={{ width: '100%' }} /> :
