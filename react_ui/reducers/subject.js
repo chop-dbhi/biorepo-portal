@@ -63,7 +63,6 @@ function subject(state = initialState, action) {
       action.subject.organization = action.subject.organization;
       action.subject.organization_id_label = action.subject.organization_id_label;
       return Object.assign({}, state, {
-        items: action.subjects,
         isFetching: false,
         activeSubject: action.subject,
       });
