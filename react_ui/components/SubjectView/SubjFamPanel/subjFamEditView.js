@@ -89,7 +89,7 @@ class SubjFamEditView extends React.Component {
     } else {
       this.setState({relatedSubErr: false });
     }
-    
+
     if (this.state.subjectRole == '') {
       this.setState({subjectRoleError: true});
     } else {
@@ -107,10 +107,10 @@ class SubjFamEditView extends React.Component {
       return false;
     } else {
       this.setState({dataEntryCorrect: true});
-      return true; 
+      return true;
     }
-   
-   
+
+
 
   }
   handleNewPedRelClick(e) {
@@ -171,7 +171,7 @@ class SubjFamEditView extends React.Component {
       width: '90%',
       position: 'fixed',
       zIndex: '1000',
-    }; 
+    };
 
     const errorStyle = {
       control: styles => ({ ...styles, backgroundColor: 'pink' })
@@ -180,7 +180,6 @@ class SubjFamEditView extends React.Component {
     const { value } = this.state;
       return (
         <section>
-              {console.log(this.state)}
 
           <div style={backdropStyle}></div>
             <div className="col-md-12 edit-label-modal" style={modalStyle}>
@@ -234,7 +233,7 @@ class SubjFamEditView extends React.Component {
                           placeholder="Search for Related Subject Role Types"
                         />
                         {this.state.subjectRoleError ? <p>Please select related subject role. </p> : null}
- 
+
                         </div>
                     </Row>
                   <Row>

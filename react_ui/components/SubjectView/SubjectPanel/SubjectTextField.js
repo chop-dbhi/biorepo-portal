@@ -26,7 +26,6 @@ class SubjectTextField extends React.Component {
 
   render() {
     let style = {};
-    console.log(this.props);
     if (this.props.error) {
         style = {backgroundColor: 'pink'};
     }
@@ -42,7 +41,7 @@ class SubjectTextField extends React.Component {
             style= {style}
             value={this.props.value}
           />
-       {this.props.error 
+       {this.props.error
       ? <p> {this.props.error} </p>
     : null  }
     </div>
