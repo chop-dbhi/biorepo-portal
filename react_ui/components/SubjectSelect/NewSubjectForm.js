@@ -223,6 +223,7 @@ export class NewSubjectForm extends React.Component {
                     />
                     <SubjectDOBField
                       value={''}
+                      new
                     />
                     {this.props.savingSubject ? <LoadingGif style={{ width: '100%' }} /> :
                       <div>

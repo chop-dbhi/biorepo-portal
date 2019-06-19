@@ -16,6 +16,49 @@ class SubjectDOBField extends React.Component {
     this.onChange = this.onChange.bind(this);
   }
 
+  getSelectedValue() {
+    let selectedDate = null;
+    if (!this.props.new) {
+      selectedDate=`new Date(this.state.value)`
+    } else {
+      selectedDate=this.state.value;
+    }
+    return selectedDate
+  }
+
+  datePickerSettings() {
+    if (this.props.new){
+      return (
+        <DatePicker
+            selected={this.state.value}
+            onChange={this.onChange}
+            peekNextMonth
+            showMonthDropdown
+            showYearDropdown
+            scrollableYearDropdown
+            dropdownMode="select"
+            dateFormat="yyyy-MM-dd"
+            maxDate={(new Date())}
+        />
+      );
+    } else {
+      return (
+        <DatePicker
+            openToDate={new Date(this.props.value)}
+            selected={new Date(this.state.value)}
+            onChange={this.onChange}
+            peekNextMonth
+            showMonthDropdown
+            showYearDropdown
+            scrollableYearDropdown
+            dropdownMode="select"
+            dateFormat="yyyy-MM-dd"
+            maxDate={(new Date())}
+        />
+      );
+    }
+  }
+
   onChange(e) {
     const { dispatch } = this.props;
     let date= moment(e);
@@ -41,18 +84,7 @@ class SubjectDOBField extends React.Component {
 
         <div className="form-group">
           <h5 className="category" style={{fontWeight: "bold"}} > Date of Birth (YYYY-MM-DD) </h5>
-          <DatePicker
-              openToDate={new Date(this.props.value)}
-              selected={new Date(this.state.value)}
-              onChange={this.onChange}
-              peekNextMonth
-              showMonthDropdown
-              showYearDropdown
-              scrollableYearDropdown
-              dropdownMode="select"
-              dateFormat="yyyy-MM-dd"
-              maxDate={(new Date())}
-          />
+          {this.datePickerSettings()}
         </div>
 
     );
@@ -63,6 +95,7 @@ SubjectDOBField.propTypes = {
   dispatch: PropTypes.func,
   value: PropTypes.string,
   error: PropTypes.string,
+  new: PropTypes.bool,
 };
 
 function mapStateToProps(state) {
