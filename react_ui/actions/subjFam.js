@@ -130,13 +130,13 @@ export function addSubjFamRelRequest() {
 
 export function addSubjFamRelSuccess(subjFamRel) {
   return dispatch => {
-    dispatch(NotificationActions.addNotification(
-      {
-        message: 'Relationship Added',
-        level: 'success',
-        autoDismiss: 2,
-      }
-    ));
+    // dispatch(NotificationActions.addNotification(
+    //   {
+    //     message: 'Relationship Added',
+    //     level: 'success',
+    //     autoDismiss: 2,
+    //   }
+    // ));
     dispatch(setAddSubjFamRelMode());
     dispatch({
       type: ADD_SUBJ_FAM_REL_SUCCESS,
