@@ -62,7 +62,7 @@ class SubjectOrgSelectField extends React.Component {
     }
     return (
       <div>
-        <h6 className="category"> Organization </h6>
+        <h5 className="category" style={{fontWeight: "bold"}}> Organization </h5>
         {this.props.editSubjectMode ?
           <Select
             onChange={this.onChange}

@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import RaisedButton from '@material-ui/core/Button';
 import SubjectTextField from './SubjectTextField';
 import SubjectOrgSelectField from './SubjectOrgSelectField';
+import SubjectDOBField from './SubjectDOBField';
 import * as SubjectActions from '../../../actions/subject';
 import * as Colors from '@material-ui/core/colors';
 import ExternalIDs from './ExternalIds';
@@ -162,7 +163,7 @@ class SubjectCardEdit extends React.Component {
           <div style={backdropStyle}/>
               <PureModal
                 isOpen
-                width='700px'
+                width='500px'
                 onClose={() => {return false;}}
                 >
                 <div className="card">
@@ -198,6 +199,9 @@ class SubjectCardEdit extends React.Component {
                           label={'Date of Birth (YYYY-MM-DD)'}
                           value={subject.dob}
                           skey={'dob'}
+                        />
+                        <SubjectDOBField
+                          value={subject.dob}
                         />
                         <ExternalIDs externalIds={subject.external_ids} />
                       {!this.props.savingSubject ?
