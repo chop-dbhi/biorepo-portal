@@ -8,6 +8,7 @@ class SubjectTextField extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state={value: this.props.value}
     this.onChange = this.onChange.bind(this);
   }
 
@@ -22,6 +23,7 @@ class SubjectTextField extends React.Component {
       const sub = this.props.newSubject;
       sub[this.props.skey] = e.target.value.trim();
     }
+    this.setState({value: e.target.value.trim()});
   }
 
   render() {
@@ -35,7 +37,7 @@ class SubjectTextField extends React.Component {
             id="formGroupExampleInput"
             onChange={this.onChange}
             style= {this.props.error ? {backgroundColor: 'pink'}: {} }
-            value={this.props.value}
+            value={this.state.value}
           />
        {this.props.error
       ? <p> {this.props.error} </p>
