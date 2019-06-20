@@ -232,7 +232,7 @@ class SubjFamEditView extends React.Component {
                           onChange={this.handleSubject2RoleSelect}
                           placeholder="Search for Related Subject Role Types"
                         />
-                        {this.state.subjectRoleError ? <p>Please select related subject role. </p> : null}
+                        {this.state.relatedSubRoleErr ? <p>Please select related subject role. </p> : null}
 
                         </div>
                     </Row>
