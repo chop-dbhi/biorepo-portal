@@ -25,6 +25,10 @@ class SubjFamEditView extends React.Component {
       subjectRole: '',
       relatedSubjectRole: '',
       dataEntryCorrect: '',
+      relatedSubErr: false,
+      subjectRoleError: false,
+      relatedSubRoleErr: false
+
     };
     this.handleRelatedSubjectSelect = this.handleRelatedSubjectSelect.bind(this);
     this.handleSubject1RoleSelect = this.handleSubject1RoleSelect.bind(this);
@@ -81,23 +85,33 @@ class SubjFamEditView extends React.Component {
   checkRelDataEntry(){
     const { dispatch } = this.props;
     if (this.state.relatedSubject == '') {
-      dispatch(SubjFamActions.setUpdateFormErrors("please select related subject"))
-      this.setState({dataEntryCorrect: false});
-      return false;
+      this.setState({relatedSubErr: true});
+    } else {
+      this.setState({relatedSubErr: false });
     }
+
     if (this.state.subjectRole == '') {
-      dispatch(SubjFamActions.setUpdateFormErrors("please select subject role"))
-      this.setState({dataEntryCorrect: false});
-      return false;
+      this.setState({subjectRoleError: true});
+    } else {
+      this.setState({subjectRoleError: false});
     }
+
     if (this.state.relatedSubjectRole == '') {
-      dispatch(SubjFamActions.setUpdateFormErrors("please select related subject role"))
-      this.setState({dataEntryCorrect: false});
-      return false;
+      this.setState({relatedSubRoleErr: true});
+    } else {
+      this.setState({relatedSubRoleErr: false});
     }
-    else
+
+    if(this.state.relatedSubject == '' || this.state.subjectRole == '' || this.state.relatedSubjectRole == ''){
+      this.setState({dataEntryCorrect: false})
+      return false;
+    } else {
       this.setState({dataEntryCorrect: true});
       return true;
+    }
+
+
+
   }
   handleNewPedRelClick(e) {
     const { dispatch } = this.props;
@@ -159,6 +173,10 @@ class SubjFamEditView extends React.Component {
       zIndex: '1000',
     };
 
+    const errorStyle = {
+      control: styles => ({ ...styles, backgroundColor: 'pink' })
+    }
+
     const { value } = this.state;
       return (
         <section>
@@ -180,36 +198,39 @@ class SubjFamEditView extends React.Component {
                         <Select
                           onChange={this.handleRelatedSubjectSelect}
                           error={this.state.dataEntryCorrect}
-                          styles={{ width: '100%' }}
                           value={this.state.relatedSubject}
                           placeholder="Search for Related Subject"
-                          isClearable
+                          styles={this.state.relatedSubErr ? errorStyle : {}}
                           options={subjects}
                         />
+                        {this.state.relatedSubErr ? <p>Please select related subject. </p> : null}
                       </div>
                     </Row>
                     <Row>
                       <div className="col-md-6">
                         <label> Subject Role: </label>
                         <Select
-                          styles={{ width: '100%',  }}
+                          styles={this.state.subjectRoleError ? errorStyle : {}}
                           value={this.state.subjectRole}
                           onChange={this.handleSubject1RoleSelect}
                           options={relTypes}
                           placeholder="Search for Subject Role Types"
-                          isClearable
                         />
+                      {this.state.subjectRoleError ? <p>Please select subject role. </p> : null}
+
                       </div>
+
                       <div className="col-md-6">
                         <label> Related Subject Role: </label>
                         <Select
-                          isClearable
                           options={relTypes}
-                          styles={{ width: '100%', overflowWrap: 'normal', fontSize: '16'}}
+                          styles={this.state.relatedSubRoleErr ? errorStyle : {}}
                           value={this.state.relatedSubjectRole}
                           onChange={this.handleSubject2RoleSelect}
                           placeholder="Search for Related Subject Role Types"
                         />
+                        {this.state.relatedSubRoleErr ? <p>Please select related subject role. </p> : null}
+
                         </div>
                     </Row>
                   <Row>

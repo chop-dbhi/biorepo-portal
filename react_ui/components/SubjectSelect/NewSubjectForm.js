@@ -72,64 +72,67 @@ export class NewSubjectForm extends React.Component {
 
     let valid = true;
     const errors = [];
+    let new_errs= [];
 
     if (subject == null) {
       valid = false;
     }
-
     if (Object.keys(subject).length === 0) {
       valid = false;
     }
 
     if (!subject.organization) {
-      errors.push('Organization field is required');
+      new_errs['orgRequired']= 'Organization field is required.';
       valid = false;
     }
 
     if (!subject.first_name) {
-      errors.push('First name field is required');
+      new_errs['fnReq']= 'First name field is required.';
+
       valid = false;
     }
 
     if (!subject.last_name) {
-      errors.push('Last name field is required');
+      new_errs['lnReq']= 'Last name field is required.';
+
       valid = false;
     }
 
-    if (!this.validateDate(subject.dob)) {
-      errors.push('Date of birth field is required');
+    if(!subject.dob){
+      new_errs['dobR']= 'Date of birth field is required.'
+      valid = false;
+    }else if (!this.validateDate(subject.dob)) {
+      new_errs['dobR']= 'Must be a valid date (YYYY-MM-DD).';
       valid = false;
     }
-
     if (!subject.organization_subject_id) {
-      errors.push('Organization subject ID is required');
+      new_errs['oidReq']= 'Organization subject ID is required.';
+
       valid = false;
     }
 
-    if (subject.organization_subject_id !== subject.organization_subject_id_validation) {
-      errors.push('Organization subject IDs do not match');
+    if(!subject.organization_subject_id_validation){
+      new_errs['oidNoMatch'] = 'Organization subject ID verification is required.';
+      valid = false;
+    } else if (subject.organization_subject_id !== subject.organization_subject_id_validation) {
+      new_errs['oidNoMatch']= 'Organization subject IDs do not match.';
+
       valid = false;
     }
 
-    dispatch(SubjectActions.setNewSubjectFormErrors(errors));
+    dispatch(SubjectActions.setNewSubjectFormErrors(new_errs));
     return valid;
   }
 
   renderErrors() {
-    let errors =  '';
     const serverErrors = this.props.newFormErrors.server;
-    const formErrors = this.props.newFormErrors.form;
-    if (serverErrors) {
-      errors = serverErrors.concat(formErrors);
-    } else {
-      errors = formErrors;
-    }
+
     const style = {
       fontSize: '12px',
       marginTop: '15px',
     };
-    if (errors) {
-      return errors.map((error, i) => (
+    if (serverErrors) {
+      return serverErrors.map((error, i) => (
         <div key={i} style={style} className="alert alert-danger">
           <div className="container">
             {error}
@@ -181,42 +184,42 @@ export class NewSubjectForm extends React.Component {
                 </div>
                 <div className="content">
                   <form id="subject-form" onSubmit={this.handleSaveClick}>
-                    <SubjectOrgSelectField
+                  <SubjectOrgSelectField
                       new
-                      error={this.props.newFormErrors.form.org}
+                      error={this.props.newFormErrors.form['orgRequired']}
                       value={newSub.organization}
                     />
                     <SubjectTextField
                       new
-                      error={this.props.newFormErrors.form.first_name}
+                      error={this.props.newFormErrors.form['fnReq']}
                       label={'First Name'}
                       value={''}
                       skey={'first_name'}
                     />
                     <SubjectTextField
                       new
-                      error={this.props.newFormErrors.form.last_name}
+                      error={this.props.newFormErrors.form['lnReq']}
                       label={'Last Name'}
                       value={''}
                       skey={'last_name'}
                     />
                     <SubjectTextField
                       new
-                      error={this.props.newFormErrors.form.org_id}
+                      error={this.props.newFormErrors.form['oidReq']}
                       label={`${this.props.subject.newSubject.organization_id_label}`}
                       value={''}
                       skey={'organization_subject_id'}
                     />
                     <SubjectTextField
                       new
-                      error={this.props.newFormErrors.form.org_valid}
+                      error={this.props.newFormErrors.form['oidNoMatch']}
                       label={`Verify ${this.props.subject.newSubject.organization_id_label}`}
                       value={''}
                       skey={'organization_subject_id_validation'}
                     />
                     <SubjectTextField
                       new
-                      error={this.props.newFormErrors.form.dob}
+                      error={this.props.newFormErrors.form['dobR']}
                       label={'Date of Birth (YYYY-MM-DD)'}
                       value={''}
                       skey={'dob'}

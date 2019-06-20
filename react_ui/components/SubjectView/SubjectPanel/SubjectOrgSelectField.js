@@ -55,11 +55,12 @@ class SubjectOrgSelectField extends React.Component {
 
   render() {
     const orgs = this.props.orgs;
-    let errorText = '';
 
-    if (this.props.error) {
-      errorText = 'Please select an organization.';
+    const errorStyle = {
+      control: styles => ({ ...styles, backgroundColor: 'pink' })
     }
+
+  
     return (
       <div>
         <h5 className="category" style={{fontWeight: "bold"}}> Organization </h5>
@@ -69,13 +70,18 @@ class SubjectOrgSelectField extends React.Component {
             defaultValue={this.setOrgDefaltValue()}
             options={this.orgOptions()}
             placeholder="Search for Organization"
+            styles={this.props.error ? errorStyle : {}}
+
           />
           :
           <Select
             onChange={this.onChange}
             options={this.orgOptions()}
             placeholder="Search for Organization"
+            styles={this.props.error ? errorStyle : {}}
           />}
+
+        {this.props.error ? <p> {this.props.error} </p> : null  }   
       </div>
     );
   }
