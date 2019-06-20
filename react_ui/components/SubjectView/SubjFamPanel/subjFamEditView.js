@@ -201,7 +201,6 @@ class SubjFamEditView extends React.Component {
                           value={this.state.relatedSubject}
                           placeholder="Search for Related Subject"
                           styles={this.state.relatedSubErr ? errorStyle : {}}
-                          isClearable
                           options={subjects}
                         />
                         {this.state.relatedSubErr ? <p>Please select related subject. </p> : null}
@@ -216,7 +215,6 @@ class SubjFamEditView extends React.Component {
                           onChange={this.handleSubject1RoleSelect}
                           options={relTypes}
                           placeholder="Search for Subject Role Types"
-                          isClearable
                         />
                       {this.state.subjectRoleError ? <p>Please select subject role. </p> : null}
 
@@ -225,7 +223,6 @@ class SubjFamEditView extends React.Component {
                       <div className="col-md-6">
                         <label> Related Subject Role: </label>
                         <Select
-                          isClearable
                           options={relTypes}
                           styles={this.state.relatedSubRoleErr ? errorStyle : {}}
                           value={this.state.relatedSubjectRole}
