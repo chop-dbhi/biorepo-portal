@@ -25,10 +25,6 @@ class SubjectTextField extends React.Component {
   }
 
   render() {
-    let style = {};
-    if (this.props.error) {
-        style = {backgroundColor: 'pink'};
-    }
 
     return (
       <div className="form-group">
@@ -38,7 +34,7 @@ class SubjectTextField extends React.Component {
             className="form-control"
             id="formGroupExampleInput"
             onChange={this.onChange}
-            style= {style}
+            style= {this.props.error ? {backgroundColor: 'pink'}: {} }
             value={this.props.value}
           />
        {this.props.error
