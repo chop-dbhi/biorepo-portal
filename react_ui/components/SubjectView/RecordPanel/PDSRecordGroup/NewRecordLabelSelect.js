@@ -14,7 +14,10 @@ class NewRecordLabelSelect extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { selectedLabel: '',};
+    this.state = { 
+      selectedLabel: null,
+      recordLabelSelectError: false
+  };
     this.handleRecordLabelSelect = this.handleRecordLabelSelect.bind(this);
     this.handleNewRecordClick = this.handleNewRecordClick.bind(this);
     this.handleCloseClick = this.handleCloseClick.bind(this);
@@ -37,9 +40,12 @@ class NewRecordLabelSelect extends React.Component {
 
   handleNewRecordClick() {
     const { dispatch } = this.props;
-    if (this.state.selectedLabel === null) {
-      dispatch(RecordActions.setRecordError('Please select a record label.'));
+    console.log(this.state);
+    if (this.state.selectedLabel == null) {
+        this.setState({recordLabelSelectError: true})
       return;
+    } else {
+      this.setState({recordLabelSelectError: false})
     }
     dispatch(RecordActions.createRecordRequest());
     const url = `/dataentry/protocoldatasource/${this.props.pds.id}/subject/` +
@@ -77,6 +83,12 @@ class NewRecordLabelSelect extends React.Component {
       display: 'block',
       backgroundColor: 'rgba(0, 0, 0, 0.298039)',
     };
+
+    const errorStyle = {
+      control: styles => ({ ...styles, backgroundColor: 'pink' })
+    }
+
+
     return (
       this.props.isCreating && this.props.pds.id == this.props.activePDS.id ?
         <section>
@@ -101,11 +113,14 @@ class NewRecordLabelSelect extends React.Component {
                   <div className="content">
                     <Select
                       onChange={this.handleRecordLabelSelect}
-                      style={{ width: '100%' }}
+                      styles={this.state.recordLabelSelectError ? errorStyle: {}}
                       value={this.state.selectedLabel}
                       options={this.recordLabelOptions()}
-                      placeholder="Search for record Label"
+                      placeholder="Search for record label"
+                      
                     />
+                    {this.state.recordLabelSelectError ?
+                     <p>Select a record label.</p> : null}
                   </div>
                   <Button
                     type='submit'
@@ -121,9 +136,7 @@ class NewRecordLabelSelect extends React.Component {
                     label="Cancel"
                     onMouseUp={this.handleCloseClick}
                   > Cancel </Button>
-                  {this.props.newRecordError != null ?
-                    <div className="alert alert-danger">{this.props.newRecordError}</div>
-                  : null}
+
                 </div>
               </div>
             </section>
@@ -138,7 +151,6 @@ NewRecordLabelSelect.propTypes = {
   selectedLabel: PropTypes.number,
   pds: PropTypes.object,
   isCreating: PropTypes.bool,
-  newRecordError: PropTypes.string,
 };
 
 function mapStateToProps(state) {
@@ -147,7 +159,6 @@ function mapStateToProps(state) {
     subject: state.subject.activeSubject,
     selectedLabel: state.record.selectedLabel,
     isCreating: state.record.isCreating,
-    newRecordError: state.record.newRecordError,
     addRecordMode: state.record.addRecordMode,
   };
 }
