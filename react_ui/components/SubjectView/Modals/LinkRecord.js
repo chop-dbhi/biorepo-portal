@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import RaisedButton from '@material-ui/core/Button';
+import Button from 'react-bootstrap/Button';
 import * as RecordActions from '../../../actions/record';
 import * as SubjectActions from '../../../actions/subject';
 import * as Colors from '@material-ui/core/colors';
@@ -136,22 +136,22 @@ class LinkRecord extends React.Component {
                     <div style={linkErrorStyle}>Error: {this.props.linkError}</div> :
                     null
                   }
-                  <RaisedButton
+                  <Button
                     style={{ width: '100%' }}
                     labelColor={'#7AC29A'}
                     label="Link Records"
                     onClick={this.handleLinkRecordClick}
-                  />
+                  > Link Records </Button>
                 </div>
                 :
                 <h6> This record is not available for linking </h6>
               }
-              <RaisedButton
+              <Button
                 style={{ width: '100%' }}
-                labelColor={Colors.red400}
+                variant="danger"
                 label="Cancel"
                 onClick={this.handleCloseClick}
-              />
+              > Cancel </Button>
             </div>
           </div>
         </div>
