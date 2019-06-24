@@ -154,14 +154,14 @@ export function updateRecordSuccess(record) {
       isFetching: false,
       record,
     });
-    dispatch(NotificationActions.addNotification(
-      {
-        message: 'Record Updated',
-        level: 'success',
-        autoDismiss: 2,
-      }
-    ));
-    dispatch(NotificationActions.renderNotification());
+    // dispatch(NotificationActions.addNotification(
+    //   {
+    //     message: 'Record Updated',
+    //     level: 'success',
+    //     autoDismiss: 2,
+    //   }
+    // ));
+    // dispatch(NotificationActions.renderNotification());
   };
 }
 
