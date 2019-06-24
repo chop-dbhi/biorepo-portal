@@ -16,7 +16,7 @@ class Navbar extends React.Component {
     };
 
     const navbarStyle = {
-      backgroundColor: '#34BFED',
+      backgroundColor: '#e7f2f5',
       marginBottom: '0 !important',
       border: '0',
       fontFamily: ' "TPRubrik-Regular", sans-serif',
@@ -48,9 +48,9 @@ class Navbar extends React.Component {
 
           <div className="collapse navbar-collapse navbar-ex1-collapse">
             <ul className="nav navbar-nav navbar-right pull-right">
-              <li><Link to={subjectSelectUrl}>Subjects</Link></li>
-              <li><Link to="/">Projects</Link></li>
-              <li><a href="/logout">Logout</a></li>
+              <li><Link to={subjectSelectUrl} className="navbar-text">Subjects</Link></li>
+              <li><Link to="/" className="navbar-text">Projects</Link></li>
+              <li><a href="/logout" className="navbar-text" >Logout</a></li>
             </ul>
           </div>
         </div>

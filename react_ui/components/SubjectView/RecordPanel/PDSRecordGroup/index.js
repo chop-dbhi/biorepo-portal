@@ -88,14 +88,15 @@ class PDSRecordGroup extends React.Component {
   renderRecords(recordNodes) {
     return (
       recordNodes ?
-        <table className="table table-striped">
+
+        <table className="table">
           <thead>
             <tr><th>Record ID</th><th>Record</th><th>Created</th><th>Modified</th></tr>
           </thead>
           <tbody>
             {recordNodes}
           </tbody>
-        </table> : <div>No Records</div>
+        </table> : <div > No Records</div>
     );
   }
 

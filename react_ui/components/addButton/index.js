@@ -16,8 +16,8 @@ const styles = theme => ({
     marginLeft: '10px',
     marginTop: '10px',
     float: 'right',
-    backgroundColor: '#2AF7BA',
-    color: '#ffffff',
+    backgroundColor: '#fdedf1',
+    color: '#34BFED',
   },
   iconHover: {
     margin: theme.spacing.unit * 2,

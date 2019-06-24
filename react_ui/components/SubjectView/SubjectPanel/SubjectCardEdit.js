@@ -94,20 +94,20 @@ class SubjectCardEdit extends React.Component {
 
     if(!subject.dob){
       new_errs['dobR']= 'Date of birth field is required.'
-      valid = false; 
+      valid = false;
     }else if (!this.validateDate(subject.dob)) {
       new_errs['dobR']= 'Must be a valid date (YYYY-MM-DD).';
-      valid = false; 
+      valid = false;
     }
     if (!subject.organization_subject_id) {
       new_errs['oidReq']= 'Organization subject ID is required.';
 
       valid = false;
     }
-    
+
     if(!subject.organization_subject_id_validation){
       new_errs['oidNoMatch'] = 'Organization subject ID verification is required.';
-      valid = false; 
+      valid = false;
     } else if (subject.organization_subject_id !== subject.organization_subject_id_validation) {
       new_errs['oidNoMatch']= 'Organization subject IDs do not match.';
 
@@ -218,7 +218,7 @@ class SubjectCardEdit extends React.Component {
 
                           <Button
                             onClick={this.handleCancelClick}
-                            labelcolor={Colors.red400}
+                            variant="danger"
                             style={{ marginLeft: '10px' }}
                             label={'Close'}> Cancel </Button>
                         </div>
