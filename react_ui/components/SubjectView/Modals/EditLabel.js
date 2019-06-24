@@ -2,9 +2,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Select from '@material-ui/core/Select';
+import Select from 'react-select';
 import MenuItem from '@material-ui/core/MenuItem';
-import RaisedButton from '@material-ui/core/Button';
+import Button from 'react-bootstrap/Button';
 import * as RecordActions from '../../../actions/record';
 import * as Colors from '@material-ui/core/colors';
 
@@ -12,8 +12,10 @@ class EditLabelModal extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {selectedLabel: null,}
     this.handleCloseClick = this.handleCloseClick.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.handleRecordLabelSelect = this.handleRecordLabelSelect.bind(this);
   }
 
   onChange(e, index, value) {
@@ -26,9 +28,9 @@ class EditLabelModal extends React.Component {
       }
       return null;
     });
-    record.label = label[0];
-    record.label_id = label[0];
-    record.label_desc = label[1];
+    record.label = this.state.selectedLabel.value;
+    record.label_id = this.state.selectedLabel.value;
+    record.label_desc = this.state.selectedLabel.label;
     dispatch(RecordActions.setActiveRecord(record));
     dispatch(RecordActions.updateRecord(
       this.props.activePDS.id,
@@ -40,6 +42,30 @@ class EditLabelModal extends React.Component {
   handleCloseClick() {
     const { dispatch } = this.props;
     dispatch(RecordActions.setEditLabelMode());
+  }
+
+  recordLabelOptions() {
+    let labelList = null;
+    let labels = this.props.activePDS.driver_configuration.labels;
+    labelList = labels.map(label => ({
+      value: label[0],
+      label: label[1],
+    }));
+    return labelList
+  }
+
+  setDefaltValue(){
+    let defaultValue = null;
+    defaultValue = {
+      value: this.props.activeRecord.label,
+      label: this.props.activeRecord.label_desc,
+    };
+    console.log(defaultValue)
+    return defaultValue
+  }
+
+  handleRecordLabelSelect(e, index, value) {
+    this.setState({selectedLabel: e});
   }
 
   render() {
@@ -77,21 +103,24 @@ class EditLabelModal extends React.Component {
             </div>
             <div className="content">
               <Select
-                style={{ width: '100%' }}
-                onChange={this.onChange}
-                value={this.props.activeRecord.label}
-              >
-                {labels.map((label, i) => (
-                  <MenuItem key={i} value={label[0]}>{label[1]}</MenuItem>))
-                }
-              </Select>
+                onChange={this.handleRecordLabelSelect}
+                defaultValue={this.setDefaltValue()}
+                options={this.recordLabelOptions()}
+              />
+
             </div>
-            <RaisedButton
+            <Button
+              type='submit'
+              size="sm"
               style={{ width: '100%' }}
-              labelColor={Colors.red400}
+              onClick={this.onChange}
+            > Save </Button>
+            <Button
+              style={{ width: '100%' }}
+              variant="danger"
               label="Cancel"
               onClick={this.handleCloseClick}
-            />
+            > Cancel </Button>
           </div>
         </div>
       </section>
