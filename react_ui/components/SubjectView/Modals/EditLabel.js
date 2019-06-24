@@ -60,7 +60,6 @@ class EditLabelModal extends React.Component {
       value: this.props.activeRecord.label,
       label: this.props.activeRecord.label_desc,
     };
-    console.log(defaultValue)
     return defaultValue
   }
 
