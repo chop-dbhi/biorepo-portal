@@ -16,7 +16,7 @@ class Navbar extends React.Component {
     };
 
     const navbarStyle = {
-      backgroundColor: '#E9F5FD',
+      backgroundColor: '#34BFED',
       marginBottom: '0 !important',
       border: '0',
       fontFamily: ' "TPRubrik-Regular", sans-serif',
