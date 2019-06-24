@@ -14,7 +14,7 @@ class NewRecordLabelSelect extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       selectedLabel: null,
       recordLabelSelectError: false
   };
@@ -40,7 +40,6 @@ class NewRecordLabelSelect extends React.Component {
 
   handleNewRecordClick() {
     const { dispatch } = this.props;
-    console.log(this.state);
     if (this.state.selectedLabel == null) {
         this.setState({recordLabelSelectError: true})
       return;
@@ -117,7 +116,7 @@ class NewRecordLabelSelect extends React.Component {
                       value={this.state.selectedLabel}
                       options={this.recordLabelOptions()}
                       placeholder="Search for record label"
-                      
+
                     />
                     {this.state.recordLabelSelectError ?
                      <p>Select a record label.</p> : null}
