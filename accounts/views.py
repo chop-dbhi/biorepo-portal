@@ -11,6 +11,7 @@ from redis.exceptions import ConnectionError
 
 from .forms import BrpAuthenticationForm
 
+import re
 
 @never_cache
 def throttled_login(request):
@@ -20,6 +21,7 @@ def throttled_login(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
 
+    is_IE = re.findall(r'MSIE', request.META['HTTP_USER_AGENT'])
     template_name = 'accounts/login.html'
 
     login_allowed = request.session.get('login_allowed', True)
@@ -36,26 +38,27 @@ def throttled_login(request):
                 'non_field_errors': ['Redis not connected. Unable to create session.']
             }
             return render(request, template_name, {
-                'form': form
+                'form': form,
+                'is_IE': True,
             })
         except:
             raise
 
         login_allowed = throttle_login(request)
 
-    if login_allowed:
-        response = login(request, template_name=template_name,
-                         authentication_form=BrpAuthenticationForm)
-        # We know if the response is a redirect, the login
-        # was successful, thus we can clear the throttled login counter
-        if isinstance(response, HttpResponseRedirect):
-            request.META['action'] = 'Login successful.'
-            clear_throttled_login(request)
-
-        return response
+        if login_allowed:
+            response = login(request, template_name=template_name,
+                             authentication_form=BrpAuthenticationForm)
+            # We know if the response is a redirect, the login
+            # was successful, thus we can clear the throttled login counter
+            if isinstance(response, HttpResponseRedirect):
+                request.META['action'] = 'Login successful.'
+                clear_throttled_login(request)
+            return response
 
     return render(request, template_name, {
-        'login_not_allowed': not login_allowed
+        'login_not_allowed': not login_allowed,
+        'is_IE': is_IE,
     })
 
 

@@ -61,6 +61,11 @@
             <a href="http://dbhi.chop.edu">
               <img class="dbhi-logo" src="{% static "img/CHOPDepartmentLogo.png" %}" />
             </a>
+            {% if is_IE %}
+              <div class="alert alert-danger" role="alert">
+                Internet Explorer is not Supported. Please use Chrome or Firefox
+              </div>
+            {% endif %}
           </center>
         </div>
     </div>
