@@ -3,6 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Divider, Header, Image, Segment } from 'semantic-ui-react'
 import BackButton from '../BackButton';
 import LoadingGif from '../LoadingGif';
 import SubjectPanel from './SubjectPanel';
@@ -46,6 +47,7 @@ class SubjectView extends React.Component {
               <SubjectPanel subject={subject} path={path} />
               {this.props.subject.editSubjectMode ? <SubjectCardEdit subject={subject}/> : null}
             </section>
+            <hr />
             <section>
               <SubjFamPanel />
               {this.props.subjFam.addSubjFamRelMode ? <SubjFamEditView/> : null}

@@ -88,7 +88,7 @@ class SubjFamCardView extends React.Component {
             <AddButton/>
           </div>
           </h5>
-          <table className="table table-striped">
+          <table className="table">
             <thead>
               <tr><th>Relation</th><th>MRN</th></tr>
             </thead>

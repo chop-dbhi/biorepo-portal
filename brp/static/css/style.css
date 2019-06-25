@@ -183,6 +183,7 @@ td.row-action:hover {
 .card {
     padding: 20px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.12);
+    background-color: #e7f2f5;
 }
 #old-nav{
     background-color: #E9F5FD;
@@ -193,6 +194,8 @@ td.row-action:hover {
     color: #7a7a7a;
     margin-top: 0px;
     margin-bottom: 0px;
+    font-size: 1em;
+    font-weight: bold;
 }
 .nav>li>a:hover {
     text-decoration: none;
@@ -205,4 +208,12 @@ td.row-action:hover {
 .dbhi-logo {
     width: 300px;
     height: 100px;
+}
+.btn-primary {
+    background-color: #35BFED;
+    border-color: #35BFED;
+}
+.btn-danger {
+    background-color: #F04D77;
+    border-color: #F04D77;
 }

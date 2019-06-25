@@ -240,7 +240,7 @@ export class NewSubjectForm extends React.Component {
                         <Divider />
                         <Button
                           label={'Cancel'}
-                          labelcolor={Colors.red400}
+                          variant="danger"
                           onClick={this.handleCloseClick}
                           style={{ width: '100%' }}
                         > Cancel </Button>
