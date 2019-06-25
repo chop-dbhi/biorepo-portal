@@ -183,7 +183,7 @@ class SubjectSelect extends React.PureComponent {
                 data={this.props.subject.items}
                 columns={columns}
                 filterable = {true}
-                className={"-highlight"}
+                className="-highlight"
                 getTdProps={(state, rowInfo) => {
                   return {
                     onClick: (e, handleOrigional) => {

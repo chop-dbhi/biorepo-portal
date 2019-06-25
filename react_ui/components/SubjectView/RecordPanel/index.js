@@ -29,28 +29,24 @@ class RecordPanel extends React.Component {
         });
         return (
           <div>
-          <div className="card">
-          <PDSRecordGroup key={i} pds={_pds} records={pdsRecords} />
-          </div>
-          <hr/>
+            <div className="card">
+              <PDSRecordGroup key={i} pds={_pds} records={pdsRecords} />
+            </div>
+            <hr/>
           </div>
         );
       }, this);
     }
     return (
       <div>
-
-            <div className="content">
-
-              {this.props.linkMode ? <LinkModeBanner /> : null}
-              {this.props.selectLinkTypeModal ? <LinkRecord /> : null}
-              {pdsNodes}
-            </div>
-
+        <div className="content">
+          {this.props.linkMode ? <LinkModeBanner /> : null}
+          {this.props.selectLinkTypeModal ? <LinkRecord /> : null}
+          {pdsNodes}
+        </div>
         {this.props.activeLinks.length !== 0 && !this.props.isFetching ?
           <LinkedRecords /> : null
         }
-
       </div>
     );
   }

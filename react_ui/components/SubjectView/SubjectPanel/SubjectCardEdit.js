@@ -104,10 +104,9 @@ class SubjectCardEdit extends React.Component {
 
       valid = false;
     }
-
     if(!subject.organization_subject_id_validation){
       new_errs['oidNoMatch'] = 'Organization subject ID verification is required.';
-      valid = false;
+      valid = false; 
     } else if (subject.organization_subject_id !== subject.organization_subject_id_validation) {
       new_errs['oidNoMatch']= 'Organization subject IDs do not match.';
 
