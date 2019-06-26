@@ -106,7 +106,7 @@ class SubjectCardEdit extends React.Component {
     }
     if(!subject.organization_subject_id_validation){
       new_errs['oidNoMatch'] = 'Organization subject ID verification is required.';
-      valid = false; 
+      valid = false;
     } else if (subject.organization_subject_id !== subject.organization_subject_id_validation) {
       new_errs['oidNoMatch']= 'Organization subject IDs do not match.';
 
@@ -197,15 +197,9 @@ class SubjectCardEdit extends React.Component {
                           error={this.props.subject.updateFormErrors.form['oidNoMatch']}
 
                         />
-                        <SubjectTextField
-                          label={'Date of Birth (YYYY-MM-DD)'}
-                          value={subject.dob}
-                          skey={'dob'}
-                          error={this.props.subject.updateFormErrors.form['dobR']}
-
-                        />
                         <SubjectDOBField
                           value={subject.dob}
+                          error={this.props.subject.updateFormErrors.form['dobR']}
                         />
                         <ExternalIDs externalIds={subject.external_ids} />
                       {!this.props.savingSubject ?

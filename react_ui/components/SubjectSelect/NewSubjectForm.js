@@ -217,16 +217,10 @@ export class NewSubjectForm extends React.Component {
                       value={''}
                       skey={'organization_subject_id_validation'}
                     />
-                    <SubjectTextField
-                      new
-                      error={this.props.newFormErrors.form['dobR']}
-                      label={'Date of Birth (YYYY-MM-DD)'}
-                      value={''}
-                      skey={'dob'}
-                    />
                     <SubjectDOBField
                       value={''}
                       new
+                      error={this.props.newFormErrors.form['dobR']}
                     />
                     {this.props.savingSubject ? <LoadingGif style={{ width: '100%' }} /> :
                       <div>
