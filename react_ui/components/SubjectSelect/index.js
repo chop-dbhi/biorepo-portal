@@ -26,10 +26,8 @@ class SubjectSelect extends React.PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     this.props.dispatch(ProtocolActions.setActiveProtocol(this.props.match.params.id));
-    // Check to see if subjects are loaded, if not fetch them
-    if(this.props.subject.items.length == 0){
-      this.props.dispatch(SubjectActions.fetchSubjects(this.props.match.params.id));
-    }
+    this.props.dispatch(SubjectActions.fetchSubjects(this.props.match.params.id));
+
   }
 
   componentWillUnmount() {
