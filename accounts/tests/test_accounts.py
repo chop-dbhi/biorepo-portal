@@ -220,7 +220,7 @@ class AccountsModuleTests(TestCase):
         user.profile.eula = True
         user.profile.save()
         self.client.force_login(user)
-        response = self.client.get('/login/')
+        response = self.client.get('/login/', HTTP_USER_AGENT='Mozilla/5.0',)
         # Should redirect to root.
         self.assertEqual(response.status_code, 302)
 
