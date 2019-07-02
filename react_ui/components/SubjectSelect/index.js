@@ -90,6 +90,8 @@ class SubjectSelect extends React.PureComponent {
     // If this view is navigated to directly. Get active protocol based on param
     const subjects = this.props.subject.items;
     const protocol = this.getActiveProtocol();
+    const filterCaseInsensitive = ({ id, value }, row) =>
+      row[id] ? row[id].toLowerCase().includes(value.toLowerCase()) : true
     // const rows = this.griddleFrendlySubjects(); //This is not needed for react-table
 
     let manageExternalIDs = false;
@@ -181,6 +183,7 @@ class SubjectSelect extends React.PureComponent {
                 data={this.props.subject.items}
                 columns={columns}
                 filterable = {true}
+                defaultFilterMethod={filterCaseInsensitive}
                 className="-highlight"
                 getTdProps={(state, rowInfo) => {
                   return {
