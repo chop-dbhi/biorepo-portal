@@ -196,7 +196,6 @@ class ProtocolSubjectsView(BRPApiView):
             )
 
         if subjects:
-            subs = sorted(subs, key=lambda kv: datetime.strptime(kv['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
             return Response(
                 subs,
                 headers={'Access-Control-Allow-Origin': '*'}

@@ -201,7 +201,7 @@ class AccountsModuleTests(TestCase):
         s = self.client.session
         s['login_allowed'] = True
         s.save()
-        response = self.client.get('/login/')
+        response = self.client.get('/login/', HTTP_USER_AGENT='Mozilla/5.0',)
         # Should redirect to login.
         self.assertEqual(response.status_code, 200)
 
@@ -209,7 +209,7 @@ class AccountsModuleTests(TestCase):
         s = self.client.session
         s['login_allowed'] = False
         s.save()
-        response = self.client.get('/login/')
+        response = self.client.get('/login/', HTTP_USER_AGENT='Mozilla/5.0',)
         # Should redirect to login.
         self.assertTrue('You have reached the maximum number of login attempts.' in str(response.content))
         self.assertEqual(response.status_code, 200)
@@ -220,7 +220,7 @@ class AccountsModuleTests(TestCase):
         user.profile.eula = True
         user.profile.save()
         self.client.force_login(user)
-        response = self.client.get('/login/')
+        response = self.client.get('/login/', HTTP_USER_AGENT='Mozilla/5.0',)
         # Should redirect to root.
         self.assertEqual(response.status_code, 302)
 
@@ -228,7 +228,7 @@ class AccountsModuleTests(TestCase):
         s = self.client.session
         s['login_allowed'] = False
         s.save()
-        response = self.client.post('/login/', {'username': 'admin@email.chop.edu', 'password': 'Chopchop1234'})
+        response = self.client.post('/login/', {'username': 'admin@email.chop.edu', 'password': 'Chopchop1234'}, HTTP_USER_AGENT='Mozilla/5.0',)
         # Should redirect to login.
         self.assertEqual(response.status_code, 302)
 
@@ -243,7 +243,7 @@ class AccountsModuleTests(TestCase):
             }
         }):
             form_data = {'email': 'jane@email.chop.edu', 'username': 'jane', 'password': 'Chopchop1234'}
-            response = self.client.post('/login/', form_data)
+            response = self.client.post('/login/', form_data, HTTP_USER_AGENT='Mozilla/5.0',)
             # Should redirect to root.
             self.assertEqual(response.status_code, 302)
 
@@ -258,7 +258,7 @@ class AccountsModuleTests(TestCase):
             }
         }):
             form_data = {'email': 'jane@email.chop.edu', 'username': 'jane'}
-            response = self.client.post('/login/', form_data)
+            response = self.client.post('/login/', form_data, HTTP_USER_AGENT='Mozilla/5.0',)
             # Should not redirect...
             self.assertEqual(response.status_code, 200)
 
@@ -278,7 +278,7 @@ class AccountsModuleTests(TestCase):
             self.assertTrue(user.is_active)
             # Make 11 bogus login attempts (10 is max)
             cache.set('jane@email.chop.edu_127.0.0.1_login_attempts', 10)
-            self.client.post('/login/', form_data)
+            self.client.post('/login/', form_data, HTTP_USER_AGENT='Mozilla/5.0',)
             user = User.objects.get(email='jane@email.chop.edu')
             self.assertFalse(user.is_active)
 
@@ -298,7 +298,7 @@ class AccountsModuleTests(TestCase):
             user.save()
             self.assertFalse(user.is_active)
             # Should fail immediately
-            response = self.client.post('/login/', form_data)
+            response = self.client.post('/login/', form_data, HTTP_USER_AGENT='Mozilla/5.0',)
             self.assertTrue('You have reached the maximum number of login attempts.' in str(response.content))
             user = User.objects.get(email='jane@email.chop.edu')
             self.assertFalse(user.is_active)
@@ -315,7 +315,7 @@ class AccountsModuleTests(TestCase):
         }):
             form_data = {'email': 'none@email.chop.edu', 'username': 'none', 'password': 'wrongpass'}
             # Should fail immediately
-            response = self.client.post('/login/', form_data)
+            response = self.client.post('/login/', form_data, HTTP_USER_AGENT='Mozilla/5.0',)
             self.assertTrue('Please enter a correct email and password.' in str(response.content))
 
     def test_clear_throttled_login(self):
@@ -334,7 +334,7 @@ class AccountsModuleTests(TestCase):
             self.assertTrue(user.is_active)
             # Make 3 bogus login attempts (5 is max)
             cache.set('jane@email.chop.edu_127.0.0.1_login_attempts', 3)
-            self.client.post('/login/', form_data)
+            self.client.post('/login/', form_data, HTTP_USER_AGENT='Mozilla/5.0',)
             user = User.objects.get(email='jane@email.chop.edu')
             self.assertTrue(user.is_active)
             # when login successful user should be deleted from cache.
