@@ -21,12 +21,12 @@ class LinkRecord extends React.Component {
 
   onChange(e, index, value) {
     const { dispatch } = this.props;
-    dispatch(RecordActions.setSelectedLinkType(value));
+    dispatch(RecordActions.setSelectedLinkType(e.value));
   }
 
   handleRecordLabelSelect(e, index, value) {
     const { dispatch } = this.props;
-    dispatch(RecordActions.setSelectedLabel(value));
+    dispatch(RecordActions.setSelectedLabel(e));
   }
 
   handleNewRecordClick() {
@@ -69,6 +69,8 @@ class LinkRecord extends React.Component {
   }
 
   render() {
+    const activePds = this.props.activeRecord.pds;
+    const availableLinkTypes = this.props.availableLinkTypes[activePds];
     const primaryRecord = this.props.activeRecord;
     const secondaryRecord = this.props.pendingLinkedRecord;
     const modalStyle = {
@@ -144,7 +146,6 @@ class LinkRecord extends React.Component {
                   }
                   <Button
                     style={{ width: '100%' }}
-                    labelColor={'#7AC29A'}
                     label="Link Records"
                     onClick={this.handleLinkRecordClick}
                   > Link Records </Button>
