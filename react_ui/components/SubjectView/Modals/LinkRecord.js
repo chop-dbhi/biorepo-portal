@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import Select from 'react-select';
 import Button from 'react-bootstrap/Button';
 import * as RecordActions from '../../../actions/record';
 import * as SubjectActions from '../../../actions/subject';
@@ -43,6 +42,17 @@ class LinkRecord extends React.Component {
       return;
     }
     dispatch(RecordActions.createRecordLink(activeRecord, secondaryRecord));
+  }
+
+  recordLinkOptions() {
+    let labelLinkList = null;
+    let activePds = this.props.activeRecord.pds
+    let labels = this.props.availableLinkTypes[activePds]
+    labelLinkList = labels.map(label => ({
+      value: label.id,
+      label: label.desc,
+    }));
+    return labelLinkList
   }
 
   handleCloseClick() {
@@ -94,8 +104,6 @@ class LinkRecord extends React.Component {
       padding: '5px',
       margin: '15px',
     };
-    const activePds = this.props.activeRecord.pds;
-    const availableLinkTypes = this.props.availableLinkTypes[activePds];
     const canLink = availableLinkTypes.length > 0;
     return (
       <section>
@@ -119,11 +127,9 @@ class LinkRecord extends React.Component {
                     onChange={this.onChange}
                     value={this.props.selectedLinkType}
                     style={{ width: '100%' }}
-                  >
-                    {availableLinkTypes.map((link, i) => (
-                      <MenuItem key={i} value={link.id} primaryText={link.desc} />
-                      ))}
-                  </Select>
+                    options={this.recordLinkOptions()}
+                  />
+
                   <div style={recordStyle}>
                     <h6>
                       {secondaryRecord ?
