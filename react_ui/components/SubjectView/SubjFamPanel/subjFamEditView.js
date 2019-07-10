@@ -180,87 +180,83 @@ class SubjFamEditView extends React.Component {
     const { value } = this.state;
       return (
         <section>
-
           <div style={backdropStyle}></div>
-            <div className="col-md-12 edit-label-modal" style={modalStyle}>
-              <div className="card" style={cardStyle}>
-                <h3 className="category" style={{ textAlign: 'center' }}> Add a new Relationship </h3>
-                  <Row>
-                    <div className="col-md-6">
-                      <label> Subject: </label>
-                      <TextField
-                        style={{ width: '100%', whiteSpace: 'nowrap',  fontSize: '16'}}
-                        value={this.props.subject.activeSubject.organization_subject_id}
-                      />
-                      </div>
-                      <div className="col-md-6">
-                      <label> Related Subject: </label>
-                        <Select
-                          onChange={this.handleRelatedSubjectSelect}
-                          error={this.state.dataEntryCorrect}
-                          value={this.state.relatedSubject}
-                          placeholder="Search for Related Subject"
-                          styles={this.state.relatedSubErr ? errorStyle : {}}
-                          options={subjects}
-                        />
-                        {this.state.relatedSubErr ? <p>Please select related subject. </p> : null}
-                      </div>
-                    </Row>
-                    <Row>
-                      <div className="col-md-6">
-                        <label> Subject Role: </label>
-                        <Select
-                          styles={this.state.subjectRoleError ? errorStyle : {}}
-                          value={this.state.subjectRole}
-                          onChange={this.handleSubject1RoleSelect}
-                          options={relTypes}
-                          placeholder="Search for Subject Role Types"
-                        />
-                      {this.state.subjectRoleError ? <p>Please select subject role. </p> : null}
+          <div className="col-md-12 edit-label-modal" style={modalStyle}>
+            <div className="card" style={cardStyle}>
+              <h3 className="category" style={{ textAlign: 'center' }}> Add a new Relationship </h3>
+              <Row>
+                <div className="col-md-6">
+                  <label> Subject: </label>
+                  <TextField
+                    style={{ width: '100%', whiteSpace: 'nowrap',  fontSize: '16'}}
+                    value={this.props.subject.activeSubject.organization_subject_id}
+                  />
+                </div>
+                <div className="col-md-6">
+                <label> Related Subject: </label>
+                  <Select
+                    onChange={this.handleRelatedSubjectSelect}
+                    error={this.state.dataEntryCorrect}
+                    value={this.state.relatedSubject}
+                    placeholder="Search for Related Subject"
+                    styles={this.state.relatedSubErr ? errorStyle : {}}
+                    options={subjects}
+                  />
+                  {this.state.relatedSubErr ? <p>Please select related subject. </p> : null}
+                </div>
+              </Row>
+              <Row>
+                <div className="col-md-6">
+                  <label> Subject Role: </label>
+                  <Select
+                    styles={this.state.subjectRoleError ? errorStyle : {}}
+                    value={this.state.subjectRole}
+                    onChange={this.handleSubject1RoleSelect}
+                    options={relTypes}
+                    placeholder="Search for Subject Role Types"
+                  />
+                  {this.state.subjectRoleError ? <p>Please select subject role. </p> : null}
+                </div>
 
-                      </div>
+                <div className="col-md-6">
+                  <label> Related Subject Role: </label>
+                  <Select
+                    options={relTypes}
+                    styles={this.state.relatedSubRoleErr ? errorStyle : {}}
+                    value={this.state.relatedSubjectRole}
+                    onChange={this.handleSubject2RoleSelect}
+                    placeholder="Search for Related Subject Role Types"
+                  />
+                  {this.state.relatedSubRoleErr ? <p>Please select related subject role. </p> : null}
 
-                      <div className="col-md-6">
-                        <label> Related Subject Role: </label>
-                        <Select
-                          options={relTypes}
-                          styles={this.state.relatedSubRoleErr ? errorStyle : {}}
-                          value={this.state.relatedSubjectRole}
-                          onChange={this.handleSubject2RoleSelect}
-                          placeholder="Search for Related Subject Role Types"
-                        />
-                        {this.state.relatedSubRoleErr ? <p>Please select related subject role. </p> : null}
-
-                        </div>
-                    </Row>
-                  <Row>
-                    <center>
-
-                      <Button
-                        label={'Create New'}
-                        type='submit'
-                        size="sm"
-                        onClick={this.handleNewPedRelClick}
-                      > Create New </Button>
-
-                      <Button
-                        variant="contained"
-                        onClick={this.handleCloseClick}
-                        type='reset'
-                        variant="danger"
-                        size="sm"
-                      > Cancel </Button>
-                    {this.props.updateFormErrors != null ?
-                      <div className="alert alert-danger">{this.props.updateFormErrors}</div>
+                </div>
+              </Row>
+              <Row>
+                <center>
+                  <Button
+                    label={'Create New'}
+                    type='submit'
+                    size="sm"
+                    onClick={this.handleNewPedRelClick}
+                  > Create New </Button>
+                  <Button
+                    variant="contained"
+                    onClick={this.handleCloseClick}
+                    type='reset'
+                    variant="danger"
+                    size="sm"
+                  > Cancel </Button>
+                  {this.props.updateFormErrors != null ?
+                    <div className="alert alert-danger">{this.props.updateFormErrors}</div>
                     : null}
-                  </center>
-                </Row>
-              </div>
+                </center>
+              </Row>
             </div>
+          </div>
         </section>
-      );
+        );
+      }
     }
-  }
 
 
 SubjFamEditView.propTypes = {

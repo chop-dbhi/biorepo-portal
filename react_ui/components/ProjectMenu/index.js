@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as ProtocolActions from '../../actions/protocol';
 import { fetchProtocols } from '../../actions/protocol';
+import LoadingGif from '../LoadingGif';
 
 class ProjectMenu extends Component {
 
@@ -40,7 +41,7 @@ class ProjectMenu extends Component {
       );
     }
     else {
-      return <div>Loading...</div>;
+      return <div><LoadingGif/></div>;
     }
   }
 }
