@@ -13,17 +13,24 @@ class SubjectTextField extends React.Component {
   }
 
   onChange(e) {
+
+    let value = this.state.value;
+    if (this.props.skey == 'organization_subject_id') {
+      value = e.target.value.trim();
+    } else {
+      value = e.target.value;
+    }
     // Check to see if we're editing an existing subject
     if (!this.props.new) {
       // Changing the input fields should update the state of the active subject
       const sub = this.props.subject;
-      sub[this.props.skey] = e.target.value.trim();
+      sub[this.props.skey] = value;
       this.props.dispatch(SubjectActions.setActiveSubject(sub));
     } else {
       const sub = this.props.newSubject;
-      sub[this.props.skey] = e.target.value.trim();
+      sub[this.props.skey] = value;
     }
-    this.setState({value: e.target.value.trim()});
+    this.setState({value: value});
   }
 
   render() {
