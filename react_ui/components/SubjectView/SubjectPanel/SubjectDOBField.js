@@ -39,7 +39,7 @@ class SubjectDOBField extends React.Component {
             dropdownMode="select"
             dateFormat="yyyy-MM-dd"
             maxDate={(new Date())}
-            className="form-control"
+            className={this.props.error ? "field-error" : "form-control"}
         />
       );
     } else {
@@ -55,7 +55,7 @@ class SubjectDOBField extends React.Component {
             dropdownMode="select"
             dateFormat="yyyy-MM-dd"
             maxDate={(new Date())}
-            className="form-control"
+            className={this.props.error ? "field-error" : "form-control"}
         />
       );
     }
@@ -84,7 +84,7 @@ class SubjectDOBField extends React.Component {
     }
     return (
 
-        <div className="form-group">
+        <div className="form-group ">
           <h5 className="category" style={{fontWeight: "bold"}} > Date of Birth (YYYY-MM-DD) </h5>
           {this.datePickerSettings()}
           {this.props.error ? <p> {this.props.error} </p> : null  }
