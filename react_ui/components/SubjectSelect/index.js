@@ -120,6 +120,7 @@ class SubjectSelect extends React.PureComponent {
       Header: 'Subjects',
       columns: [{
         Header: 'Organization',
+        headerStyle: {textAlign: 'left'},
         accessor: 'organization_name', // String-based value accessors!
         style: { 'whiteSpace': 'unset' },
         Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
@@ -127,24 +128,28 @@ class SubjectSelect extends React.PureComponent {
         },
         {
         Header: 'Identifier',
+        headerStyle: {textAlign: 'left'},
         accessor: 'organization_subject_id', // String-based value accessors!
         Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
                        onChange={event => onChange(event.target.value)} />),
         },
         {
-          Header: 'First Name',
+        Header: 'First Name',
+        headerStyle: {textAlign: 'left'},
         accessor: 'first_name', // String-based value accessors!
         Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
                        onChange={event => onChange(event.target.value)} />),
         },
         {
-          Header: 'Last Name',
+        Header: 'Last Name',
+        headerStyle: {textAlign: 'left'},
         accessor: 'last_name', // String-based value accessors!
         Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
                        onChange={event => onChange(event.target.value)} />),
         },
         {
         Header: 'Birth Date',
+        headerStyle: {textAlign: 'left'},
         accessor: 'dob', // String-based value accessors!
         Filter: ({filter, onChange}) => (<input placeholder="search" value={filter ? filter.value : ''}
                        onChange={event => onChange(event.target.value)} />),
