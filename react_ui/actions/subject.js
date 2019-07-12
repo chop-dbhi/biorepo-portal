@@ -16,11 +16,13 @@ export const ADD_SUBJECT_FAILURE = 'ADD_SUBJECT_FAILURE';
 export const ADD_SUBJECT_SUCCESS = 'ADD_SUBJECT_SUCCESS';
 export const SET_LINK_MODE = 'SET_LINK_MODE';
 export const SET_ADD_SUBJECT_MODE = 'SET_ADD_SUBJECT_MODE';
+export const SET_EDIT_SUBJECT_MODE = 'SET_EDIT_SUBJECT_MODE';
 export const SET_NEW_SUBJECT = 'SET_NEW_SUBJECT';
 export const REQUEST_SUBJECT_RECORDS = 'REQUEST_SUBJECT_RECORDS';
 export const RECEIVE_SUBJECT_RECORDS = 'RECEIVE_SUBJECT_RECORDS';
 export const SET_NEW_SUBJECT_FORM_ERRORS = 'SET_NEW_SUBJECT_FORM_ERRORS';
 export const SET_UPDATE_FORM_ERRORS = 'SET_UPDATE_FORM_ERRORS';
+export const CLEAR_SUBJECTS_STATE = 'CLEAR_SUBJECTS_STATE';
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -75,6 +77,14 @@ export function setAddSubjectMode(mode = null) {
   // Update state to enable or disable AddSubject mode
   return {
     type: SET_ADD_SUBJECT_MODE,
+    mode,
+  };
+}
+
+export function setEditSubjectMode(mode = null) {
+  // Update state to enable or disable Edit Subject mode
+  return {
+    type: SET_EDIT_SUBJECT_MODE,
     mode,
   };
 }
@@ -136,14 +146,14 @@ export function addSubjectRequest() {
 
 export function addSubjectSuccess(subject) {
   return dispatch => {
-    dispatch(NotificationActions.addNotification(
-      {
-        message: 'Subject Added',
-        level: 'success',
-        autoDismiss: 2,
-      }
-    ));
-    dispatch(setAddSubjectMode());
+    // dispatch(NotificationActions.addNotification(
+    //   {
+    //     message: 'Subject Added',
+    //     level: 'success',
+    //     autoDismiss: 2,
+    //   }
+    // ));
+    dispatch(setAddSubjectMode(false));
     dispatch({
       type: ADD_SUBJECT_SUCCESS,
       isSaving: false,
@@ -203,14 +213,15 @@ export function updateSubjectSuccess(subject) {
       isFetching: false,
       subject,
     });
-    dispatch(NotificationActions.addNotification(
-      {
-        message: 'Subject Updated',
-        level: 'success',
-        autoDismiss: 2,
-      }
-    ));
-    dispatch(NotificationActions.renderNotification());
+    dispatch(setEditSubjectMode(false));
+  //   dispatch(NotificationActions.addNotification(
+  //     {
+  //       message: 'Subject Updated',
+  //       level: 'success',
+  //       autoDismiss: 2,
+  //     }
+  //   ));
+  //   dispatch(NotificationActions.renderNotification());
   };
 }
 
@@ -282,5 +293,11 @@ export function setUpdateFormErrors(errors) {
   return {
     type: SET_UPDATE_FORM_ERRORS,
     errors,
+  };
+}
+
+export function clearSubjectsState() {
+  return {
+    type: CLEAR_SUBJECTS_STATE,
   };
 }

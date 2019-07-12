@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import NotificationSystem from 'react-notification-system';
 import Navbar from '../components/Navbar';
 import { connect } from 'react-redux';
@@ -64,11 +65,11 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  notifications: React.PropTypes.object,
-  params: React.PropTypes.object,
-  children: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  notifications: PropTypes.object,
+  params: PropTypes.object,
+  children: PropTypes.object,
 };
 
 function mapStateToProps(state) {

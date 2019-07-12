@@ -65,35 +65,6 @@ export function fetchRelationshipTypes() {
     .then(response => response.json())
     .then(json => dispatch(receiveRelTypes(json)));
   };
-  // const json = [
-  //   {
-  //       "desc": "Maternal",
-  //       "id": 2,
-  //       "typ": "familial"
-  //   },
-  //   {
-  //       "desc": "Paternal",
-  //       "id": 3,
-  //       "typ": "familial"
-  //   },
-  //   {
-  //       "desc": "Child",
-  //       "id": 7,
-  //       "typ": "familial"
-  //   },
-  //   {
-  //       "desc": "Sister",
-  //       "id": 8,
-  //       "typ": "familial-sibling"
-  //   },
-  //   {
-  //       "desc": "Brother",
-  //       "id": 6,
-  //       "typ": "familial-sibling"
-  //   }
-  // ]
-  // return dispatch(receiveRelTypes(json));
-// }
 }
 
 export function fetchSubjFam(protocolID, subjectId) {
@@ -159,13 +130,13 @@ export function addSubjFamRelRequest() {
 
 export function addSubjFamRelSuccess(subjFamRel) {
   return dispatch => {
-    dispatch(NotificationActions.addNotification(
-      {
-        message: 'Relationship Added',
-        level: 'success',
-        autoDismiss: 2,
-      }
-    ));
+    // dispatch(NotificationActions.addNotification(
+    //   {
+    //     message: 'Relationship Added',
+    //     level: 'success',
+    //     autoDismiss: 2,
+    //   }
+    // ));
     dispatch(setAddSubjFamRelMode());
     dispatch({
       type: ADD_SUBJ_FAM_REL_SUCCESS,

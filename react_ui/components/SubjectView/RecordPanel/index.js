@@ -1,5 +1,6 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
+import PropTypes from 'prop-types';
 import PDSRecordGroup from './PDSRecordGroup';
 import LinkModeBanner from '../Modals/LinkModeBanner';
 import LinkRecord from '../Modals/LinkRecord';
@@ -27,19 +28,22 @@ class RecordPanel extends React.Component {
           return null;
         });
         return (
-          <PDSRecordGroup key={i} pds={_pds} records={pdsRecords} />
+          <div>
+            <div className="card">
+              <PDSRecordGroup key={i} pds={_pds} records={pdsRecords} />
+            </div>
+            <hr/>
+          </div>
         );
       }, this);
     }
     return (
       <div>
-          <div className="card">
-            <div className="content">
-              {this.props.linkMode ? <LinkModeBanner /> : null}
-              {this.props.selectLinkTypeModal ? <LinkRecord /> : null}
-              {pdsNodes}
-            </div>
-          </div>
+        <div className="content">
+          {this.props.linkMode ? <LinkModeBanner /> : null}
+          {this.props.selectLinkTypeModal ? <LinkRecord /> : null}
+          {pdsNodes}
+        </div>
         {this.props.activeLinks.length !== 0 && !this.props.isFetching ?
           <LinkedRecords /> : null
         }
@@ -49,19 +53,19 @@ class RecordPanel extends React.Component {
 }
 
 RecordPanel.propTypes = {
-  dispatch: React.PropTypes.func,
-  subject: React.PropTypes.object,
-  protocol: React.PropTypes.object,
-  pds: React.PropTypes.object,
-  record: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  activeSubject: React.PropTypes.object,
-  activeLinks: React.PropTypes.array,
-  activeSubjectRecords: React.PropTypes.array,
-  selectedLabel: React.PropTypes.number,
-  linkMode: React.PropTypes.bool,
-  selectLinkTypeModal: React.PropTypes.bool,
-  isFetching: React.PropTypes.bool,
+  dispatch: PropTypes.func,
+  subject: PropTypes.object,
+  protocol: PropTypes.object,
+  pds: PropTypes.object,
+  record: PropTypes.object,
+  activeRecord: PropTypes.object,
+  activeSubject: PropTypes.object,
+  activeLinks: PropTypes.array,
+  activeSubjectRecords: PropTypes.array,
+  selectedLabel: PropTypes.number,
+  linkMode: PropTypes.bool,
+  selectLinkTypeModal: PropTypes.bool,
+  isFetching: PropTypes.bool,
 };
 
 function mapStateToProps(state) {

@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
 
 class BackButton extends React.Component {
   constructor(props) {
@@ -8,12 +10,12 @@ class BackButton extends React.Component {
   }
 
   handleClick() {
-    this.context.history.goBack();
+    this.props.history.goBack();
   }
 
   render() {
     const divStyle = {
-      backgroundColor: 'white',
+      backgroundColor: '#e7f2f5',
       opacity: '0.7',
       width: '75px',
       position: 'fixed',
@@ -28,8 +30,8 @@ class BackButton extends React.Component {
     };
     const arrowStyle = {
       marginTop: '10px',
-      fontSize: '2em',
-      color: '#7AC29A',
+      fontSize: '3em',
+      color: '#34BFED', 
       position: 'relative',
       top: '20px',
     };
@@ -41,8 +43,8 @@ class BackButton extends React.Component {
   }
 }
 
-BackButton.contextTypes = {
-  history: React.PropTypes.object,
+BackButton.propTypes = {
+  history: PropTypes.object,
 };
 
-export default connect()(BackButton);
+export default withRouter(connect()(BackButton));

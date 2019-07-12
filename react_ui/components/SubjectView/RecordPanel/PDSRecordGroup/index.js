@@ -1,12 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import FloatingActionButton from 'material-ui/lib/floating-action-button';
-import RaisedButton from 'material-ui/lib/raised-button';
-import ContentAdd from 'material-ui/lib/svg-icons/content/add';
+import PropTypes from 'prop-types';
+import FloatingActionButton from '@material-ui/core/Button';
+import RaisedButton from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 import NewRecordLabelSelect from './NewRecordLabelSelect';
 import * as SubjectActions from '../../../../actions/subject';
 import * as RecordActions from '../../../../actions/record';
 import * as PDSActions from '../../../../actions/pds';
+import AddButton from '../../../addButton'
 
 class PDSRecordGroup extends React.Component {
 
@@ -79,10 +81,14 @@ class PDSRecordGroup extends React.Component {
     return linked;
   }
 
+  Icons(props) {
+  const { classes } = props;
+}
+
   renderRecords(recordNodes) {
     return (
       recordNodes ?
-        <table className="table table-striped">
+        <table className="table">
           <thead>
             <tr><th>Record ID</th><th>Record</th><th>Created</th><th>Modified</th></tr>
           </thead>
@@ -176,25 +182,13 @@ class PDSRecordGroup extends React.Component {
         <NewRecordLabelSelect pds={this.props.pds} />
         <h5 className="category">{this.props.pds.display_label}
           {this.props.pds.authorized ?
-            <FloatingActionButton
-              onClick={() => this.handleNewRecordClick(this.props.pds)}
-              backgroundColor={'#7AC29A'}
-              mini
-              style={addButtonStyle}
-              disableTouchRipple={true}
-            >
-              <ContentAdd />
-            </FloatingActionButton>
-          :
-            <FloatingActionButton
-              disabled
-              mini
-              style={addButtonStyle}
-            >
-              <ContentAdd />
-            </FloatingActionButton>}
-
+            <div className="font-icon-wrapper" onClick={() => this.handleNewRecordClick(this.props.pds)}>
+              <AddButton/>
+            </div>
+            : <div/>
+          }
         </h5>
+
         <div className="PDSRecords">
           {this.props.pds.authorized ?
             this.renderRecords(recordNodes)
@@ -208,20 +202,20 @@ class PDSRecordGroup extends React.Component {
 }
 
 PDSRecordGroup.contextTypes = {
-  history: React.PropTypes.object,
+  history: PropTypes.object,
 };
 
 PDSRecordGroup.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  pds: React.PropTypes.object,
-  record: React.PropTypes.object,
-  records: React.PropTypes.array,
-  subject: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  activeLinks: React.PropTypes.array,
-  linkMode: React.PropTypes.bool,
-  selectedLabel: React.PropTypes.number,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  pds: PropTypes.object,
+  record: PropTypes.object,
+  records: PropTypes.array,
+  subject: PropTypes.object,
+  activeRecord: PropTypes.object,
+  activeLinks: PropTypes.array,
+  linkMode: PropTypes.bool,
+  selectedLabel: PropTypes.number,
 };
 
 function mapStateToProps(state) {

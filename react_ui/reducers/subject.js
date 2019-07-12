@@ -1,11 +1,11 @@
 /* eslint-disable no-param-reassign*/
 import { REQUEST_SUBJECTS, RECEIVE_SUBJECTS, SET_ACTIVE_SUBJECT,
-         SHOW_INFO_PANEL, HIDE_INFO_PANEL, SHOW_ACTION_PANEL,
-         HIDE_ACTION_PANEL, UPDATE_SUBJECT_SUCCESS, UPDATE_SUBJECT_REQUEST,
+         UPDATE_SUBJECT_SUCCESS, UPDATE_SUBJECT_REQUEST,
          SET_LINK_MODE, ADD_SUBJECT_SUCCESS, ADD_SUBJECT_FAILURE,
          SET_ADD_SUBJECT_MODE, SET_NEW_SUBJECT, REQUEST_SUBJECT_SUCCESS,
          SET_NEW_SUBJECT_FORM_ERRORS, SET_UPDATE_FORM_ERRORS,
-         UPDATE_SUBJECT_FAILURE, ADD_SUBJECT_REQUEST } from '../actions/subject';
+         UPDATE_SUBJECT_FAILURE, ADD_SUBJECT_REQUEST, CLEAR_SUBJECTS_STATE,
+         SET_EDIT_SUBJECT_MODE } from '../actions/subject';
 
 let initialNewSubject = {
   organization: null,
@@ -27,6 +27,7 @@ const initialState = {
   showInfoPanel: false,
   showActionPanel: false,
   addRecordMode: false,
+  editSubjectMode: false,
   linkMode: false,
   newFormErrors: {
     server: [],
@@ -62,7 +63,6 @@ function subject(state = initialState, action) {
       action.subject.organization = action.subject.organization;
       action.subject.organization_id_label = action.subject.organization_id_label;
       return Object.assign({}, state, {
-        items: action.subjects,
         isFetching: false,
         activeSubject: action.subject,
       });
@@ -73,22 +73,6 @@ function subject(state = initialState, action) {
     case SET_NEW_SUBJECT:
       return Object.assign({}, state, {
         newSubject: action.subject,
-      });
-    case SHOW_INFO_PANEL:
-      return Object.assign({}, state, {
-        showInfoPanel: true,
-      });
-    case HIDE_INFO_PANEL:
-      return Object.assign({}, state, {
-        showInfoPanel: false,
-      });
-    case SHOW_ACTION_PANEL:
-      return Object.assign({}, state, {
-        showActionPanel: true,
-      });
-    case HIDE_ACTION_PANEL:
-      return Object.assign({}, state, {
-        showActionPanel: false,
       });
     case UPDATE_SUBJECT_REQUEST:
       return Object.assign({}, state, {
@@ -178,8 +162,20 @@ function subject(state = initialState, action) {
           form: action.errors,
         },
       });
+    case CLEAR_SUBJECTS_STATE:
+      return initialState;
     default:
       return state;
+    case SET_EDIT_SUBJECT_MODE:
+      if (action.mode != null) {
+        return Object.assign({}, state, {
+          editSubjectMode: action.mode,
+        });
+      }
+      return Object.assign({}, state, {
+        editSubjectMode: !state.editSubjectMode,
+      });
+
   }
 }
 

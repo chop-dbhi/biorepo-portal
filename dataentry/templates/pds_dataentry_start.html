@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+<link href="/open-iconic/font/css/open-iconic-bootstrap.css" rel="stylesheet">
 {% block head_content %}
 <title>Subject Data</title>
 {% endblock %}
@@ -9,7 +9,7 @@
 {% endblock %}
 {% block top_links %}
     <li><a href="{{root_path}}/#/dataentry/protocol/{{protocol.id}}/subject/{{subject.id}}">Records</href></a></li>
-    <li><a href="{{root_path}}/#/dataentry/protocol/{{protocol.id}}/">Subjects</href></a></li>
+    <li><a href="{{root_path}}/#/dataentry/protocol/{{protocol.id}}">Subjects</href></a></li>
     <li><a href="{{root_path}}/">Projects</href></a></li>
 {% endblock %}
 
@@ -60,7 +60,8 @@
 </div>
 {% endif %}
 
-<div> <span class="label label-primary">{{label.label}}</span></div>
+<div> <h4>{{label.label}}</h4></div>
+
 
 {{redcap_complete_legend|safe}}
 
@@ -84,6 +85,12 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div>
+<div>
+  <a href="{{root_path}}/#/dataentry/protocol/{{protocol.id}}/subject/{{subject.id}}"
+     class="btn btn-primary"
+     role="button"
+     aria-disabled="true"> <span class="ti-angle-left"> </span>Return to Subject Records</a>
+</div>
 
 {% endblock %}
 

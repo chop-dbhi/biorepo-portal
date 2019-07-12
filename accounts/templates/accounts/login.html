@@ -50,15 +50,22 @@
 			</div>
       <a href="{% url 'password_reset' %}">Forgot Password?</a>
 
-			<center><button type="submit" class="btn btn-primary">Login</button></center>
+			<center><button type="submit" class="btn-primary">Login</button></center>
       <center><a href="{% url 'register' %}">New here? Create an account</a></center>
 		    </form>
 	       {% endif %}
 	</div>
     <div class="col-md-12">
-        <div>
+        <div >
           <center>
-            <a href="http://dbhi.chop.edu"><img src="{% static "img/CHDBHi.png" %}"></a>
+            <a href="http://dbhi.chop.edu">
+              <img class="dbhi-logo" src="{% static "img/CHOPDepartmentLogo.png" %}" />
+            </a>
+            {% if is_IE %}
+              <div class="alert alert-danger" role="alert">
+                Internet Explorer is not Supported. Please use Chrome or Firefox
+              </div>
+            {% endif %}
           </center>
         </div>
     </div>

@@ -1,5 +1,6 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const ExternalIDs = (props) => {
   let nodes = null;
@@ -22,7 +23,7 @@ const ExternalIDs = (props) => {
 };
 
 ExternalIDs.propTypes = {
-  externalIds: React.PropTypes.array,
+  externalIds: PropTypes.array,
 };
 
 export default ExternalIDs;

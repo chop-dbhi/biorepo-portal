@@ -1,9 +1,18 @@
 // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 // jscs:disable maximumLineLength
-import React from 'react';
-import { Link } from 'react-router';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ExternalIDs from './ExternalIds';
+import * as SubjectActions from '../../../actions/subject';
+import { withRouter } from 'react-router';
+
+
+function handleEditSubjectClick(props){
+  const { dispatch } = props;
+  dispatch(SubjectActions.setEditSubjectMode(true));
+}
 
 const SubjectCardView = (props) => {
   const subject = props.subject.activeSubject;
@@ -11,14 +20,7 @@ const SubjectCardView = (props) => {
   return (
       <div className="card">
         <div className="more">
-          <Link
-            to={editUrl}
-            type="button"
-            style={{ marginRight: '40%' }}
-            className="btn btn-simple btn-icon pull-right"
-          >
-            <i className="ti-pencil"></i>
-          </Link>
+            <i className="ti-pencil" onClick={() => handleEditSubjectClick(props)}></i>
         </div>
         <div className="content">
           <h6 className="category">{subject.organization_name}</h6>
@@ -32,10 +34,11 @@ const SubjectCardView = (props) => {
 };
 
 SubjectCardView.propTypes = {
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  pds: React.PropTypes.object,
-  path: React.PropTypes.string,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  pds: PropTypes.object,
+  path: PropTypes.string,
+  history: PropTypes.object,
 };
 
 function mapStateToProps(state) {
@@ -53,4 +56,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(SubjectCardView);
+export default withRouter(connect(mapStateToProps)(SubjectCardView));

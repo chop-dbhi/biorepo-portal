@@ -1,10 +1,10 @@
 import React from 'react';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import RaisedButton from 'material-ui/lib/raised-button';
+import PropTypes from 'prop-types';
+import Select from 'react-select';
+import Button from 'react-bootstrap/Button';
 import * as RecordActions from '../../../actions/record';
 import * as SubjectActions from '../../../actions/subject';
-import * as Colors from 'material-ui/lib/styles/colors';
+import * as Colors from '@material-ui/core/colors';
 
 import { connect } from 'react-redux';
 
@@ -21,12 +21,12 @@ class LinkRecord extends React.Component {
 
   onChange(e, index, value) {
     const { dispatch } = this.props;
-    dispatch(RecordActions.setSelectedLinkType(value));
+    dispatch(RecordActions.setSelectedLinkType(e.value));
   }
 
   handleRecordLabelSelect(e, index, value) {
     const { dispatch } = this.props;
-    dispatch(RecordActions.setSelectedLabel(value));
+    dispatch(RecordActions.setSelectedLabel(e));
   }
 
   handleNewRecordClick() {
@@ -44,6 +44,17 @@ class LinkRecord extends React.Component {
     dispatch(RecordActions.createRecordLink(activeRecord, secondaryRecord));
   }
 
+  recordLinkOptions() {
+    let labelLinkList = null;
+    let activePds = this.props.activeRecord.pds
+    let labels = this.props.availableLinkTypes[activePds]
+    labelLinkList = labels.map(label => ({
+      value: label.id,
+      label: label.desc,
+    }));
+    return labelLinkList
+  }
+
   handleCloseClick() {
     const { dispatch } = this.props;
     dispatch(RecordActions.dismissLinkModal());
@@ -58,6 +69,8 @@ class LinkRecord extends React.Component {
   }
 
   render() {
+    const activePds = this.props.activeRecord.pds;
+    const availableLinkTypes = this.props.availableLinkTypes[activePds];
     const primaryRecord = this.props.activeRecord;
     const secondaryRecord = this.props.pendingLinkedRecord;
     const modalStyle = {
@@ -93,8 +106,6 @@ class LinkRecord extends React.Component {
       padding: '5px',
       margin: '15px',
     };
-    const activePds = this.props.activeRecord.pds;
-    const availableLinkTypes = this.props.availableLinkTypes[activePds];
     const canLink = availableLinkTypes.length > 0;
     return (
       <section>
@@ -114,15 +125,13 @@ class LinkRecord extends React.Component {
                         null}
                     </h6>
                   </div>
-                  <SelectField
+                  <Select
                     onChange={this.onChange}
                     value={this.props.selectedLinkType}
                     style={{ width: '100%' }}
-                  >
-                    {availableLinkTypes.map((link, i) => (
-                      <MenuItem key={i} value={link.id} primaryText={link.desc} />
-                      ))}
-                  </SelectField>
+                    options={this.recordLinkOptions()}
+                  />
+
                   <div style={recordStyle}>
                     <h6>
                       {secondaryRecord ?
@@ -135,22 +144,21 @@ class LinkRecord extends React.Component {
                     <div style={linkErrorStyle}>Error: {this.props.linkError}</div> :
                     null
                   }
-                  <RaisedButton
+                  <Button
                     style={{ width: '100%' }}
-                    labelColor={'#7AC29A'}
                     label="Link Records"
                     onClick={this.handleLinkRecordClick}
-                  />
+                  > Link Records </Button>
                 </div>
                 :
                 <h6> This record is not available for linking </h6>
               }
-              <RaisedButton
+              <Button
                 style={{ width: '100%' }}
-                labelColor={Colors.red400}
+                variant="danger"
                 label="Cancel"
                 onClick={this.handleCloseClick}
-              />
+              > Cancel </Button>
             </div>
           </div>
         </div>
@@ -161,14 +169,14 @@ class LinkRecord extends React.Component {
 }
 
 LinkRecord.propTypes = {
-  dispatch: React.PropTypes.func,
-  subject: React.PropTypes.object,
-  selectedLabel: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  pendingLinkedRecord: React.PropTypes.object,
-  selectedLinkType: React.PropTypes.number,
-  linkError: React.PropTypes.string,
-  availableLinkTypes: React.PropTypes.object,
+  dispatch: PropTypes.func,
+  subject: PropTypes.object,
+  selectedLabel: PropTypes.object,
+  activeRecord: PropTypes.object,
+  pendingLinkedRecord: PropTypes.object,
+  selectedLinkType: PropTypes.number,
+  linkError: PropTypes.string,
+  availableLinkTypes: PropTypes.object,
 };
 
 function mapStateToProps(state) {

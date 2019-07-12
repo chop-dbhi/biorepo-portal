@@ -1,55 +1,68 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import TextField from 'material-ui/lib/text-field';
+import TextField from '@material-ui/core/TextField';
 import * as SubjectActions from '../../../actions/subject';
 
 class SubjectTextField extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state={value: this.props.value}
     this.onChange = this.onChange.bind(this);
   }
 
   onChange(e) {
+
+    let value = this.state.value;
+    if (this.props.skey == 'organization_subject_id') {
+      value = e.target.value.trim();
+    } else {
+      value = e.target.value;
+    }
     // Check to see if we're editing an existing subject
     if (!this.props.new) {
       // Changing the input fields should update the state of the active subject
       const sub = this.props.subject;
-      sub[this.props.skey] = e.target.value.trim();
+      sub[this.props.skey] = value;
       this.props.dispatch(SubjectActions.setActiveSubject(sub));
     } else {
       const sub = this.props.newSubject;
-      sub[this.props.skey] = e.target.value.trim();
+      sub[this.props.skey] = value;
     }
+    this.setState({value: value});
   }
 
   render() {
-    let errorText = '';
-    if (this.props.error) {
-      errorText = 'This field is required.';
-    }
 
     return (
-      <TextField
-        onChange={this.onChange}
-        style={{ width: '100%', whiteSpace: 'nowrap' }}
-        value={this.props.value}
-        floatingLabelText={this.props.label}
-        errorText={errorText}
-      />
+      <div className="form-group">
+        <label htmlFor="formGroupExampleInput">{this.props.label}</label>
+          <input
+            type="text"
+            className="form-control"
+            id="formGroupExampleInput"
+            onChange={this.onChange}
+            style= {this.props.error ? {backgroundColor: '#F04D77'}: {} }
+            value={this.state.value}
+          />
+       {this.props.error
+      ? <p> {this.props.error} </p>
+    : null  }
+    </div>
     );
   }
 }
 
 SubjectTextField.propTypes = {
-  dispatch: React.PropTypes.func,
-  new: React.PropTypes.bool,
-  subject: React.PropTypes.object,
-  newSubject: React.PropTypes.object,
-  skey: React.PropTypes.string,
-  value: React.PropTypes.string,
-  error: React.PropTypes.string,
-  label: React.PropTypes.string,
+  dispatch: PropTypes.func,
+  new: PropTypes.bool,
+  subject: PropTypes.object,
+  newSubject: PropTypes.object,
+  skey: PropTypes.string,
+  value: PropTypes.string,
+  error: PropTypes.string,
+  label: PropTypes.string,
 };
 
 function mapStateToProps(state) {

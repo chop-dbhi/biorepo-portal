@@ -1,9 +1,8 @@
 import { ADD_NOTIFICATION, REMOVE_NOTIFICATION,
          RENDER_NOTIFICATION } from '../actions/notification';
 
-const initialState = {
-  items: [],
-};
+const initialState = [
+  { items: [] }];
 
 let notifications = [];
 

@@ -1,9 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import * as SubjFamActions from '../../../actions/subjFam';
-import ContentAdd from 'material-ui/lib/svg-icons/content/add';
-import FloatingActionButton from 'material-ui/lib/floating-action-button';
+import { withStyles } from '@material-ui/core/styles';
+import Icon from '@material-ui/core/Icon';
+import FloatingActionButton from '@material-ui/core/Button';
+import AddButton from '../../addButton'
 
 class SubjFamCardView extends React.Component {
 
@@ -81,16 +84,11 @@ class SubjFamCardView extends React.Component {
       <div className="card">
         <div className="content">
           <h5 className="category"> Relationships
-            <FloatingActionButton
-              onClick={() => this.handleNewSubjFamRelClick(this.props.subjFam)  }
-              backgroundColor={'#7AC29A'}
-              mini
-              style={addButtonStyle}
-              disableTouchRipple={true}>
-              <ContentAdd />
-            </FloatingActionButton>
+          <div className="font-icon-wrapper" onClick={() => this.handleNewSubjFamRelClick(this.props.subjFam)}>
+            <AddButton/>
+          </div>
           </h5>
-          <table className="table table-striped">
+          <table className="table">
             <thead>
               <tr><th>Relation</th><th>MRN</th></tr>
             </thead>
@@ -105,13 +103,13 @@ class SubjFamCardView extends React.Component {
 }
 
 SubjFamCardView.propTypes = {
-  dispatch: React.PropTypes.func,
-  protocol: React.PropTypes.object,
-  subject: React.PropTypes.object,
-  activeRecord: React.PropTypes.object,
-  activeProtocolId: React.PropTypes.number,
-  subjFam: React.PropTypes.object,
-  isFetching: React.PropTypes.bool,
+  dispatch: PropTypes.func,
+  protocol: PropTypes.object,
+  subject: PropTypes.object,
+  activeRecord: PropTypes.object,
+  activeProtocolId: PropTypes.number,
+  subjFam: PropTypes.object,
+  isFetching: PropTypes.bool,
 };
 
 function mapStateToProps(state) {
