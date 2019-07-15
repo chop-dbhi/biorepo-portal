@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import * as SubjectActions from '../../../actions/subject';
 
+
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
@@ -12,53 +13,20 @@ class SubjectDOBField extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state={value: this.props.value};
+    this.state={value: this.getDateValue()};
     this.onChange = this.onChange.bind(this);
   }
 
-  getSelectedValue() {
-    let selectedDate = null;
-    if (!this.props.new) {
-      selectedDate=`new Date(this.state.value)`
-    } else {
-      selectedDate=this.state.value;
+  getDateValue() {
+    if (this.props.value == '') {
+      return ''
     }
-    return selectedDate
-  }
-
-  datePickerSettings() {
-    if (this.props.new){
-      return (
-        <DatePicker
-            selected={this.state.value}
-            onChange={this.onChange}
-            peekNextMonth
-            showMonthDropdown
-            showYearDropdown
-            scrollableYearDropdown
-            dropdownMode="select"
-            dateFormat="yyyy-MM-dd"
-            maxDate={(new Date())}
-            className={this.props.error ? "field-error" : "form-control"}
-        />
-      );
-    } else {
-      return (
-        <DatePicker
-            openToDate={new Date(this.props.value)}
-            selected={new Date(this.state.value)}
-            onChange={this.onChange}
-            peekNextMonth
-            showMonthDropdown
-            showYearDropdown
-            scrollableYearDropdown
-            dropdownMode="select"
-            dateFormat="yyyy-MM-dd"
-            maxDate={(new Date())}
-            className={this.props.error ? "field-error" : "form-control"}
-        />
-      );
-    }
+    var date = this.props.value;
+    var splitDate = date.split('-');
+    var day = splitDate[2];
+    let dateClass = new Date(date);
+    dateClass.setDate(day);
+    return dateClass;
   }
 
   onChange(e) {
@@ -86,7 +54,18 @@ class SubjectDOBField extends React.Component {
 
         <div className="form-group ">
           <h5 className="category" style={{fontWeight: "bold"}} > Date of Birth (YYYY-MM-DD) </h5>
-          {this.datePickerSettings()}
+          <DatePicker
+              selected={this.state.value}
+              onChange={this.onChange}
+              peekNextMonth
+              showMonthDropdown
+              showYearDropdown
+              scrollableYearDropdown
+              dropdownMode="select"
+              dateFormat="yyyy-MM-dd"
+              maxDate={(new Date())}
+              className={this.props.error ? "field-error" : "form-control"}
+          />
           {this.props.error ? <p> {this.props.error} </p> : null  }
         </div>
 
