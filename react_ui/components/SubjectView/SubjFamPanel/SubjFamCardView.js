@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import * as SubjFamActions from '../../../actions/subjFam';
 import { withStyles } from '@material-ui/core/styles';
@@ -13,6 +12,7 @@ class SubjFamCardView extends React.Component {
   constructor(props) {
     super(props);
     this.handleNewSubjFamRelClick = this.handleNewSubjFamRelClick.bind(this);
+    this.handelRelClick = this.handleRelClick.bind(this);
   }
 
   // get the related subject and the related
@@ -27,11 +27,13 @@ class SubjFamCardView extends React.Component {
       relationships.relationships.forEach(function (relationship) {
         if (relationship.subject_1_id == subject.id) {
           organizedRelationships.push({ "subject_org_id": relationship.subject_2_org_id,
-                                      "subject_role": relationship.subject_2_role});
+                                      "subject_role": relationship.subject_2_role,
+                                      "subject_id": relationship.subject_2_id});
         }
         else {
           organizedRelationships.push({"subject_org_id": relationship.subject_1_org_id,
-                                      "subject_role": relationship.subject_1_role});
+                                      "subject_role": relationship.subject_1_role,
+                                      "subject_id": relationship.subject_1_id});
         }
       });
     }
@@ -43,13 +45,24 @@ class SubjFamCardView extends React.Component {
       return organizedRelationships
     }
   }
+  handleRelClick(subjectId){
+    const url = `#/dataentry/protocol/${this.props.activeProtocolId}/subject/${subjectId}`;
+    window.location.href = url;
+    window.location.reload();
+  }
+  
   renderRelationships(relationships){
     return(
       relationships ?
         relationships.map((item, i)=> (
-          <tr key={i} >
+          <tr
+            key={i}
+            onClick={() => this.handleRelClick(item.subject_id)}
+            className="ExternalRecord"
+          >
             <td > {item.subject_role} </td>
             <td > {item.subject_org_id} </td>
+
           </tr>))
           :
           <tr>
@@ -66,11 +79,6 @@ class SubjFamCardView extends React.Component {
   }
 
   render() {
-    const addButtonStyle = {
-      marginLeft: '10px',
-      marginTop: '10px',
-      float: 'right',
-    };
     const protocol = this.props.activeProtocolId;
     const relationships = this.props.subjFam.items.items;
     let organizedRelationships = null;
