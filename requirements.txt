@@ -7,7 +7,7 @@ djangorestframework>=3.3.3,<3.4
 djangorestframework-jwt>=1.5.0,<1.6
 dj-static>=0.0.6,<0.1.0
 -e git+https://github.com/chop-dbhi/ehb-client.git@v2.0.3-alpha#egg=ehb-client
--e git+https://github.com/chop-dbhi/ehb-datasources.git@d38c2ae36df471bfd26d055efd073af3ea58cac7#egg=ehb-datasources
+-e git+https://github.com/chop-dbhi/ehb-datasources.git@master#egg=ehb-datasources
 ldap3>=1.4.0,<1.5
 psycopg2-binary
 python-json-logger==0.1.7
