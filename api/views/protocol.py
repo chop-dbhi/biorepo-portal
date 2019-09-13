@@ -15,6 +15,7 @@ from api.utilities import SubjectUtils
 from ehb_client.requests.exceptions import PageNotFound
 from ehb_client.requests.subject_request_handler import Subject
 from ehb_client.requests.subj_fam_relationships_handler import SubjFamRelationship
+from ..ehb_service_client import ServiceClient
 from rest_framework.response import Response
 
 from rest_framework import viewsets
@@ -516,6 +517,15 @@ class ProtocolSubjFamDetailView(BRPApiView):
                 [{"success": success, "relationship": relationship, "errors": errors}],
                 status=422)
 
+        payload = []
+        payload.append({
+            "subject": r['subjFamRelationship'].subject_1_id,
+            "change_type": "SubjectFamRelation",
+            "change_type_ehb_pk": r['subjFamRelationship'].id,
+            "change_action": "create",
+            "user_name": request.user.username
+            })
+        ServiceClient.user_audit(payload)
         return Response(
             [{"success": success, "relationship": json.loads(SubjFamRelationship.json_from_identity(new_relationship)), "errors": errors}],
             headers={'Access-Control-Allow-Origin': '*'},
