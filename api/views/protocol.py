@@ -486,6 +486,8 @@ class ProtocolSubjFamDetailView(BRPApiView):
             "protocol_id": 1
         }
         '''
+        user_audit_payload1 = []
+        user_audit_payload2 = []
         relationship = request.data
         req_body_valid = self.validate_req_body(relationship)
         if req_body_valid is not True:
@@ -517,15 +519,23 @@ class ProtocolSubjFamDetailView(BRPApiView):
                 [{"success": success, "relationship": relationship, "errors": errors}],
                 status=422)
 
-        payload = []
-        payload.append({
+        user_audit_payload1.append({
             "subject": r['subjFamRelationship'].subject_1_id,
             "change_type": "SubjectFamRelation",
             "change_type_ehb_pk": r['subjFamRelationship'].id,
-            "change_action": "create",
+            "change_action": "Create",
             "user_name": request.user.username
             })
-        ServiceClient.user_audit(payload)
+        ServiceClient.user_audit(user_audit_payload1)
+
+        user_audit_payload2.append({
+            "subject": r['subjFamRelationship'].subject_2_id,
+            "change_type": "SubjectFamRelation",
+            "change_type_ehb_pk": r['subjFamRelationship'].id,
+            "change_action": "Create",
+            "user_name": request.user.username
+            })
+        ServiceClient.user_audit(user_audit_payload2)
         return Response(
             [{"success": success, "relationship": json.loads(SubjFamRelationship.json_from_identity(new_relationship)), "errors": errors}],
             headers={'Access-Control-Allow-Origin': '*'},
@@ -565,3 +575,49 @@ class ProtocolSubjFamDetailView(BRPApiView):
                 {"detail": "You are not authorized to view subjects in this protocol"},
                 status=403
             )
+
+    def delete(self, request, relationship_id):
+        '''
+        Delete a subject relationship in the protocol
+
+        Expects a request body of the form:
+        {
+            "subject_1": 1,
+            "subject_2": 2,
+            "subject_1_role": 3,
+            "subject_2_role": 4,
+            "protocol_id": 1,
+            "id": 1
+        }
+        '''
+        user_audit_payload1 = []
+        user_audit_payload2 = []
+        relationship = request.data
+        req_body_valid = self.validate_req_body(relationship)
+        if req_body_valid is not True:
+            return Response(req_body_valid, status=400)
+        try:
+            self.relationship_HB_handler.delete(relationship_id=relationship_id)
+        except:
+            return Response({'error': 'Unable to delete relationship'}, status=400)
+
+        # Send delete information to the user audit log
+        user_audit_payload1.append({
+            "subject": relationship['subject_1'],
+            "change_type": "SubjectFamRelation",
+            "change_type_ehb_pk": relationship_id,
+            "change_action": "Delete",
+            "user_name": request.user.username
+        })
+        ServiceClient.user_audit(user_audit_payload1)
+
+        user_audit_payload2.append({
+            "subject": relationship['subject_2'],
+            "change_type": "SubjectFamRelation",
+            "change_type_ehb_pk": relationship_id,
+            "change_action": "Delete",
+            "user_name": request.user.username
+        })
+        ServiceClient.user_audit(user_audit_payload2)
+
+        return Response({'info': 'Relationship deleted'}, status=200)
