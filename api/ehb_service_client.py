@@ -156,7 +156,7 @@ class ServiceClient(object):
     @staticmethod
     def user_audit(payload):
         url = ServiceClient.APP_URL + "/api/auditlog/"
-
+        headers = {
             'Content-Type': "application/json",
             'Api-token': ServiceClient.api_key,
             'Host': "127.0.0.1:8000",
