@@ -427,6 +427,29 @@ class ProtocolSubjectDetailView(BRPApiView):
 
 class ProtocolSubjFamDetailView(BRPApiView):
 
+    def user_audit_relationship(self, subject_1, subject_2, change_type, ehb_pk, change_action, username, protocol_id):
+        user_audit_payload1 = []
+        user_audit_payload2 = []
+        user_audit_payload1.append({
+            "subject": subject_1,
+            "change_type": change_type,
+            "change_type_ehb_pk": ehb_pk,
+            "change_action": change_action,
+            "user_name": username,
+            "protocol_id": protocol_id
+        })
+        ServiceClient.user_audit(user_audit_payload1)
+
+        user_audit_payload2.append({
+            "subject": subject_2,
+            "change_type": change_type,
+            "change_type_ehb_pk": ehb_pk,
+            "change_action": change_action,
+            "user_name": username,
+            "protocol_id": protocol_id
+        })
+        ServiceClient.user_audit(user_audit_payload2)
+
     # will return True if subject inputs are valid
     def check_subject(self, subject_1, subject_2=None):
         try:
@@ -486,8 +509,6 @@ class ProtocolSubjFamDetailView(BRPApiView):
             "protocol_id": 1
         }
         '''
-        user_audit_payload1 = []
-        user_audit_payload2 = []
         relationship = request.data
         req_body_valid = self.validate_req_body(relationship)
         if req_body_valid is not True:
@@ -519,23 +540,11 @@ class ProtocolSubjFamDetailView(BRPApiView):
                 [{"success": success, "relationship": relationship, "errors": errors}],
                 status=422)
 
-        user_audit_payload1.append({
-            "subject": r['subjFamRelationship'].subject_1_id,
-            "change_type": "SubjectFamRelation",
-            "change_type_ehb_pk": r['subjFamRelationship'].id,
-            "change_action": "Create",
-            "user_name": request.user.username
-            })
-        ServiceClient.user_audit(user_audit_payload1)
+        self.user_audit_relationship(r['subjFamRelationship'].subject_1_id,
+                                     r['subjFamRelationship'].subject_2_id,
+                                     "SubjectFamRelation", r['subjFamRelationship'].id,
+                                     "Create", request.user.username, r['subjFamRelationship'].protocol_id)
 
-        user_audit_payload2.append({
-            "subject": r['subjFamRelationship'].subject_2_id,
-            "change_type": "SubjectFamRelation",
-            "change_type_ehb_pk": r['subjFamRelationship'].id,
-            "change_action": "Create",
-            "user_name": request.user.username
-            })
-        ServiceClient.user_audit(user_audit_payload2)
         return Response(
             [{"success": success, "relationship": json.loads(SubjFamRelationship.json_from_identity(new_relationship)), "errors": errors}],
             headers={'Access-Control-Allow-Origin': '*'},
@@ -590,8 +599,6 @@ class ProtocolSubjFamDetailView(BRPApiView):
             "id": 1
         }
         '''
-        user_audit_payload1 = []
-        user_audit_payload2 = []
         relationship = request.data
         req_body_valid = self.validate_req_body(relationship)
         if req_body_valid is not True:
@@ -602,22 +609,9 @@ class ProtocolSubjFamDetailView(BRPApiView):
             return Response({'error': 'Unable to delete relationship'}, status=400)
 
         # Send delete information to the user audit log
-        user_audit_payload1.append({
-            "subject": relationship['subject_1'],
-            "change_type": "SubjectFamRelation",
-            "change_type_ehb_pk": relationship_id,
-            "change_action": "Delete",
-            "user_name": request.user.username
-        })
-        ServiceClient.user_audit(user_audit_payload1)
-
-        user_audit_payload2.append({
-            "subject": relationship['subject_2'],
-            "change_type": "SubjectFamRelation",
-            "change_type_ehb_pk": relationship_id,
-            "change_action": "Delete",
-            "user_name": request.user.username
-        })
-        ServiceClient.user_audit(user_audit_payload2)
+        self.user_audit_relationship(relationship['subject_1'],
+                                     relationship['subject_2'],
+                                     "SubjectFamRelation", relationship_id,
+                                     "Delete", request.user.username, relationship['protocol_id'])
 
         return Response({'info': 'Relationship deleted'}, status=200)
