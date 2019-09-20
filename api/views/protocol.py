@@ -540,6 +540,7 @@ class ProtocolSubjFamDetailView(BRPApiView):
                 [{"success": success, "relationship": relationship, "errors": errors}],
                 status=422)
 
+        # Send add relationship information to the user audit log
         self.user_audit_relationship(r['subjFamRelationship'].subject_1_id,
                                      r['subjFamRelationship'].subject_2_id,
                                      "SubjectFamRelation", r['subjFamRelationship'].id,
@@ -551,7 +552,7 @@ class ProtocolSubjFamDetailView(BRPApiView):
             status=200
         )
 
-    def get(self, request, pk, subject=None):
+    def get(self, request, pk, subject=None, relationship_id=None):
         # returns list of relationships
         try:
             p = Protocol.objects.get(pk=pk)
@@ -564,20 +565,23 @@ class ProtocolSubjFamDetailView(BRPApiView):
                 valid_subject = self.check_subject(subject)
                 if valid_subject is True:
                     r = self.relationship_HB_handler.get(subject_id=subject)
-                    r = json.loads(SubjFamRelationship.json_from_identity(r))
-                    return Response(
-                        {"relationships": r},
-                        status=200
-                    )
                 else:
                     return Response(valid_subject, status=400)
+            # get relationship by relationship id
+            elif relationship_id:
+                try:
+                    r = self.relationship_HB_handler.get(relationship_id=relationship_id)
+                except ObjectDoesNotExist:
+                    return Response({'error': 'relationship requested not found'}, status=404)
+            # get all relationships in the protocol
             else:
                 r = self.relationship_HB_handler.get(protocol_id=pk)
-                r = json.loads(SubjFamRelationship.json_from_identity(r))
-                return Response(
-                    {"relationships": r},
-                    status=200
-                )
+
+            r = json.loads(SubjFamRelationship.json_from_identity(r))
+            return Response(
+                {"relationships": r},
+                status=200
+            )
 
         else:
             return Response(
@@ -615,3 +619,22 @@ class ProtocolSubjFamDetailView(BRPApiView):
                                      "Delete", request.user.username, relationship['protocol_id'])
 
         return Response({'info': 'Relationship deleted'}, status=200)
+
+    def put(self, request, relationship_id):
+        '''
+        updates a subject relationship in the protocol
+
+        Expects a request body of the form:
+        {
+            "subject_1": 1,
+            "subject_2": 2,
+            "subject_1_role": 3,
+            "subject_2_role": 4,
+            "protocol_id": 1,
+            "id": 1
+        }
+        '''
+        pass
+        # TODO check to see which elements have changed, there could be many
+        # TODO pass body through to ehb-client/ehb-ServiceClient
+        # TODO if updated, for each element that has been changed, add to user audit log.
