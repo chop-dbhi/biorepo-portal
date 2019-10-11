@@ -195,7 +195,6 @@ class PDSRecordGroup extends React.Component {
             : <div> Not authorized for this Protocol Data Source </div>
           }
         </div>
-        <hr />
       </div>
     );
   }

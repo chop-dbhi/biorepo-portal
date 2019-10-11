@@ -50,7 +50,7 @@ class SubjFamCardView extends React.Component {
     window.location.href = url;
     window.location.reload();
   }
-  
+
   renderRelationships(relationships){
     return(
       relationships ?
@@ -61,8 +61,9 @@ class SubjFamCardView extends React.Component {
             className="ExternalRecord"
           >
             <td > {item.subject_role} </td>
-            <td > {item.subject_org_id} </td>
-
+            <td > {item.subject_org_id}  </td>
+            <td > <i className="ti-pencil" ></i> </td>
+            <td > <i className="ti-trash" ></i> </td>
           </tr>))
           :
           <tr>
@@ -89,10 +90,10 @@ class SubjFamCardView extends React.Component {
       organizedRelationships = null;
     }
     return (
-      <div className="card">
+      <div className="relationshipCard">
         <div className="content">
           <h5 className="category"> Relationships
-          <div className="font-icon-wrapper" onClick={() => this.handleNewSubjFamRelClick(this.props.subjFam)}>
+          <div  onClick={() => this.handleNewSubjFamRelClick(this.props.subjFam)}>
             <AddButton/>
           </div>
           </h5>

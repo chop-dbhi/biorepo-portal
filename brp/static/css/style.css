@@ -16,6 +16,8 @@ body{
     margin-top:10px;
     padding-top:40px;
     padding-bottom: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
 }
 
 table {
@@ -217,6 +219,18 @@ td.row-action:hover {
     background-color: #F04D77;
     border-color: #F04D77;
 }
+
 .field-error {
     background-color: #F04D77;
+}
+
+.subjectCard {
+    padding: 20px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.12);
+    background-color: #F8FBFC;
+}
+.relationshipCard {
+    padding: 20px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.12);
+    background-color: #e7f2f5;
 }
