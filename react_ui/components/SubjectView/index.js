@@ -53,7 +53,7 @@ class SubjectView extends React.Component {
 
             <section>
               <SubjFamPanel />
-              {this.props.subjFam.addSubjFamRelMode ? <SubjFamEditView/> : null}
+              {(this.props.subjFam.addSubjFamRelMode || this.props.subjFam.editSubjFamRelMode) ? <SubjFamEditView/> : null}
             </section>
             <hr />
           </div>
@@ -77,6 +77,7 @@ SubjectView.propTypes = {
   protocol: PropTypes.object,
   editLabelMode: PropTypes.bool,
   addSubjFamRelMode: PropTypes.bool,
+  editSubjFamRelMode: PropTypes.bool,
   location: PropTypes.object,
   params: PropTypes.object,
 };
@@ -94,6 +95,7 @@ function mapStateToProps(state) {
     },
     subjFam: {
       addSubjFamRelMode: state.subjFam.addSubjFamRelMode,
+      editSubjFamRelMode: state.subjFam.editSubjFamRelMode,
     },
     editLabelMode: state.record.editLabelMode,
   };

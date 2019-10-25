@@ -235,17 +235,17 @@ export function updateSubjFamRelSuccess(subjFamRel) {
 export function updateSubjFamRel(protocolId, subjFamRel) {
   return dispatch => {
     dispatch(updateSubjFamRelRequest());
-    const url = `api/protocols/${protocolId}/subj_fam/${subjFamRel.id}`;
+    const url = `api/protocols/${protocolId}/subj_fam/relationship_id/${subjFamRel.id}`;
     return fetch(url, {
       method: 'PUT',
       headers: {
-        Accept: 'application/json',
+        'Content-Type': 'application/json',
         Authorization: `token ${token}`,
         'X-CSRFToken': csrf_token,
       },
       body: JSON.stringify(subjFamRel),
     })
-      .then(checkStatus)
+      .then(checkResponse)
       .then(response => response.json())
       .then(json => dispatch(updateSubjFamRelSuccess(json)))
       .catch(errors => dispatch(updateSubjFamRelFailure(errors)));

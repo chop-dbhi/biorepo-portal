@@ -25,15 +25,22 @@ class SubjFamCardView extends React.Component {
     // return null if there are no relationships in the eHB
     if (relationships){
       relationships.relationships.forEach(function (relationship) {
+        console.log(relationship)
         if (relationship.subject_1_id == subject.id) {
           organizedRelationships.push({ "subject_org_id": relationship.subject_2_org_id,
                                       "subject_role": relationship.subject_2_role,
-                                      "subject_id": relationship.subject_2_id});
+                                      "subject_id": relationship.subject_2_id,
+                                      "id": relationship.id,
+                                      "related_subject_role": relationship.subject_1_role,
+                                      "current_subject": 2});
         }
         else {
           organizedRelationships.push({"subject_org_id": relationship.subject_1_org_id,
                                       "subject_role": relationship.subject_1_role,
-                                      "subject_id": relationship.subject_1_id});
+                                      "subject_id": relationship.subject_1_id,
+                                      "id": relationship.id,
+                                      "related_subject_role": relationship.subject_2_role,
+                                      "current_subject": 1});
         }
       });
     }
@@ -57,12 +64,18 @@ class SubjFamCardView extends React.Component {
         relationships.map((item, i)=> (
           <tr
             key={i}
-            onClick={() => this.handleRelClick(item.subject_id)}
+
             className="ExternalRecord"
           >
-            <td > {item.subject_role} </td>
-            <td > {item.subject_org_id}  </td>
-            <td > <i className="ti-pencil" ></i> </td>
+            <td onClick={() => this.handleRelClick(item.subject_id)}>
+              {item.subject_role}
+            </td>
+            <td onClick={() => this.handleRelClick(item.subject_id)}>
+              {item.subject_org_id}
+            </td>
+            <td onClick={() => this.handleEditSubjFamRelClick(item)}>
+              <i className="ti-pencil" ></i>
+            </td>
             <td > <i className="ti-trash" ></i> </td>
           </tr>))
           :
@@ -77,6 +90,12 @@ class SubjFamCardView extends React.Component {
     const { dispatch } = this.props;
     dispatch(SubjFamActions.setActiveSubjFamRel(subj_fam_relationship));
     dispatch(SubjFamActions.setAddSubjFamRelMode(true));
+  }
+
+  handleEditSubjFamRelClick(subj_fam_relationship) {
+    const { dispatch } = this.props;
+    dispatch(SubjFamActions.setActiveSubjFamRel(subj_fam_relationship));
+    dispatch(SubjFamActions.setEditSubjFamRelMode(true));
   }
 
   render() {
@@ -119,6 +138,7 @@ SubjFamCardView.propTypes = {
   activeProtocolId: PropTypes.number,
   subjFam: PropTypes.object,
   isFetching: PropTypes.bool,
+  activeSubjFam: PropTypes.object,
 };
 
 function mapStateToProps(state) {
@@ -131,6 +151,7 @@ function mapStateToProps(state) {
     activeRecord: state.record.activeRecord,
     activeProtocol: state.protocol.activeProtocol,
     activeProtocolId: state.protocol.activeProtocolId,
+    activeSubjFam: state.subjFam.activeSubjFam,
   };
 }
 
