@@ -25,22 +25,25 @@ class SubjFamCardView extends React.Component {
     // return null if there are no relationships in the eHB
     if (relationships){
       relationships.relationships.forEach(function (relationship) {
-        console.log(relationship)
         if (relationship.subject_1_id == subject.id) {
-          organizedRelationships.push({ "subject_org_id": relationship.subject_2_org_id,
-                                      "subject_role": relationship.subject_2_role,
-                                      "subject_id": relationship.subject_2_id,
-                                      "id": relationship.id,
-                                      "related_subject_role": relationship.subject_1_role,
-                                      "current_subject": 2});
-        }
-        else {
-          organizedRelationships.push({"subject_org_id": relationship.subject_1_org_id,
+          organizedRelationships.push({ "subject_org_id": relationship.subject_1_org_id,
                                       "subject_role": relationship.subject_1_role,
                                       "subject_id": relationship.subject_1_id,
                                       "id": relationship.id,
                                       "related_subject_role": relationship.subject_2_role,
+                                      "related_subject_org_id": relationship.subject_2_org_id,
+                                      "related_subject_id": relationship.subject_2_id,
                                       "current_subject": 1});
+        }
+        else {
+          organizedRelationships.push({"subject_org_id": relationship.subject_2_org_id,
+                                      "subject_role": relationship.subject_2_role,
+                                      "subject_id": relationship.subject_2_id,
+                                      "id": relationship.id,
+                                      "related_subject_role": relationship.subject_1_role,
+                                      "related_subject_org_id": relationship.subject_1_org_id,
+                                      "related_subject_id": relationship.subject_1_id,
+                                      "current_subject": 2});
         }
       });
     }
@@ -52,6 +55,7 @@ class SubjFamCardView extends React.Component {
       return organizedRelationships
     }
   }
+  
   handleRelClick(subjectId){
     const url = `#/dataentry/protocol/${this.props.activeProtocolId}/subject/${subjectId}`;
     window.location.href = url;
@@ -67,11 +71,11 @@ class SubjFamCardView extends React.Component {
 
             className="ExternalRecord"
           >
-            <td onClick={() => this.handleRelClick(item.subject_id)}>
-              {item.subject_role}
+            <td onClick={() => this.handleRelClick(item.related_subject_id)}>
+              {item.related_subject_role}
             </td>
-            <td onClick={() => this.handleRelClick(item.subject_id)}>
-              {item.subject_org_id}
+            <td onClick={() => this.handleRelClick(item.related_subject_id)}>
+              {item.related_subject_org_id}
             </td>
             <td onClick={() => this.handleEditSubjFamRelClick(item)}>
               <i className="ti-pencil" ></i>
