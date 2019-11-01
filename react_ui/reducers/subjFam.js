@@ -35,7 +35,6 @@ function subjFam(state = initialState, action){
       })
     case SET_ACTIVE_SUBJ_FAM_REL:
       return Object.assign({}, state, {
-        // activeSubjFam: parseInt(action.activeSubjFam, 10),
         activeSubjFam: action.activeSubjFam,
       });
     case CLEAR_SUBJ_FAM_STATE:
@@ -78,7 +77,6 @@ function subjFam(state = initialState, action){
       return Object.assign({}, state, {
         updateFormErrors: action.error,
       });
-      /////////
     case SET_EDIT_SUBJ_FAM_REL_MODE:
       if (action.mode != null) {
         return Object.assign({}, state, {
