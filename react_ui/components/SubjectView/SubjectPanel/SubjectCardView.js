@@ -18,8 +18,7 @@ const SubjectCardView = (props) => {
   const subject = props.subject.activeSubject;
   const editUrl = `${props.path}/edit`;
   return (
-
-        <div className="subjectCard">
+        <div className="subject-card">
           <div class="row">
           <table className="table">
             <thead>

@@ -51,7 +51,6 @@ class SubjectDOBField extends React.Component {
       errorText = 'This field is required.';
     }
     return (
-
         <div className="form-group ">
           <h5 className="category" style={{fontWeight: "bold"}} > Date of Birth (YYYY-MM-DD) </h5>
           <DatePicker

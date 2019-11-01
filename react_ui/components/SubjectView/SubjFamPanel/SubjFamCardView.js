@@ -63,7 +63,6 @@ class SubjFamCardView extends React.Component {
         relationships.map((item, i)=> (
           <tr
             key={i}
-
             className="ExternalRecord"
           >
             <td onClick={() => this.handleRelClick(item.related_subject_id)}>
@@ -108,7 +107,7 @@ class SubjFamCardView extends React.Component {
     window.location.href = url;
     window.location.reload();
   }
-  
+
   render() {
     const protocol = this.props.activeProtocolId;
     const relationships = this.props.subjFam.items.items;
@@ -120,7 +119,7 @@ class SubjFamCardView extends React.Component {
       organizedRelationships = null;
     }
     return (
-      <div className="relationshipCard">
+      <div className="relationship-card">
         <div className="content">
           <h5 className="category"> Relationships
           <div  onClick={() => this.handleNewSubjFamRelClick(this.props.subjFam)}>

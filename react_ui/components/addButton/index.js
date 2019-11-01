@@ -28,13 +28,6 @@ const styles = theme => ({
   },
 });
 
-// const addButtonStyle = {
-//   marginLeft: '10px',
-//   marginTop: '10px',
-//   float: 'right',
-// };
-
-
 function AddButton(props) {
   const { classes } = props;
 

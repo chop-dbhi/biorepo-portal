@@ -34,7 +34,6 @@ class SubjectTextField extends React.Component {
   }
 
   render() {
-
     return (
       <div className="form-group">
         <label htmlFor="formGroupExampleInput">{this.props.label}</label>

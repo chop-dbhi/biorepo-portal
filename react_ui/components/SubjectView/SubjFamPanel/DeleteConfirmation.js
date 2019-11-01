@@ -34,40 +34,11 @@ class DeleteConfirmation extends React.Component {
   }
 
   render() {
-    const root = {
-
-        flexGrow: 1,
-        height: 250,
-      };
-
-    const backdropStyle = {
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      width: '100%',
-      height: '100%',
-      zIndex: 99,
-      display: 'block',
-      backgroundColor: 'rgba(0, 0, 0, 0.298039)',
-    };
-    const cardStyle = {
-      padding: '15px',
-      boxShadow: '3px 3px 14px rgba(204, 197, 185, 0.5)',
-      backgroundColor: 'white',
-      width: '90%',
-    };
-    const modalStyle = {
-      right: '0%',
-      top: '20%',
-      width: '90%',
-      position: 'fixed',
-      zIndex: '1000',
-    };
     return (
       <section>
-        <div style={backdropStyle}></div>
-        <div className="col-md-12 edit-label-modal" style={modalStyle}>
-          <div className="card" style={cardStyle}>
+        <div className="backdrop-style"></div>
+        <div className="col-md-12 subj-fam-modal-style">
+          <div className="card">
             <h3 className="category" style={{ textAlign: 'center' }}> Are you Sure you want to delete this relationship? </h3>
             <Row>
               <div className="col-md-6">
