@@ -630,10 +630,12 @@ class ProtocolSubjFamDetailView(BRPApiView):
                 return Response({'error': 'Unable to delete relationship'}, status=400)
 
             # Send delete information to the user audit log
-            self.user_audit_relationship(relationship['subject_1'],
-                                         "SubjectFamRelation", relationship_id,
-                                         "Delete", request.user.username, relationship['protocol_id'],
-                                         relationship['subject_2'])
+            relationship['change_type'] = "SubjectFamRelation"
+            relationship['user_name'] = request.user.username
+            relationship['change_type_ehb_pk'] = relationship_id
+            relationship['change_action'] = "Delete"
+
+            self.user_audit_relationship(relationship)
 
             return Response({'info': 'Relationship deleted'}, status=200)
         else:
