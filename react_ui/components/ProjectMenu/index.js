@@ -21,22 +21,24 @@ class ProjectMenu extends Component {
   render(props) {
     if (this.props.protocol.items && this.props.protocol.items.length){
       return (
-      <div className="card">
-        <p>Welcome Back</p>
-        <p><i>Select a project for data entry</i></p>
-        {this.props.protocol.items.map((protocol, i) => {
-          const url = `/dataentry/protocol/${protocol.id}`;
-          return (
-            <div key={i} className="lg-col-12">
-              <Link
-                className="project-row-link"
-                to={url}
-              >
-                {protocol.name}
-              </Link>
-            </div>
-            );
-          }, this)}
+      <div className="container">
+        <div className="card">
+          <p>Welcome Back</p>
+          <p><i>Select a project for data entry</i></p>
+          {this.props.protocol.items.map((protocol, i) => {
+            const url = `/dataentry/protocol/${protocol.id}`;
+            return (
+              <div key={i} className="lg-col-12">
+                <Link
+                  className="project-row-link"
+                  to={url}
+                >
+                  {protocol.name}
+                </Link>
+              </div>
+              );
+            }, this)}
+          </div>
         </div>
       );
     }

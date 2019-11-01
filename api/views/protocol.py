@@ -15,6 +15,7 @@ from api.utilities import SubjectUtils
 from ehb_client.requests.exceptions import PageNotFound
 from ehb_client.requests.subject_request_handler import Subject
 from ehb_client.requests.subj_fam_relationships_handler import SubjFamRelationship
+from ..ehb_service_client import ServiceClient
 from rest_framework.response import Response
 
 from rest_framework import viewsets
@@ -426,6 +427,33 @@ class ProtocolSubjectDetailView(BRPApiView):
 
 class ProtocolSubjFamDetailView(BRPApiView):
 
+    def update_relationship_user_audit(self, new_value, old_value, field, **change):
+        if (new_value != old_value):
+            change['change_field'] = field
+            change['old_value'] = old_value
+            change['new_value'] = new_value
+            self.user_audit_relationship(change)
+
+    def user_audit_relationship(self, change):
+        ''' pass in a dictionary with the following elements:
+        subject_1, subject_2 (not required), change_type, change_type_ehb_pk,
+        change_action, user_name, protocol_id, change_field '''
+
+        user_audit_payload1 = []
+        user_audit_payload2 = []
+
+        subject_1 = change.pop('subject_1')
+        subject_2 = change.pop('subject_2')
+
+        change['subject'] = subject_1
+        user_audit_payload1.append(change.copy())
+        ServiceClient.user_audit(user_audit_payload1)
+        # if there is a subject_2 send second request
+        if subject_2:
+            change['subject'] = subject_2
+            user_audit_payload2.append(change.copy())
+            ServiceClient.user_audit(user_audit_payload2)
+
     # will return True if subject inputs are valid
     def check_subject(self, subject_1, subject_2=None):
         try:
@@ -516,14 +544,26 @@ class ProtocolSubjFamDetailView(BRPApiView):
                 [{"success": success, "relationship": relationship, "errors": errors}],
                 status=422)
 
+        change = {
+            'subject_1': r['subjFamRelationship'].subject_1_id,
+            'subject_2': r['subjFamRelationship'].subject_2_id,
+            'change_type': "SubjectFamRelation",
+            'change_type_ehb_pk': r['subjFamRelationship'].id,
+            'change_action': "Create",
+            'user_name': request.user.username,
+            'protocol_id': r['subjFamRelationship'].protocol_id
+        }
+        self.user_audit_relationship(change)
+
         return Response(
             [{"success": success, "relationship": json.loads(SubjFamRelationship.json_from_identity(new_relationship)), "errors": errors}],
             headers={'Access-Control-Allow-Origin': '*'},
             status=200
         )
 
-    def get(self, request, pk, subject=None):
-        # returns list of relationships
+    def get(self, request, pk, subject=None, relationship_id=None):
+        ''' returns list of relationships unless relationship_id is passed in.
+            in that case, a single relationship will be returned.'''
         try:
             p = Protocol.objects.get(pk=pk)
         except ObjectDoesNotExist:
@@ -535,23 +575,121 @@ class ProtocolSubjFamDetailView(BRPApiView):
                 valid_subject = self.check_subject(subject)
                 if valid_subject is True:
                     r = self.relationship_HB_handler.get(subject_id=subject)
-                    r = json.loads(SubjFamRelationship.json_from_identity(r))
-                    return Response(
-                        {"relationships": r},
-                        status=200
-                    )
+                    r = SubjFamRelationship.json_from_identity(r)
                 else:
                     return Response(valid_subject, status=400)
+            # get relationship by relationship id
+            elif relationship_id:
+                try:
+                    r = self.relationship_HB_handler.get(relationship_id=relationship_id)
+                except ObjectDoesNotExist:
+                    return Response({'error': 'relationship requested not found'}, status=404)
+            # get all relationships in the protocol
             else:
                 r = self.relationship_HB_handler.get(protocol_id=pk)
-                r = json.loads(SubjFamRelationship.json_from_identity(r))
-                return Response(
-                    {"relationships": r},
-                    status=200
-                )
+                r = SubjFamRelationship.json_from_identity(r)
+
+            r = json.loads(r)
+            return Response(
+                {"relationships": r},
+                status=200
+            )
 
         else:
             return Response(
                 {"detail": "You are not authorized to view subjects in this protocol"},
                 status=403
             )
+
+    def delete(self, request, pk, relationship_id):
+        '''
+        Delete a subject relationship in the protocol
+
+        Expects a request body of the form:
+        {
+            "subject_1": 1,
+            "subject_2": 2,
+            "subject_1_role": 3,
+            "subject_2_role": 4,
+            "protocol_id": 1,
+            "id": 1
+        }
+        '''
+        try:
+            p = Protocol.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            return Response({'error': 'Protocol requested not found'}, status=404)
+        if p.isUserAuthorized(request.user):
+            relationship = request.data
+            req_body_valid = self.validate_req_body(relationship)
+            if req_body_valid is not True:
+                return Response(req_body_valid, status=400)
+            try:
+                self.relationship_HB_handler.delete(relationship_id=relationship_id)
+            except:
+                return Response({'error': 'Unable to delete relationship'}, status=400)
+
+            # Send delete information to the user audit log
+            relationship['change_type'] = "SubjectFamRelation"
+            relationship['user_name'] = request.user.username
+            relationship['change_type_ehb_pk'] = relationship_id
+            relationship['change_action'] = "Delete"
+
+            self.user_audit_relationship(relationship)
+
+            return Response({'info': 'Relationship deleted'}, status=200)
+        else:
+
+            return Response(
+                {"detail": "You are not authorized to view subjects in this protocol"},
+                status=403
+            )
+
+    def put(self, request, pk, relationship_id):
+        '''
+        updates a subject relationship in the protocol
+
+        Expects a request body of the form:
+        {
+            "subject_1": 1,
+            "subject_2": 2,
+            "subject_1_role": 3,
+            "subject_2_role": 4,
+            "protocol_id": 1,
+            "id": 1
+        }
+        '''
+        # todo authorize user
+        try:
+            updated_relationship = request.data
+            old_relationship = json.loads(self.relationship_HB_handler.get(relationship_id=relationship_id))
+
+        except ObjectDoesNotExist:
+            return Response({'error': 'relationship requested not found'}, status=404)
+        try:
+            self.relationship_HB_handler.update(relationship_id, updated_relationship)
+
+        except:
+            return Response({'error': 'Unable to update relationship'}, status=400)
+
+        # update User audit log if update was a success
+        try:
+            # check each element in updated and old relationships to identify Changes
+            relationship_change = {}
+            relationship_change["subject_1"] = updated_relationship['subject_1']
+            relationship_change["subject_2"] = updated_relationship['subject_2']
+            relationship_change["change_type"] = "SubjectFamRelation"
+            relationship_change["change_type_ehb_pk"] = relationship_id
+            relationship_change["change_action"] = "Update"
+            relationship_change["user_name"] = request.user.username
+            relationship_change["protocol_id"] = pk
+
+            self.update_relationship_user_audit(int(updated_relationship['subject_1']), int(old_relationship['subject_1']['id']), "subject_1", **relationship_change)
+            self.update_relationship_user_audit(int(updated_relationship['subject_1_role']), int(old_relationship['subject_1_role']['id']), "subject_1_role", **relationship_change)
+            self.update_relationship_user_audit(int(updated_relationship['subject_2']), int(old_relationship['subject_2']['id']), "subject_2", **relationship_change)
+            self.update_relationship_user_audit(int(updated_relationship['subject_2_role']), int(old_relationship['subject_2_role']['id']), "subject_2_role", **relationship_change)
+
+        except:
+            logger.info('error updating relationship id {0}'.format(relationship_id))
+
+        return Response({'updatedRelationship': updated_relationship, 'oldRelationship': old_relationship}, status=200)

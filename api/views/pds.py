@@ -73,11 +73,6 @@ class PDSRecordLinkDetailView(BRPApiView):
             primary_rec = ExternalRecord.identity_from_json(json.dumps(primary_rec))
             secondary_rec = ExternalRecord.identity_from_json(json.dumps(secondary_rec))
             res = self.er_rh.link(primary_rec, secondary_rec, link_type)
-            print("res")
-            print(res)
-            # res = json.loads(res)
-            print("Success:")
-            print(res['success'])
             if res['success']:
                 return Response(res)
             else:

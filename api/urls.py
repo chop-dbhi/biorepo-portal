@@ -33,6 +33,9 @@ urlpatterns = [
     url(r'^protocols/(?P<pk>[0-9]+)/subj_fam/subject/(?P<subject>[0-9]+)$',
         views.ProtocolSubjFamDetailView.as_view(),
         name='protocol-subject-subjFam'),
+    url(r'^protocols/(?P<pk>[0-9]+)/subj_fam/relationship_id/(?P<relationship_id>[0-9]+)$',
+        views.ProtocolSubjFamDetailView.as_view(),
+        name='protocol-specific-subjFam'),
     # Create subjFam Relationhip
     url(r'^protocols/(?P<pk>[0-9]+)/subj_fam/create/$',
         views.ProtocolSubjFamDetailView.as_view(),
@@ -77,5 +80,8 @@ urlpatterns = [
         name='subjFam-get-by-protocol-id'),
     url(r'^subj_fam/relationship_types/',
         views.RelationshipDetailView.as_view(),
-        name='subjFam-get-rel-types')
+        name='subjFam-get-rel-types'),
+    url(r'^subj_fam/relationship_id/(?P<relationship_id>[0-9]+)/$',
+        views.ProtocolSubjFamDetailView.as_view(),
+        name='delete-subjFam')
 ]

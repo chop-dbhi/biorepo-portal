@@ -13,6 +13,7 @@ class SubjFamCardView extends React.Component {
     super(props);
     this.handleNewSubjFamRelClick = this.handleNewSubjFamRelClick.bind(this);
     this.handelRelClick = this.handleRelClick.bind(this);
+    this.handleDeleteSubjRel = this.handleDeleteSubjRel.bind(this);
   }
 
   // get the related subject and the related
@@ -26,14 +27,24 @@ class SubjFamCardView extends React.Component {
     if (relationships){
       relationships.relationships.forEach(function (relationship) {
         if (relationship.subject_1_id == subject.id) {
-          organizedRelationships.push({ "subject_org_id": relationship.subject_2_org_id,
-                                      "subject_role": relationship.subject_2_role,
-                                      "subject_id": relationship.subject_2_id});
+          organizedRelationships.push({ "subject_org_id": relationship.subject_1_org_id,
+                                      "subject_role": relationship.subject_1_role,
+                                      "subject_id": relationship.subject_1_id,
+                                      "id": relationship.id,
+                                      "related_subject_role": relationship.subject_2_role,
+                                      "related_subject_org_id": relationship.subject_2_org_id,
+                                      "related_subject_id": relationship.subject_2_id,
+                                      "current_subject": 1});
         }
         else {
-          organizedRelationships.push({"subject_org_id": relationship.subject_1_org_id,
-                                      "subject_role": relationship.subject_1_role,
-                                      "subject_id": relationship.subject_1_id});
+          organizedRelationships.push({"subject_org_id": relationship.subject_2_org_id,
+                                      "subject_role": relationship.subject_2_role,
+                                      "subject_id": relationship.subject_2_id,
+                                      "id": relationship.id,
+                                      "related_subject_role": relationship.subject_1_role,
+                                      "related_subject_org_id": relationship.subject_1_org_id,
+                                      "related_subject_id": relationship.subject_1_id,
+                                      "current_subject": 2});
         }
       });
     }
@@ -45,24 +56,26 @@ class SubjFamCardView extends React.Component {
       return organizedRelationships
     }
   }
-  handleRelClick(subjectId){
-    const url = `#/dataentry/protocol/${this.props.activeProtocolId}/subject/${subjectId}`;
-    window.location.href = url;
-    window.location.reload();
-  }
-  
+
   renderRelationships(relationships){
     return(
       relationships ?
         relationships.map((item, i)=> (
           <tr
             key={i}
-            onClick={() => this.handleRelClick(item.subject_id)}
+
             className="ExternalRecord"
           >
-            <td > {item.subject_role} </td>
-            <td > {item.subject_org_id} </td>
-
+            <td onClick={() => this.handleRelClick(item.related_subject_id)}>
+              {item.related_subject_role}
+            </td>
+            <td onClick={() => this.handleRelClick(item.related_subject_id)}>
+              {item.related_subject_org_id}
+            </td>
+            <td onClick={() => this.handleEditSubjFamRelClick(item)}>
+              <i className="ti-pencil" ></i>
+            </td>
+            <td onClick={() => this.handleDeleteSubjRel(item)}> <i className="ti-trash" ></i> </td>
           </tr>))
           :
           <tr>
@@ -78,6 +91,24 @@ class SubjFamCardView extends React.Component {
     dispatch(SubjFamActions.setAddSubjFamRelMode(true));
   }
 
+  handleEditSubjFamRelClick(subj_fam_relationship) {
+    const { dispatch } = this.props;
+    dispatch(SubjFamActions.setActiveSubjFamRel(subj_fam_relationship));
+    dispatch(SubjFamActions.setEditSubjFamRelMode(true));
+  }
+
+  handleDeleteSubjRel(subj_fam_relationship){
+    const { dispatch } = this.props;
+    dispatch(SubjFamActions.setActiveSubjFamRel(subj_fam_relationship));
+    dispatch(SubjFamActions.setDeleteSubjFamRelMode(true));
+  }
+
+  handleRelClick(subjectId){
+    const url = `#/dataentry/protocol/${this.props.activeProtocolId}/subject/${subjectId}`;
+    window.location.href = url;
+    window.location.reload();
+  }
+  
   render() {
     const protocol = this.props.activeProtocolId;
     const relationships = this.props.subjFam.items.items;
@@ -89,10 +120,10 @@ class SubjFamCardView extends React.Component {
       organizedRelationships = null;
     }
     return (
-      <div className="card">
+      <div className="relationshipCard">
         <div className="content">
           <h5 className="category"> Relationships
-          <div className="font-icon-wrapper" onClick={() => this.handleNewSubjFamRelClick(this.props.subjFam)}>
+          <div  onClick={() => this.handleNewSubjFamRelClick(this.props.subjFam)}>
             <AddButton/>
           </div>
           </h5>
@@ -118,6 +149,7 @@ SubjFamCardView.propTypes = {
   activeProtocolId: PropTypes.number,
   subjFam: PropTypes.object,
   isFetching: PropTypes.bool,
+  activeSubjFam: PropTypes.object,
 };
 
 function mapStateToProps(state) {
@@ -130,6 +162,7 @@ function mapStateToProps(state) {
     activeRecord: state.record.activeRecord,
     activeProtocol: state.protocol.activeProtocol,
     activeProtocolId: state.protocol.activeProtocolId,
+    activeSubjFam: state.subjFam.activeSubjFam,
   };
 }
 

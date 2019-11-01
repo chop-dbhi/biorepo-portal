@@ -168,37 +168,39 @@ class SubjectSelect extends React.PureComponent {
             <BackButton /> :
             <div />
           }
-          <h3>Project: {this.props.protocol.items.name}</h3>
-          <div id="toolbar">
-            <ul className="list-unstyled">
-              <li>
-                <Button
-                  labelcolor={'#7AC29A'}
-                  onClick={this.handleNewSubject}
-                  label={'New Subject'}
-                > New Subject </Button>
-              </li>
-            </ul>
-          </div>
-          <div style={subjectCountStyle}>{this.props.subject.items.length} Subjects</div>
-          <div className="subject-table">
-            {(this.props.subject.items.length>0) ?
+          <div className="container">
+            <h3>Project: {this.props.protocol.items.name}</h3>
+            <div id="toolbar">
+              <ul className="list-unstyled">
+                <li>
+                  <Button
+                    labelcolor={'#7AC29A'}
+                    onClick={this.handleNewSubject}
+                    label={'New Subject'}
+                  > New Subject </Button>
+                </li>
+              </ul>
+            </div>
+            <div style={subjectCountStyle}>{this.props.subject.items.length} Subjects</div>
+            <div className="subject-table">
+              {(this.props.subject.items.length>0) ?
 
-              <ReactTable
-                data={this.props.subject.items}
-                columns={columns}
-                filterable = {true}
-                defaultFilterMethod={filterCaseInsensitive}
-                className="-highlight"
-                getTdProps={(state, rowInfo) => {
-                  return {
-                    onClick: (e, handleOrigional) => {
-                      this.handleClick(rowInfo);
-                    }
-                  }}
-                }
-                />
-               : <LoadingGif />}
+                <ReactTable
+                  data={this.props.subject.items}
+                  columns={columns}
+                  filterable = {true}
+                  defaultFilterMethod={filterCaseInsensitive}
+                  className="-highlight"
+                  getTdProps={(state, rowInfo) => {
+                    return {
+                      onClick: (e, handleOrigional) => {
+                        this.handleClick(rowInfo);
+                      }
+                    }}
+                  }
+                  />
+                 : <LoadingGif />}
+            </div>
           </div>
         </div> :
         <div />

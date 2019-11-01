@@ -1,3 +1,6 @@
+import requests
+import json
+
 from django.conf import settings
 
 from ehb_client.requests.external_record_request_handler import ExternalRecordRequestHandler  # noqa
@@ -149,3 +152,15 @@ class ServiceClient(object):
                    ' {0}').format(str(type(record)))
 
             raise Exception(msg)
+
+    @staticmethod
+    def user_audit(payload):
+        url = ServiceClient.APP_URL + "/api/auditlog/"
+        headers = {
+            'Content-Type': "application/json",
+            'Api-token': ServiceClient.api_key,
+            'Host': "127.0.0.1:8000",
+            'cache-control': "no-cache"
+            }
+
+        response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
