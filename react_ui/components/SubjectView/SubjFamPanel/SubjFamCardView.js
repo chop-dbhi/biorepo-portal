@@ -57,12 +57,6 @@ class SubjFamCardView extends React.Component {
     }
   }
 
-  handleRelClick(subjectId){
-    const url = `#/dataentry/protocol/${this.props.activeProtocolId}/subject/${subjectId}`;
-    window.location.href = url;
-    window.location.reload();
-  }
-
   renderRelationships(relationships){
     return(
       relationships ?
@@ -109,6 +103,12 @@ class SubjFamCardView extends React.Component {
     dispatch(SubjFamActions.setDeleteSubjFamRelMode(true));
   }
 
+  handleRelClick(subjectId){
+    const url = `#/dataentry/protocol/${this.props.activeProtocolId}/subject/${subjectId}`;
+    window.location.href = url;
+    window.location.reload();
+  }
+  
   render() {
     const protocol = this.props.activeProtocolId;
     const relationships = this.props.subjFam.items.items;
