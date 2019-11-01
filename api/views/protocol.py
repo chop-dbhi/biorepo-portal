@@ -550,7 +550,7 @@ class ProtocolSubjFamDetailView(BRPApiView):
             'change_type': "SubjectFamRelation",
             'change_type_ehb_pk': r['subjFamRelationship'].id,
             'change_action': "Create",
-            'username': request.user.username,
+            'user_name': request.user.username,
             'protocol_id': r['subjFamRelationship'].protocol_id
         }
         self.user_audit_relationship(change)
