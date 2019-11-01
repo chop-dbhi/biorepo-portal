@@ -4,7 +4,7 @@ import { REQUEST_SUBJ_FAM, RECEIVE_SUBJ_FAM, SET_ACTIVE_SUBJ_FAM_REL,
          ADD_SUBJ_FAM_REL_FAILURE, SET_UPDATE_FORM_ERRORS, RECEIVE_RELATIONSHIP_TYPES,
          REQUEST_RELATIONSHIP_TYPES, SET_EDIT_SUBJ_FAM_REL_MODE,
          EDIT_SUBJ_FAM_REL_REQUEST, EDIT_SUBJ_FAM_REL_FAILURE,
-         EDIT_SUBJ_FAM_REL_SUCCESS} from '../actions/subjFam';
+         EDIT_SUBJ_FAM_REL_SUCCESS, SET_DELETE_SUBJ_FAM_REL_MODE} from '../actions/subjFam';
 
 const initialState = {
   isFetching: false,
@@ -108,6 +108,15 @@ function subjFam(state = initialState, action){
           form: [],
         },
         isSaving: false,
+      });
+    case SET_DELETE_SUBJ_FAM_REL_MODE:
+      if (action.mode != null) {
+        return Object.assign({}, state, {
+          deleteSubjFamRelMode: action.mode,
+        });
+      }
+      return Object.assign({}, state, {
+        deleteSubjFamRelMode: !action.mode,
       });
   default:
     return state;

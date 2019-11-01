@@ -8,6 +8,7 @@ import * as SubjectActions from '../../../actions/subject';
 import LoadingGif from '../../LoadingGif';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
+import { organizeSubjFamRelForEdit, handleRelEditDelCloseClick } from '../../utils'
 // import Button from '@material-ui/core/Button';
 
 import { Container, Row, Col } from 'reactstrap';
@@ -39,25 +40,14 @@ class SubjFamEditView extends React.Component {
         subjectRoleError: false,
         relatedSubRoleErr: false
     };
-    this.getRelTypeValue = this.getRelTypeValue.bind(this);
     this.handleRelatedSubjectSelect = this.handleRelatedSubjectSelect.bind(this);
     this.handleSubject1RoleSelect = this.handleSubject1RoleSelect.bind(this);
     this.handleSubject2RoleSelect = this.handleSubject2RoleSelect.bind(this);
-    this.handleCloseClick = this.handleCloseClick.bind(this);
+    this.handleCloseClick = handleRelEditDelCloseClick.bind(this);
     this.handleNewPedRelClick = this.handleNewPedRelClick.bind(this);
     this.checkRelDataEntry = this.checkRelDataEntry.bind(this);
     this.handleEditSubjFamRelClick = this.handleEditSubjFamRelClick.bind(this);
-  }
-
-  getRelTypeValue(relTypeDesc) {
-    let relTypes = this.props.relTypes[0];
-    let relTypeValue = null;
-    relTypes.forEach(function (relType) {
-        if (relType.desc == relTypeDesc.label) {
-          relTypeValue = relType.id
-        }
-    });
-    return relTypeValue;
+    this.organizeSubjFamRelForEdit = organizeSubjFamRelForEdit.bind(this);
   }
 
   menuItemsSubjects(){
@@ -151,41 +141,13 @@ class SubjFamEditView extends React.Component {
 
   handleEditSubjFamRelClick(e) {
     const { dispatch } = this.props;
+    let updatedRel = null;
     if (this.checkRelDataEntry()) {
-      if (this.props.activeSubjFam.current_subject == 1) {
-        var updatedRel = {
-            "subject_1": this.props.subject.activeSubject.id,
-            "subject_2": this.state.relatedSubject.value,
-            "subject_1_role": (this.state.subjectRole.value ? this.state.subjectRole.value
-                              : this.getRelTypeValue(this.state.subjectRole)),
-            "subject_2_role": ((this.state.relatedSubjectRole.value != null) ? this.state.relatedSubjectRole.value
-                              : this.getRelTypeValue(this.state.relatedSubjectRole)),
-            "protocol_id": this.props.protocol.activeProtocolId,
-            "id": this.props.activeSubjFam.id,
-        }
-      }
-      else {
-        var updatedRel = {
-            "subject_1": this.state.relatedSubject.value,
-            "subject_2": this.props.subject.activeSubject.id,
-            "subject_1_role": ((this.state.relatedSubjectRole.value != null) ? this.state.relatedSubjectRole.value
-                              :(this.getRelTypeValue(this.state.relatedSubjectRole))),
-            "subject_2_role": ((this.state.subjectRole.value != null) ? this.state.subjectRole.value
-                              :this.getRelTypeValue(this.state.subjectRole)),
-            "protocol_id": this.props.protocol.activeProtocolId,
-            "id": this.props.activeSubjFam.id,
-        }
-      }
-    dispatch(SubjFamActions.updateSubjFamRel(this.props.protocol.activeProtocolId, updatedRel))
+      updatedRel = this.organizeSubjFamRelForEdit();
+    dispatch(SubjFamActions.updateSubjFamRel(this.props.protocol.activeProtocolId, updatedRel, this.props.subject.activeSubject.id))
     .then(dispatch(SubjFamActions.fetchSubjFam(this.props.protocol.activeProtocolId, this.props.subject.activeSubject.id)))
     this.handleCloseClick();
     }
-  }
-  
-  handleCloseClick() {
-    const { dispatch } = this.props;
-    dispatch(SubjFamActions.setAddSubjFamRelMode(false));
-    dispatch(SubjFamActions.setEditSubjFamRelMode(false));
   }
 
   renderErrors() {
@@ -326,6 +288,7 @@ SubjFamEditView.propTypes = {
   updateFormErrors: PropTypes.string,
   activeSubjFam: PropTypes.object,
   editSubjFamRelMode: PropTypes.bool,
+  deleteSubjFamRelMode: PropTypes.bool,
 };
 
 function mapStateToProps(state) {
@@ -346,7 +309,8 @@ function mapStateToProps(state) {
     relTypes: state.subjFam.relTypes,
     updateFormErrors: state.subjFam.updateFormErrors,
     activeSubjFam: state.subjFam.activeSubjFam,
-    editSubjFamRelMode: state.subjFam.editSubjFamRelMode
+    editSubjFamRelMode: state.subjFam.editSubjFamRelMode,
+    deleteSubjFamRelMode: state.subjFam.deleteSubjFamRelMode
   };
 }
 

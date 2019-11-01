@@ -21,7 +21,7 @@ export const SET_EDIT_SUBJ_FAM_REL_MODE = 'SET_EDIT_SUBJ_FAM_REL_MODE';
 export const EDIT_SUBJ_FAM_REL_SUCCESS = 'EDIT_SUBJ_FAM_REL_SUCCESS';
 export const EDIT_SUBJ_FAM_REL_REQUEST = 'EDIT_SUBJ_FAM_REL_REQUEST';
 export const EDIT_SUBJ_FAM_REL_FAILURE = 'EDIT_SUBJ_FAM_REL_FAILURE';
-
+export const SET_DELETE_SUBJ_FAM_REL_MODE = 'SET_DELETE_SUBJ_FAM_REL_MODE';
 
 
 function checkResponse(response) {
@@ -232,7 +232,7 @@ export function updateSubjFamRelSuccess(subjFamRel) {
   };
 }
 
-export function updateSubjFamRel(protocolId, subjFamRel) {
+export function updateSubjFamRel(protocolId, subjFamRel, activeSubjectId) {
   return dispatch => {
     dispatch(updateSubjFamRelRequest());
     const url = `api/protocols/${protocolId}/subj_fam/relationship_id/${subjFamRel.id}`;
@@ -248,6 +248,35 @@ export function updateSubjFamRel(protocolId, subjFamRel) {
       .then(checkResponse)
       .then(response => response.json())
       .then(json => dispatch(updateSubjFamRelSuccess(json)))
-      .catch(errors => dispatch(updateSubjFamRelFailure(errors)));
+      .catch(errors => dispatch(updateSubjFamRelFailure(errors)))
+      .then(dispatch(fetchSubjFam(protocolId, activeSubjectId)));
+  };
+}
+
+export function setDeleteSubjFamRelMode(mode = null) {
+  // Update state to enable or disable Delete Subject Familial Relationship mode
+  return {
+    type: SET_DELETE_SUBJ_FAM_REL_MODE,
+    mode,
+  };
+}
+
+export function fetchDeleteSubjFamRel(protocolId, subjFamRel, activeSubjectId) {
+  const url = `api/protocols/${protocolId}/subj_fam/relationship_id/${subjFamRel.id}`;
+  return dispatch => {
+    return fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `token ${token}`,
+        'X-CSRFToken': csrf_token,
+      },
+      body: JSON.stringify(subjFamRel),
+    })
+    .then(checkResponse)
+    .then(response => response.json())
+    .then(setDeleteSubjFamRelMode(false))
+    .then(dispatch(fetchSubjFam(protocolId, activeSubjectId)));
   };
 }

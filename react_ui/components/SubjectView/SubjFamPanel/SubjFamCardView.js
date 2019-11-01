@@ -13,6 +13,7 @@ class SubjFamCardView extends React.Component {
     super(props);
     this.handleNewSubjFamRelClick = this.handleNewSubjFamRelClick.bind(this);
     this.handelRelClick = this.handleRelClick.bind(this);
+    this.handleDeleteSubjRel = this.handleDeleteSubjRel.bind(this);
   }
 
   // get the related subject and the related
@@ -55,7 +56,7 @@ class SubjFamCardView extends React.Component {
       return organizedRelationships
     }
   }
-  
+
   handleRelClick(subjectId){
     const url = `#/dataentry/protocol/${this.props.activeProtocolId}/subject/${subjectId}`;
     window.location.href = url;
@@ -80,7 +81,7 @@ class SubjFamCardView extends React.Component {
             <td onClick={() => this.handleEditSubjFamRelClick(item)}>
               <i className="ti-pencil" ></i>
             </td>
-            <td > <i className="ti-trash" ></i> </td>
+            <td onClick={() => this.handleDeleteSubjRel(item)}> <i className="ti-trash" ></i> </td>
           </tr>))
           :
           <tr>
@@ -100,6 +101,12 @@ class SubjFamCardView extends React.Component {
     const { dispatch } = this.props;
     dispatch(SubjFamActions.setActiveSubjFamRel(subj_fam_relationship));
     dispatch(SubjFamActions.setEditSubjFamRelMode(true));
+  }
+
+  handleDeleteSubjRel(subj_fam_relationship){
+    const { dispatch } = this.props;
+    dispatch(SubjFamActions.setActiveSubjFamRel(subj_fam_relationship));
+    dispatch(SubjFamActions.setDeleteSubjFamRelMode(true));
   }
 
   render() {

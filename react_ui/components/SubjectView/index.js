@@ -12,6 +12,7 @@ import RecordPanel from './RecordPanel';
 import SubjFamPanel from './SubjFamPanel'
 import EditLabelModal from './Modals/EditLabel';
 import SubjFamEditView from './SubjFamPanel/subjFamEditView';
+import DeleteConfirmation from './SubjFamPanel/DeleteConfirmation';
 import * as ProtocolActions from '../../actions/protocol';
 import * as SubjectActions from '../../actions/subject';
 
@@ -54,6 +55,7 @@ class SubjectView extends React.Component {
             <section>
               <SubjFamPanel />
               {(this.props.subjFam.addSubjFamRelMode || this.props.subjFam.editSubjFamRelMode) ? <SubjFamEditView/> : null}
+              {this.props.subjFam.deleteSubjFamRelMode ? <DeleteConfirmation/> : null}
             </section>
             <hr />
           </div>
@@ -78,6 +80,7 @@ SubjectView.propTypes = {
   editLabelMode: PropTypes.bool,
   addSubjFamRelMode: PropTypes.bool,
   editSubjFamRelMode: PropTypes.bool,
+  deleteSubjFamRelMode: PropTypes.bool,
   location: PropTypes.object,
   params: PropTypes.object,
 };
@@ -96,6 +99,7 @@ function mapStateToProps(state) {
     subjFam: {
       addSubjFamRelMode: state.subjFam.addSubjFamRelMode,
       editSubjFamRelMode: state.subjFam.editSubjFamRelMode,
+      deleteSubjFamRelMode: state.subjFam.deleteSubjFamRelMode,
     },
     editLabelMode: state.record.editLabelMode,
   };
