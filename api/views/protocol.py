@@ -39,6 +39,17 @@ class ProtocolViewSet(viewsets.ModelViewSet):
         return Response(protocols)
 
 
+class ProtocolAllViewSet(BRPApiView):
+    """
+    API endpoint that allows all protocols to be viewed.
+    """
+    def get(self, request, *args, **kwargs):
+        protocols = []
+        if request.user.is_superuser:
+            protocols = Protocol.objects.values('id', 'name')
+        return Response(protocols)
+
+
 class ProtocolDataSourceView(BRPApiView):
     def get(self, request, pk, *args, **kwargs):
         """
