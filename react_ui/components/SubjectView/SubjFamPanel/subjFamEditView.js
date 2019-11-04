@@ -53,7 +53,13 @@ class SubjFamEditView extends React.Component {
   menuItemsSubjects(){
     let subjectList = null;
     const subjects = this.props.subject.items;
+    //remove active subject from subject list. Limits ability for user to relate a subject to itself
     if(subjects !=null){
+      for( var i = 0; i < subjects.length; i++){
+        if ( subjects[i].id === this.props.subject.activeSubject.id) {
+         subjects.splice(i, 1);
+        }
+      }
       subjectList = subjects.map(subject =>({
           value: subject.id,
           label: subject.organization_subject_id + " - " + subject.last_name +
