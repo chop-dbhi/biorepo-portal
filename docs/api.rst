@@ -206,10 +206,10 @@ GET a Complete List of Protocols - Admin users only
 
 .. sourcecode:: http
 
-GET /api/protocols/all/ HTTP/1.1
-Host: example.com
-Accept: application/json
-Authorization: "token <your API token>"
+    GET /api/protocols/all/ HTTP/1.1
+    Host: example.com
+    Accept: application/json
+    Authorization: "token <your API token>"
 
 **Example Response:**
 
