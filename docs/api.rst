@@ -215,16 +215,16 @@ Authorization: "token <your API token>"
 
 .. sourcecode:: http
 
-HTTP/1.1 200 OK
-Vary: Accept
-Content-Type: application/json
+    HTTP/1.1 200 OK
+    Vary: Accept
+    Content-Type: application/json
 
-[
-    {
+    [
+      {
         "id": 21,
         "name": "CBTTC - TRAINING 2",
-    }
-]
+        }
+    ]
 
 GET a Specific Protocol
 ------------------------
