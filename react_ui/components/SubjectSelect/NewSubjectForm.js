@@ -150,7 +150,7 @@ export class NewSubjectForm extends React.Component {
     // jscs:disable
     return (
       <section>
-        <div className="backdropStyle"></div>
+        <div className="backdrop-style"></div>
             <PureModal
               isOpen
               width='500px'
