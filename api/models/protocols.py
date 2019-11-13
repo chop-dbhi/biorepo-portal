@@ -301,7 +301,7 @@ class Protocol(BaseWithImmutableKey):
         gh = ServiceClient.get_rh_for(record_type=ServiceClient.GROUP)
 
         try:
-            response = gh.get(name=self.ehb_group_name())
+            gh.get(name=self.ehb_group_name())
 
         except PageNotFound:
 
