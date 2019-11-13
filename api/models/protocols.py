@@ -301,9 +301,9 @@ class Protocol(BaseWithImmutableKey):
         gh = ServiceClient.get_rh_for(record_type=ServiceClient.GROUP)
 
         try:
-            gh.get(name=self.ehb_group_name())
+            response = gh.get(name=self.ehb_group_name())
 
-        except RequestedRangeNotSatisfiable:
+        except PageNotFound:
 
             grp = Group(
                 name=self.ehb_group_name(),
