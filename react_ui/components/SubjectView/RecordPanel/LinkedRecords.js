@@ -31,7 +31,7 @@ class LinkedRecords extends React.Component {
             {this.props.activeLinks.map((link, i) => (
               <div key={i}>
                 {this.linkText(activeRecord, link)}
-                <span style={remove-link-style}>
+                <span className="remove-link-style">
                   <a onClick={() => this.removeLink(activeRecord, link.id)}>
                     remove link
                   </a>
