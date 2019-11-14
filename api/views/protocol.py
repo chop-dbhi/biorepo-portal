@@ -247,7 +247,6 @@ class ProtocolSubjectDetailView(BRPApiView):
             org = self.o_rh.get(id=subject['organization'])
         except:
             return Response({'error': 'Invalid Organization Selected'}, status=400)
-
         errors = []
         try:
             subject = self.s_rh.get(
@@ -273,7 +272,6 @@ class ProtocolSubjectDetailView(BRPApiView):
             success = r.get('success')
             errors = r.get('errors')
             subject = r.get(Subject.identityLabel)
-
         # Dont proceed if creation was not a success
         if not success:
             subject = json.loads(Subject.json_from_identity(subject))
@@ -281,16 +279,6 @@ class ProtocolSubjectDetailView(BRPApiView):
 
         if not errors:
             errors = []
-        # First check if the subject is already in the group.
-        if protocol.getSubjects() and subject in protocol.getSubjects():
-            # Subject is already in protocol
-            errors.append(
-                'This subject ' + org.subject_id_label +
-                ' has already been added to this project.'
-            )
-            logger.error("Could not add subject. They already exist on this protocol.")
-            success = False
-        else:
             # Add this subject to the protocol and create external record group
             if self.subject_utils.create_protocol_subject_record_group(protocol, new_subject):
                 if protocol.addSubject(subject):
@@ -302,10 +290,19 @@ class ProtocolSubjectDetailView(BRPApiView):
                     success = False
             else:
                 # For some reason we couldn't get the eHB to add the subject to the protocol group
-                errors.append(
-                    'Failed to complete eHB transactions. Could not add subject to project. Please try again.')
-                success = False
-
+                subjects = protocol.getSubjects()
+                if subjects and subject in subjects:
+                    # Subject is already in protocol
+                    errors.append(
+                        'This subject ' + org.subject_id_label +
+                        ' has already been added to this project.'
+                    )
+                    logger.error("Could not add subject. They already exist on this protocol.")
+                    success = False
+                else:
+                    errors.append(
+                        'Failed to complete eHB transactions. Could not add subject to project. Please try again.')
+                    success = False
         subject = json.loads(Subject.json_from_identity(subject))
 
         if not success:
