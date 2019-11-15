@@ -384,6 +384,7 @@ class ProtocolSubjectDetailView(BRPApiView):
         ehb_sub.last_name = subject_update['last_name']
         ehb_sub.organization_subject_id = subject_update['organization_subject_id']
         ehb_sub.organization_id = org.id
+        ehb_sub.organization_id_label = org.subject_id_label
         ehb_sub.dob = datetime.strptime(subject_update['dob'], '%Y-%m-%d')
         new_group_name = SubjectUtils.protocol_subject_record_group_name(protocol, ehb_sub)
         group.name = new_group_name
