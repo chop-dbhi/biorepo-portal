@@ -159,7 +159,6 @@ class ServiceClient(object):
         headers = {
             'Content-Type': "application/json",
             'Api-token': ServiceClient.api_key,
-            'Host': "127.0.0.1:8000",
             'cache-control': "no-cache"
             }
 
