@@ -154,11 +154,24 @@ class PDSSubjectRecordDetailView(BRPApiView):
         if pds.protocol.isUserAuthorized(request.user):
             ex_rec = json.loads(request.body.decode('utf-8'))
             rec = self.er_rh.get(id=ex_rec['id'])
+            rec.label_desc = ex_rec['label_desc']
             rec.label_id = ex_rec['label_id']
             rec.modified = datetime.now()
             res = self.er_rh.update(rec)[0]
             if res['success']:
                 ex_rec = res['external_record']
+                # update cache with new external record label
+                cache_key = 'protocol{0}_sub_data'.format(pds.protocol_id)
+                cache_data = self.cache.get(cache_key)
+                subjects = json.loads(cache_data)
+                for i in range(0, len(subjects)):
+                    if (int(subjects[i]['id']) == int(subject)):
+                        for x in range(0, len(subjects[i]['external_records'])):
+                            if (int(subjects[i]['external_records'][x]['id']) == int(ex_rec.id)):
+                                subjects[i]['external_records'][x]['label_id'] = rec.label_id
+                                subjects[i]['external_records'][x]['label'] = rec.label_id
+                                subjects[i]['external_records'][x]['label_desc'] = rec.label_desc
+                                self.cache.set(cache_key, json.dumps(subjects))
                 return Response(json.loads(ex_rec.json_from_identity(ex_rec)))
             else:
                 return Response({
