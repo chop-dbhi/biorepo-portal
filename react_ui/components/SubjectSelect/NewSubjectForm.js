@@ -146,39 +146,17 @@ export class NewSubjectForm extends React.Component {
 
   render() {
     const newSub = this.props.subject.newSubject;
-    const newSubFormStyle = {
-      left: '50%',
-      marginLeft: '-15em',
-      marginBottom: '3em',
-      position: 'fixed',
-      zIndex: '1000',
-    };
-    const cardStyle = {
-      padding: '15px',
-      boxShadow: '3px 3px 14px rgba(204, 197, 185, 0.5)',
-      backgroundColor: 'white',
-    };
-    const backdropStyle = {
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      width: '100%',
-      height: '100%',
-      zIndex: 99,
-      display: 'block',
-      backgroundColor: 'rgba(0, 0, 0, 0.298039)',
-    };
 
     // jscs:disable
     return (
       <section>
-        <div style={backdropStyle}></div>
+        <div className="backdrop-style"></div>
             <PureModal
               isOpen
               width='500px'
               onClose={() => {return false;}}
               >
-              <div className="card" style={cardStyle}>
+              <div className="card">
                 <h6 className="category"><center>Add New Subject</center></h6>
                 <div className="more">
                 </div>

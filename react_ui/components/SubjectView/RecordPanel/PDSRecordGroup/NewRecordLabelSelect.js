@@ -59,41 +59,15 @@ class NewRecordLabelSelect extends React.Component {
 
   render() {
     const labels = this.props.pds.driver_configuration.labels;
-    const modalStyle = {
-      left: '45%',
-      top: '20%',
-      marginLeft: '-5em',
-      marginBottom: '3em',
-      position: 'fixed',
-      zIndex: '1000',
-    };
-    const cardStyle = {
-      padding: '15px',
-      boxShadow: '3px 3px 14px rgba(204, 197, 185, 0.5)',
-      backgroundColor: 'white',
-    };
-    const backdropStyle = {
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      width: '100%',
-      height: '100%',
-      zIndex: 99,
-      display: 'block',
-      backgroundColor: 'rgba(0, 0, 0, 0.298039)',
-    };
-
     const errorStyle = {
       control: styles => ({ ...styles, backgroundColor: 'pink' })
     }
-
-
     return (
       this.props.isCreating && this.props.pds.id == this.props.activePDS.id ?
         <section>
-          <div style={backdropStyle}></div>
-          <div className="col-sm-3 edit-label-modal" style={modalStyle}>
-            <div className="card" style={cardStyle}>
+          <div className="backdrop-style"></div>
+          <div className="col-sm-3 edit-label-modal-style">
+            <div className="card">
               <h4 style={{ textAlign: 'center' }}>
                 Please wait. This action may take several seconds...
               </h4>
@@ -103,9 +77,9 @@ class NewRecordLabelSelect extends React.Component {
         </section> :
           this.props.addRecordMode && this.props.pds.id == this.props.activePDS.id ?
             <section>
-              <div style={backdropStyle}></div>
-              <div className="col-sm-3 edit-label-modal" style={modalStyle}>
-                <div className="card" style={cardStyle}>
+              <div className="backdrop-style"></div>
+              <div className="col-sm-3 edit-label-modal-style">
+                <div className="card">
                   <h6 className="category">Select label for {this.props.pds.display_label} Record</h6>
                   <div className="more">
                   </div>

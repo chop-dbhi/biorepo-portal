@@ -18,18 +18,33 @@ const SubjectCardView = (props) => {
   const subject = props.subject.activeSubject;
   const editUrl = `${props.path}/edit`;
   return (
-      <div className="card">
-        <div className="more">
-            <i className="ti-pencil" onClick={() => handleEditSubjectClick(props)}></i>
+        <div className="subject-card">
+          <div class="row">
+          <table className="table">
+            <thead>
+              <tr>
+                <th><h4>Organization</h4></th>
+                <th><h4>{subject.organization_id_label}</h4></th>
+                <th><h4>First Name</h4></th>
+                <th><h4>Last Name</h4></th>
+                <th><h4>Date Of Birth</h4></th>
+              </tr>
+              <tr>
+
+                <td><h5>{subject.organization_name}</h5></td>
+                <td><h5>{subject.organization_subject_id}</h5></td>
+                <td><b><h5>{subject.first_name}</h5></b></td>
+                <td><b><h5>{subject.last_name}</h5></b></td>
+                <td><h5>{subject.dob}</h5></td>
+                <td><h5><i className="ti-pencil" onClick={() => handleEditSubjectClick(props)}></i></h5></td>
+              </tr>
+
+            </thead>
+          </table>
+          </div>
         </div>
-        <div className="content">
-          <h6 className="category">{subject.organization_name}</h6>
-          <h4 className="title">{subject.first_name} {subject.last_name}</h4>
-          <p className="description">{subject.organization_id_label}: {subject.organization_subject_id}</p>
-          <p className="description">Date of birth: {subject.dob}</p>
-          <ExternalIDs externalIds={subject.external_ids} />
-        </div>
-      </div>
+
+
   );
 };
 

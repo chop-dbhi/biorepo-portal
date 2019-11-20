@@ -100,27 +100,6 @@ class PDSRecordGroup extends React.Component {
   }
 
   render() {
-    const modalStyles = {
-      width: '25%',
-      height: '200px',
-      position: 'fixed',
-      top: '50%',
-      left: '65%',
-      marginTop: '-200px',
-      marginLeft: '-25%',
-      backgroundColor: '#fff',
-      borderRadius: '15px',
-      zIndex: 100,
-      padding: '15px',
-      boxShadow: '0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28)',
-    };
-    const exRecStyle = {
-      cursor: 'pointer',
-      backgroundColor: '#ddecf9',
-      borderTop: '1px solid #CCC5B9',
-      borderBottom: '1px solid #CCC5B9',
-    };
-
     const pds = this.props.pds;
     const records = this.props.subject.external_records.filter((record) => {
       if (pds.id === record.pds) {
@@ -140,7 +119,7 @@ class PDSRecordGroup extends React.Component {
             <tr
               key={i}
               onClick={() => this.handleRecordClick(record, this.props.pds)}
-              style={exRecStyle}
+              className="ex-rec-style"
             >
               <td>{record.id}</td>
               <td>{record.label_desc}</td>
@@ -195,7 +174,6 @@ class PDSRecordGroup extends React.Component {
             : <div> Not authorized for this Protocol Data Source </div>
           }
         </div>
-        <hr />
       </div>
     );
   }

@@ -8,6 +8,7 @@ import * as SubjectActions from '../../../actions/subject';
 import LoadingGif from '../../LoadingGif';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
+import { organizeSubjFamRelForEdit, handleRelEditDelCloseClick } from '../../utils'
 // import Button from '@material-ui/core/Button';
 
 import { Container, Row, Col } from 'reactstrap';
@@ -21,27 +22,44 @@ class SubjFamEditView extends React.Component {
     super(props);
 
     this.state = {
-      relatedSubject: '',
-      subjectRole: '',
-      relatedSubjectRole: '',
-      dataEntryCorrect: '',
-      relatedSubErr: false,
-      subjectRoleError: false,
-      relatedSubRoleErr: false
-
+        relatedSubject: (this.props.editSubjFamRelMode ?
+            {label:this.props.activeSubjFam.related_subject_org_id,
+            value:this.props.activeSubjFam.related_subject_id}
+            : ''),
+        subjectRole: (this.props.editSubjFamRelMode ?
+            {label:this.props.activeSubjFam.subject_role,
+              value: null}
+            : ''),
+        relatedSubjectRole: (this.props.editSubjFamRelMode ?
+            {label:this.props.activeSubjFam.related_subject_role,
+            value: null}
+            : ''),
+        submitVerbiage: (this.props.editSubjFamRelMode ? "Update" : "Create new"),
+        dataEntryCorrect: '',
+        relatedSubErr: false,
+        subjectRoleError: false,
+        relatedSubRoleErr: false
     };
     this.handleRelatedSubjectSelect = this.handleRelatedSubjectSelect.bind(this);
     this.handleSubject1RoleSelect = this.handleSubject1RoleSelect.bind(this);
     this.handleSubject2RoleSelect = this.handleSubject2RoleSelect.bind(this);
-    this.handleCloseClick = this.handleCloseClick.bind(this);
+    this.handleCloseClick = handleRelEditDelCloseClick.bind(this);
     this.handleNewPedRelClick = this.handleNewPedRelClick.bind(this);
     this.checkRelDataEntry = this.checkRelDataEntry.bind(this);
+    this.handleEditSubjFamRelClick = this.handleEditSubjFamRelClick.bind(this);
+    this.organizeSubjFamRelForEdit = organizeSubjFamRelForEdit.bind(this);
   }
 
   menuItemsSubjects(){
     let subjectList = null;
     const subjects = this.props.subject.items;
+    //remove active subject from subject list. Limits ability for user to relate a subject to itself
     if(subjects !=null){
+      for( var i = 0; i < subjects.length; i++){
+        if ( subjects[i].id === this.props.subject.activeSubject.id) {
+         subjects.splice(i, 1);
+        }
+      }
       subjectList = subjects.map(subject =>({
           value: subject.id,
           label: subject.organization_subject_id + " - " + subject.last_name +
@@ -109,10 +127,8 @@ class SubjFamEditView extends React.Component {
       this.setState({dataEntryCorrect: true});
       return true;
     }
-
-
-
   }
+
   handleNewPedRelClick(e) {
     const { dispatch } = this.props;
     if (this.checkRelDataEntry()) {
@@ -129,9 +145,15 @@ class SubjFamEditView extends React.Component {
     }
   }
 
-  handleCloseClick() {
+  handleEditSubjFamRelClick(e) {
     const { dispatch } = this.props;
-    dispatch(SubjFamActions.setAddSubjFamRelMode(false));
+    let updatedRel = null;
+    if (this.checkRelDataEntry()) {
+      updatedRel = this.organizeSubjFamRelForEdit();
+    dispatch(SubjFamActions.updateSubjFamRel(this.props.protocol.activeProtocolId, updatedRel, this.props.subject.activeSubject.id))
+    .then(dispatch(SubjFamActions.fetchSubjFam(this.props.protocol.activeProtocolId, this.props.subject.activeSubject.id)))
+    this.handleCloseClick();
+    }
   }
 
   renderErrors() {
@@ -142,37 +164,6 @@ class SubjFamEditView extends React.Component {
     // options for the select forms
     const subjects = this.menuItemsSubjects();
     const relTypes = this.menuItemsRelTypes();
-
-    const root = {
-
-        flexGrow: 1,
-        height: 250,
-      };
-
-    const backdropStyle = {
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      width: '100%',
-      height: '100%',
-      zIndex: 99,
-      display: 'block',
-      backgroundColor: 'rgba(0, 0, 0, 0.298039)',
-    };
-    const cardStyle = {
-      padding: '15px',
-      boxShadow: '3px 3px 14px rgba(204, 197, 185, 0.5)',
-      backgroundColor: 'white',
-      width: '90%',
-    };
-    const modalStyle = {
-      right: '0%',
-      top: '20%',
-      width: '90%',
-      position: 'fixed',
-      zIndex: '1000',
-    };
-
     const errorStyle = {
       control: styles => ({ ...styles, backgroundColor: 'pink' })
     }
@@ -180,9 +171,9 @@ class SubjFamEditView extends React.Component {
     const { value } = this.state;
       return (
         <section>
-          <div style={backdropStyle}></div>
-          <div className="col-md-12 edit-label-modal" style={modalStyle}>
-            <div className="card" style={cardStyle}>
+          <div className="backdrop-style"></div>
+          <div className="col-md-12 subj-fam-modal-style">
+            <div className="card">
               <h3 className="category" style={{ textAlign: 'center' }}> Add a new Relationship </h3>
               <Row>
                 <div className="col-md-6">
@@ -196,9 +187,10 @@ class SubjFamEditView extends React.Component {
                 <label> Related Subject: </label>
                   <Select
                     onChange={this.handleRelatedSubjectSelect}
+                    defaultValue={{ label: this.state.phRelatedSubject, value: this.state.relatedSubject }}
                     error={this.state.dataEntryCorrect}
                     value={this.state.relatedSubject}
-                    placeholder="Search for Related Subject"
+                    placeholder={"Search for Related Subject"}
                     styles={this.state.relatedSubErr ? errorStyle : {}}
                     options={subjects}
                   />
@@ -209,26 +201,26 @@ class SubjFamEditView extends React.Component {
                 <div className="col-md-6">
                   <label> Subject Role: </label>
                   <Select
+                    defaultValue={this.state.subjectRole}
                     styles={this.state.subjectRoleError ? errorStyle : {}}
                     value={this.state.subjectRole}
                     onChange={this.handleSubject1RoleSelect}
                     options={relTypes}
-                    placeholder="Search for Subject Role Types"
+                    placeholder={"Search for Subject Role"}
                   />
                   {this.state.subjectRoleError ? <p>Please select subject role. </p> : null}
                 </div>
-
                 <div className="col-md-6">
                   <label> Related Subject Role: </label>
                   <Select
                     options={relTypes}
+                    defaultValue={this.state.relatedSubjectRole}
                     styles={this.state.relatedSubRoleErr ? errorStyle : {}}
                     value={this.state.relatedSubjectRole}
                     onChange={this.handleSubject2RoleSelect}
-                    placeholder="Search for Related Subject Role Types"
+                    placeholder={"Search for Related Subject Role"}
                   />
                   {this.state.relatedSubRoleErr ? <p>Please select related subject role. </p> : null}
-
                 </div>
               </Row>
               <Row>
@@ -237,8 +229,8 @@ class SubjFamEditView extends React.Component {
                     label={'Create New'}
                     type='submit'
                     size="sm"
-                    onClick={this.handleNewPedRelClick}
-                  > Create New </Button>
+                    onClick={this.props.editSubjFamRelMode ? this.handleEditSubjFamRelClick : this.handleNewPedRelClick}
+                  > {this.state.submitVerbiage} </Button>
                   <Button
                     variant="contained"
                     onClick={this.handleCloseClick}
@@ -267,6 +259,9 @@ SubjFamEditView.propTypes = {
   savingSubject: PropTypes.bool,
   relTypes: PropTypes.array,
   updateFormErrors: PropTypes.string,
+  activeSubjFam: PropTypes.object,
+  editSubjFamRelMode: PropTypes.bool,
+  deleteSubjFamRelMode: PropTypes.bool,
 };
 
 function mapStateToProps(state) {
@@ -285,7 +280,10 @@ function mapStateToProps(state) {
     },
     savingSubject: state.subject.isSaving,
     relTypes: state.subjFam.relTypes,
-    updateFormErrors: state.subjFam.updateFormErrors
+    updateFormErrors: state.subjFam.updateFormErrors,
+    activeSubjFam: state.subjFam.activeSubjFam,
+    editSubjFamRelMode: state.subjFam.editSubjFamRelMode,
+    deleteSubjFamRelMode: state.subjFam.deleteSubjFamRelMode
   };
 }
 

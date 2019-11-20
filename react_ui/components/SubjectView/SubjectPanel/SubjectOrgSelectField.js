@@ -58,7 +58,6 @@ class SubjectOrgSelectField extends React.Component {
     const errorStyle = {
       control: styles => ({ ...styles, backgroundColor: '#F04D77' })
     }
-
     return (
       <div>
         <h5 className="category" style={{fontWeight: "bold"}}> Organization </h5>
@@ -69,7 +68,6 @@ class SubjectOrgSelectField extends React.Component {
             options={this.orgOptions()}
             placeholder="Search for Organization"
             styles={this.props.error ? errorStyle : {}}
-
           />
           :
           <Select
@@ -79,7 +77,7 @@ class SubjectOrgSelectField extends React.Component {
             styles={this.props.error ? errorStyle : {}}
           />}
 
-        {this.props.error ? <p> {this.props.error} </p> : null  }  
+        {this.props.error ? <p> {this.props.error} </p> : null  }
       </div>
     );
   }
