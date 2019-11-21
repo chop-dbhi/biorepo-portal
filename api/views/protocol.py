@@ -596,7 +596,6 @@ class ProtocolSubjFamDetailView(BRPApiView):
             # get all relationships in the protocol
             else:
                 r = self.relationship_HB_handler.get(protocol_id=pk)
-                r = SubjFamRelationship.json_from_identity(r)
 
             r = json.loads(r)
             return Response(
