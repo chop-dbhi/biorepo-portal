@@ -118,13 +118,9 @@ class SubjectCardEdit extends React.Component {
 
   renderErrors() {
     const serverErrors = this.props.subject.updateFormErrors.server;
-    const style = {
-      fontSize: '12px',
-      marginTop: '15px',
-    };
     if (serverErrors) {
       return serverErrors.map((error, i) => (
-        <div key={i} style={style} className="alert alert-danger">
+        <div key={i} className="alert alert-danger subj-error">
           <div className="container">
             {error}
           </div>
@@ -137,22 +133,11 @@ class SubjectCardEdit extends React.Component {
 
   render() {
 
-    const backdropStyle = {
-      position: 'fixed',
-      top: '0px',
-      left: '0px',
-      width: '100%',
-      height: '100%',
-      zIndex: 99,
-      display: 'block',
-      backgroundColor: 'rgba(0, 0, 0, 0.298039)',
-    };
-
     if (this.props.subject.activeSubject) {
       const subject = this.props.subject.activeSubject;
       return (
         <section>
-          <div style={backdropStyle}/>
+          <div className="backdrop-style"/>
               <PureModal
                 isOpen
                 width='500px'

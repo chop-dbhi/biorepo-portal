@@ -92,16 +92,8 @@ class SubjectSelect extends React.PureComponent {
     const protocol = this.getActiveProtocol();
     const filterCaseInsensitive = ({ id, value }, row) =>
       row[id] ? row[id].toLowerCase().includes(value.toLowerCase()) : true
-    // const rows = this.griddleFrendlySubjects(); //This is not needed for react-table
 
     let manageExternalIDs = false;
-    const subjectCountStyle = {
-      paddingLeft: '10px',
-      paddingRight: '10px',
-      paddingBottom: '10px',
-      color: '#7a7a7a',
-      fontWeight: 'bold',
-    };
     if (this.props.activeProtocolId) {
       if (parseInt(this.props.match.params.id, 10) === parseInt(protocol.id, 10)) {
         this.props.protocol.activeProtocol = protocol;
@@ -168,37 +160,39 @@ class SubjectSelect extends React.PureComponent {
             <BackButton /> :
             <div />
           }
-          <h3>Project: {this.props.protocol.items.name}</h3>
-          <div id="toolbar">
-            <ul className="list-unstyled">
-              <li>
-                <Button
-                  labelcolor={'#7AC29A'}
-                  onClick={this.handleNewSubject}
-                  label={'New Subject'}
-                > New Subject </Button>
-              </li>
-            </ul>
-          </div>
-          <div style={subjectCountStyle}>{this.props.subject.items.length} Subjects</div>
-          <div className="subject-table">
-            {(this.props.subject.items.length>0) ?
+          <div className="container">
+            <h3>Project: {this.props.protocol.items.name}</h3>
+            <div id="toolbar">
+              <ul className="list-unstyled">
+                <li>
+                  <Button
+                    labelcolor={'#7AC29A'}
+                    onClick={this.handleNewSubject}
+                    label={'New Subject'}
+                  > New Subject </Button>
+                </li>
+              </ul>
+            </div>
+            <div className="subject-count-style">{this.props.subject.items.length} Subjects</div>
+            <div className="subject-table">
+              {(this.props.subject.items.length>0) ?
 
-              <ReactTable
-                data={this.props.subject.items}
-                columns={columns}
-                filterable = {true}
-                defaultFilterMethod={filterCaseInsensitive}
-                className="-highlight"
-                getTdProps={(state, rowInfo) => {
-                  return {
-                    onClick: (e, handleOrigional) => {
-                      this.handleClick(rowInfo);
-                    }
-                  }}
-                }
-                />
-               : <LoadingGif />}
+                <ReactTable
+                  data={this.props.subject.items}
+                  columns={columns}
+                  filterable = {true}
+                  defaultFilterMethod={filterCaseInsensitive}
+                  className="-highlight"
+                  getTdProps={(state, rowInfo) => {
+                    return {
+                      onClick: (e, handleOrigional) => {
+                        this.handleClick(rowInfo);
+                      }
+                    }}
+                  }
+                  />
+                 : <LoadingGif />}
+            </div>
           </div>
         </div> :
         <div />

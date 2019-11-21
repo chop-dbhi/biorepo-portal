@@ -15,18 +15,8 @@ class LinkModeBanner extends React.Component {
   }
 
   render() {
-    const style = {
-      position: 'fixed',
-      top: '52px',
-      zIndex: 98,
-      marginLeft: '-20px',
-      backgroundColor: '#FFE28C',
-      color: '#BB992F',
-      width: '100%',
-      padding: '10px',
-    };
     return (
-      <div style={style} className="link-banner" data-notify="container">
+      <div className="link-record-banner-style" data-notify="container">
         <span onClick={this.dismissLinkMode} className="link-close">
           <i className="ti-close"></i>
         </span>

@@ -195,6 +195,36 @@ GET a Complete and Detailed List of Protocols You Have Access To
             "organizations": "http://localhost:32782/api/protocols/21/organizations/"
         }
     ]
+GET a Complete List of Protocols - Admin users only
+----------------------------------------------------------------
+
+**URLS:**
+
+.. http:get:: /api/protocols/all/
+
+**Example Request**:
+
+.. sourcecode:: http
+
+    GET /api/protocols/all/ HTTP/1.1
+    Host: example.com
+    Accept: application/json
+    Authorization: "token <your API token>"
+
+**Example Response:**
+
+.. sourcecode:: http
+
+    HTTP/1.1 200 OK
+    Vary: Accept
+    Content-Type: application/json
+
+    [
+      {
+        "id": 21,
+        "name": "CBTTC - TRAINING 2",
+        }
+    ]
 
 GET a Specific Protocol
 ------------------------

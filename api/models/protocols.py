@@ -303,7 +303,7 @@ class Protocol(BaseWithImmutableKey):
         try:
             gh.get(name=self.ehb_group_name())
 
-        except RequestedRangeNotSatisfiable:
+        except PageNotFound:
 
             grp = Group(
                 name=self.ehb_group_name(),

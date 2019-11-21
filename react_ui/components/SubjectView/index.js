@@ -12,6 +12,7 @@ import RecordPanel from './RecordPanel';
 import SubjFamPanel from './SubjFamPanel'
 import EditLabelModal from './Modals/EditLabel';
 import SubjFamEditView from './SubjFamPanel/subjFamEditView';
+import DeleteConfirmation from './SubjFamPanel/DeleteConfirmation';
 import * as ProtocolActions from '../../actions/protocol';
 import * as SubjectActions from '../../actions/subject';
 
@@ -40,19 +41,25 @@ class SubjectView extends React.Component {
     const subject = this.props.subject.activeSubject;
     const path = this.props.location.pathname;
     return (subject ?
-      <div className="subject-view">
+      <div className="container-fluid">
         <div className="row">
-          <div className="col-md-4">
-            <section>
-              <SubjectPanel subject={subject} path={path} />
-              {this.props.subject.editSubjectMode ? <SubjectCardEdit subject={subject}/> : null}
-            </section>
-            <hr />
+        <div className="container-fluid">
+        <section>
+          <SubjectPanel subject={subject} path={path} />
+          {this.props.subject.editSubjectMode ? <SubjectCardEdit subject={subject}/> : null}
+        </section>
+        <hr />
+        </div>
+          <div className="col-sm-4">
+
             <section>
               <SubjFamPanel />
-              {this.props.subjFam.addSubjFamRelMode ? <SubjFamEditView/> : null}
+              {(this.props.subjFam.addSubjFamRelMode || this.props.subjFam.editSubjFamRelMode) ? <SubjFamEditView/> : null}
+              {this.props.subjFam.deleteSubjFamRelMode ? <DeleteConfirmation/> : null}
             </section>
+            <hr />
           </div>
+
           <div className="col-md-8">
             <RecordPanel subject={subject} />
             {this.props.editLabelMode ? <EditLabelModal /> : null}
@@ -72,6 +79,8 @@ SubjectView.propTypes = {
   protocol: PropTypes.object,
   editLabelMode: PropTypes.bool,
   addSubjFamRelMode: PropTypes.bool,
+  editSubjFamRelMode: PropTypes.bool,
+  deleteSubjFamRelMode: PropTypes.bool,
   location: PropTypes.object,
   params: PropTypes.object,
 };
@@ -89,6 +98,8 @@ function mapStateToProps(state) {
     },
     subjFam: {
       addSubjFamRelMode: state.subjFam.addSubjFamRelMode,
+      editSubjFamRelMode: state.subjFam.editSubjFamRelMode,
+      deleteSubjFamRelMode: state.subjFam.deleteSubjFamRelMode,
     },
     editLabelMode: state.record.editLabelMode,
   };

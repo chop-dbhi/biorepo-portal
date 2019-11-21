@@ -7,24 +7,8 @@ import { HashRouter } from 'react-router-dom';
 
 
 class Navbar extends React.Component {
-
-
   render() {
-    const brandStyle = {
-      color: '#337ab7',
-      marginTop: '0px',
-    };
-
-    const navbarStyle = {
-      backgroundColor: '#e7f2f5',
-      marginBottom: '0 !important',
-      border: '0',
-      fontFamily: ' "TPRubrik-Regular", sans-serif',
-      color: '#337ab7',
-    };
-
     const protocol = this.props.activeProtocolId;
-
     let subjectSelectUrl = null;
     let inDs = false;
 
@@ -33,16 +17,15 @@ class Navbar extends React.Component {
     } else {
       inDs = true;
     }
-
      if (!inDs) {
       return (
         <HashRouter>
-        <div style={navbarStyle}
-        className="navbar navbar-ct-primary navbar-fixed-top"
-        role="navigation" >
+        <div
+          className="navbar navbar-ct-primary navbar-fixed-top"
+          role="navigation" >
           <div className="navbar-header">
             <div className="navbar-brand">
-              <Link to="/" style={brandStyle} className="navbar-text">Biorepository Portal</Link>
+              <Link to="/"  className="navbar-text">Biorepository Portal</Link>
             </div>
           </div>
 

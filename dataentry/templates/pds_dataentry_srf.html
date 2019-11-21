@@ -11,11 +11,11 @@
     <li><a href="{{root_path}}/dataentry/protocoldatasource/{{pds.id}}/subject/{{subject.id}}/record/{{record.id}}/start/">Forms</href></a></li>
     <li><a href="{{root_path}}/#/dataentry/protocol/{{protocol.id}}/subject/{{subject.id}}">Records</href></a></li>
     <li><a href="{{root_path}}/#/dataentry/protocol/{{protocol.id}}">Subjects</href></a></li>
-    <li><a href="{{root_path}}">Projects</href></a></li>
+    <li><a href="{{root_path}}/#/">Projects</href></a></li>
 {% endblock %}
 
 {% block main_content %}
-
+<div class="container">
 <div>
 	<table class="table table-bordered table-striped">
 	<thead>
@@ -107,7 +107,7 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div>
-
+</div>
 
 {% endblock %}
 
