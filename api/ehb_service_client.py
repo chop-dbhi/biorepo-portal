@@ -154,6 +154,18 @@ class ServiceClient(object):
             raise Exception(msg)
 
     @staticmethod
+    def ehb_api(url, request_type, payload=None):
+        url = ServiceClient.APP_URL + url
+        headers = {
+            'Content-Type': "application/json",
+            'Api-token': ServiceClient.api_key,
+            'cache-control': "no-cache",
+            'Accept': "application/json"
+            }
+
+        return requests.request(request_type, url, data=json.dumps(payload), headers=headers)
+
+    @staticmethod
     def user_audit(payload):
         url = ServiceClient.APP_URL + "/api/auditlog/"
         headers = {
