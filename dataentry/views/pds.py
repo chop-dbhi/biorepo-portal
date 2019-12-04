@@ -1,6 +1,7 @@
 import json
 import logging
 import inspect
+import time
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
@@ -345,7 +346,7 @@ class CreateView(DataEntryView):
             records = self.service_client.get_rh_for(
                 record_type=ServiceClient.EXTERNAL_RECORD).get(
                     external_system_url=self.pds.data_source.url,
-                    subject_id=self.subject.id,
+                    subject_id=self.subject['id'],
                     path=self.pds.path)
             allow_more_records = self.pds.max_records_per_subject == (
                 -1) or len(records) < self.pds.max_records_per_subject

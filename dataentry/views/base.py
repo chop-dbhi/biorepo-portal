@@ -47,12 +47,14 @@ class DataEntryView(TemplateView):
             return
 
     def get_context_data(self, **kwargs):
+        subject_api_url = "/api/subject/id/" + kwargs['subject_id'] + "/"
         context = super(DataEntryView, self).get_context_data(**kwargs)
+        
         self.pds = get_object_or_404(ProtocolDataSource, pk=kwargs['pds_id'])
-        self.subject = self.pds.getSubject(kwargs['subject_id'])
+        self.subject = ServiceClient.ehb_api(subject_api_url, "GET").json()
         self.record = self.get_external_record(**kwargs)
         self.org = self.service_client.get_rh_for(
-            record_type=ServiceClient.ORGANIZATION).get(id=self.subject.organization_id)
+            record_type=ServiceClient.ORGANIZATION).get(id=self.subject['organization'])
         self.driver = DriverUtils.getDriverFor(
             protocol_data_source=self.pds, user=self.request.user)
         if self.record:
