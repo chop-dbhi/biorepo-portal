@@ -227,8 +227,7 @@ class SubjectUtils(object):
                     if record.subject_id == subject.id:
 
                         logger.error(
-                            'Record id {0} already exists for subject {1} on'
-                            ' datasource {2}'.format(
+                            'Record id {0} already exists for subject {1} on datasource {2}'.format(
                                 record.record_id,
                                 subject.id,
                                 protocol_data_source))
@@ -237,8 +236,8 @@ class SubjectUtils(object):
 
                     else:
                         logger.error(
-                            'Record id {0} already exists for a different'
-                            ' Subject').format(record.record_id)
+                            'Record id {0} already exists for a different Subject'.format(
+                                record.record_id))
 
                         return 2
 
