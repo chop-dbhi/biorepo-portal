@@ -151,7 +151,7 @@ class StartView(DataEntryView):
         driverClass = inspect.getfile(self.driver.__class__)
         if "redcap" in str(driverClass):
             cache_key = 'protocoldatasource{pds_id}_redcap_completion_codes'.format(root=self.service_client.self_root_path, **kwargs)
-            subject_id = context['subject'].id
+            subject_id = context['subject']['id']
             record_id = context['record'].id
             record_name = context['record'].record_id
             redcap_form_complete_codes = self.redcap_form_complete_caching(self.driver, cache_key, subject_id, record_id, record_name)
@@ -254,12 +254,12 @@ class FormView(DataEntryView):
             return JsonResponse({'status': 'error', 'errors': errors})
         else:
             self.request.META['action'] = 'Form processed.'
-            self.request.META['subject_id'] = context['subject'].id  #The ehb PK for this subject
+            self.request.META['subject_id'] = context['subject']['id']  #The ehb PK for this subject
             # For all processed forms, clear cache for record selection table
             cache_key = 'protocoldatasource{pds_id}_redcap_completion_codes'.format(
                 root=self.service_client.self_root_path, **kwargs)
-            subject_id = context['subject'].id
-            record_id = context ['record'].id
+            subject_id = context['subject']['id']
+            record_id = context['record'].id
             try:
                 self.update_cache(cache_key, subject_id, record_id)
             except:
@@ -312,7 +312,7 @@ class CreateView(DataEntryView):
     def update_cache(self):
         subs = json.loads(self.cached_data)
         for sub in subs:
-            if sub['id'] == int(self.subject.id):
+            if sub['id'] == int(self.subject['id']):
                 er = self.get_external_record(record_id=self.record_id)
                 context = {"record": er}
                 label = json.loads(self.get_label(context))
@@ -353,7 +353,7 @@ class CreateView(DataEntryView):
         except PageNotFound:
             allow_more_records = self.pds.max_records_per_subject != 0
         if not allow_more_records:
-            request.META['action'] = 'Maximum number of records created for subject {0}'.format(self.subject.id)
+            request.META['action'] = 'Maximum number of records created for subject {0}'.format(self.subject['id'])
             request.META['error'] = True
             return HttpResponse('Error: The maximum number of records has been created.')
         if request.method == 'GET' and not self.driver.new_record_form_required():
@@ -368,7 +368,7 @@ class CreateView(DataEntryView):
                 self.start_path = '{0}/dataentry/protocoldatasource/{1}/subject/{2}/record/{3}/start/'.format(
                     self.service_client.self_root_path,
                     self.pds.id,
-                    self.subject.id,
+                    self.subject['id'],
                     self.record_id)
                 return HttpResponseRedirect(self.start_path)
             except RecordCreationError as rce:  # exception from the eHB
