@@ -450,7 +450,7 @@ class CreateView(DataEntryView):
                         er_rh = ServiceClient.get_rh_for(
                             record_type=ServiceClient.EXTERNAL_RECORD)
                         ehb_recs = er_rh.get(
-                            external_system_url=self.pds.data_source.url, subject_id=self.subject.id, path=self.pds.path)
+                            external_system_url=self.pds.data_source.url, subject_id=self.subject['id'], path=self.pds.path)
                         ehb_rec_id = None
                         for record in ehb_recs:
                             if record.record_id == rec_id:
@@ -459,7 +459,7 @@ class CreateView(DataEntryView):
                             self.start_path = '%s/dataentry/protocoldatasource/%s/subject/%s/record/%s/start' % (
                                 ServiceClient.self_root_path,
                                 self.pds.id,
-                                self.subject.id,
+                                self.subject['id'],
                                 ehb_rec_id)
                         else:
                             context['errors'].append(
