@@ -98,13 +98,25 @@ class SubjectUtils(object):
         from .models.protocols import Organization
 
         orh = ServiceClient.get_rh_for(record_type=ServiceClient.ORGANIZATION)
-        ehb_org = orh.get(id=subject.organization_id)
-        brp_org = Organization.objects.get(name=ehb_org.name)
 
-        return ':'.join(['BRP',
-                         protocol.immutable_key.key,
-                         brp_org.immutable_key.key,
-                         subject.organization_subject_id])
+        '''this Try catch is temporary untill all 'subject' parameters are
+        consistantly dict and not a subject object'''
+        try:
+            ehb_org = orh.get(id=subject['organization'])
+        except:
+            ehb_org = orh.get(id=subject.organization_id)
+
+        brp_org = Organization.objects.get(name=ehb_org.name)
+        try:
+            return ':'.join(['BRP',
+                             protocol.immutable_key.key,
+                             brp_org.immutable_key.key,
+                             subject.organization_subject_id])
+        except:
+            return ':'.join(['BRP',
+                             protocol.immutable_key.key,
+                             brp_org.immutable_key.key,
+                             subject['organization_subject_id']])
 
     @staticmethod
     def get_protocol_subject_record_group(protocol, subject):
