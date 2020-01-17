@@ -304,6 +304,7 @@ class ProtocolSubjectDetailView(BRPApiView):
                         'Failed to complete eHB transactions. Could not add subject to project. Please try again.')
                     success = False
         subject = json.loads(Subject.json_from_identity(subject))
+        subject['organization_name'] = org.name
 
         if not success:
             return Response(
@@ -312,17 +313,7 @@ class ProtocolSubjectDetailView(BRPApiView):
                 status=400
             )
         # Add subject to cache
-        cache_key = 'protocol{0}_sub_data'.format(protocol.id)
-        cache_data = self.cache.get(cache_key)
-        if cache_data:
-            subject['external_ids'] = []
-            subject['external_records'] = []
-            subject['organization_name'] = org.name
-            subjects = json.loads(cache_data)
-            subjects.append(subject)
-            self.cache.set(cache_key, json.dumps(subjects))
-            if hasattr(self.cache, 'persist'):
-                self.cache.persist(cache_key)
+        self.update_subject_cache(protocol.id, subject, True)
         return Response(
             [success, subject, errors],
             headers={'Access-Control-Allow-Origin': '*'},
@@ -370,55 +361,33 @@ class ProtocolSubjectDetailView(BRPApiView):
 
     def put(self, request, pk, subject, *args, **kwargs):
         subject_update = json.loads(request.body.decode('utf-8'))
+        subject_api_url = "/api/subject/id/" + subject + "/"
         # See if subject exists
         try:
-            ehb_sub = self.s_rh.get(id=subject)
-            org = self.o_rh.get(id=subject_update['organization'])
+            ehb_sub = ServiceClient.ehb_api(subject_api_url, "GET").json()
             protocol = Protocol.objects.get(pk=pk)
             old_group_name = SubjectUtils.protocol_subject_record_group_name(protocol, ehb_sub)
             group = self.g_rh.get(name=old_group_name)
         except:
             return Response({'error': 'subject not found'}, status=404)
-        ehb_sub.old_subject = deepcopy(ehb_sub)
-        ehb_sub.first_name = subject_update['first_name']
-        ehb_sub.last_name = subject_update['last_name']
-        ehb_sub.organization_subject_id = subject_update['organization_subject_id']
-        ehb_sub.organization_id = org.id
-        ehb_sub.organization_id_label = org.subject_id_label
-        ehb_sub.dob = datetime.strptime(subject_update['dob'], '%Y-%m-%d')
-        new_group_name = SubjectUtils.protocol_subject_record_group_name(protocol, ehb_sub)
-        group.name = new_group_name
-        group.client_key = protocol._settings_prop(
-            'CLIENT_KEY', 'key', '')
-        group.current_client_key(group.client_key)
-        update = self.s_rh.update(ehb_sub)[0]
-        if update['errors']:
+
+        update_subject_response = self.updateEhbSubject(subject, subject_update, ehb_sub)
+        if (update_subject_response.status_code != 200):
             return Response(json.dumps({'error': 'Unable to update subject'}), status=400)
+
         # If the update is succesful, update the subject record group associated with this subject
-        res = self.g_rh.update(group)[0]
-        if not res['success']:
+        update_subj_gr_resp = self.update_subject_group(protocol, subject_update, group)
+        if not update_subj_gr_resp['success']:
             return Response(json.dumps({'error': 'Unable to update group'}), status=400)
+
         # If the update is succesful, update the cache.
-        sub = json.loads(Subject.json_from_identity(update['subject']))
-        sub['organization_name'] = org.name
-        cache_key = 'protocol{0}_sub_data'.format(pk)
-        cache_data = self.cache.get(cache_key)
-        if cache_data:
-            if 'external_ids' in list(subject_update.keys()):
-                sub['external_ids'] = subject_update['external_ids']
-            else:
-                sub['external_ids'] = []
-            sub['external_records'] = subject_update['external_records']
-            sub['organization_name'] = org.name
-            subjects = json.loads(cache_data)
-            for i in range(0, len(subjects)):
-                if subjects[i]['id'] == sub['id']:
-                    subjects[i] = sub
-            self.cache.set(cache_key, json.dumps(subjects))
-            if hasattr(self.cache, 'persist'):
-                self.cache.persist(cache_key)
+        try:
+            self.update_subject_cache(pk, subject_update, False)
+        except:
+            return Response(json.dumps({'error': 'Unable to update cache'}), status=400)
+
         return Response(
-            sub,
+            subject_update,
             headers={'Access-Control-Allow-Origin': '*'}
         )
 
@@ -432,6 +401,44 @@ class ProtocolSubjectDetailView(BRPApiView):
             return Response({'error': 'Unable to delete subject'}, status=400)
 
         return Response({'info': 'Subject deleted'}, status=200)
+
+    @staticmethod
+    def updateEhbSubject(subjectID, new_subject, old_subject):
+        subject_update_api_url = "/api/subject/"
+        ehb_update_subj = {}
+
+        ehb_update_subj["id"] = subjectID
+        ehb_update_subj["old_subject"] = deepcopy(old_subject)
+        ehb_update_subj["new_subject"] = deepcopy(new_subject)
+        ehb_update_subj_body = '[' + str(json.dumps(deepcopy(ehb_update_subj))) + ']'
+        return ServiceClient.ehb_api(subject_update_api_url, "PUT", json.loads(ehb_update_subj_body))
+
+    @classmethod
+    def update_subject_group(cls, protocol, subject_update, group):
+        new_group_name = SubjectUtils.protocol_subject_record_group_name(protocol, subject_update)
+        group.name = new_group_name
+        group.client_key = protocol._settings_prop(
+            'CLIENT_KEY', 'key', '')
+        group.current_client_key(group.client_key)
+        return cls.g_rh.update(group)[0]
+
+    @classmethod
+    def update_subject_cache(cls, protocol_pk, subject_update, new_subject):
+        cache_key = 'protocol{0}_sub_data'.format(protocol_pk)
+        cache_data = cls.cache.get(cache_key)
+        if cache_data:
+            subjects = json.loads(cache_data)
+            if new_subject:
+                subject_update['external_ids'] = []
+                subject_update['external_records'] = []
+                subjects.append(subject_update)
+            else:
+                for i in range(0, len(subjects)):
+                    if subjects[i]['id'] == subject_update['id']:
+                        subjects[i] = subject_update
+            cls.cache.set(cache_key, json.dumps(subjects))
+            if hasattr(cls.cache, 'persist'):
+                cls.cache.persist(cache_key)
 
 
 class ProtocolSubjFamDetailView(BRPApiView):
