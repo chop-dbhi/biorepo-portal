@@ -268,11 +268,12 @@ class ProtocolViewTests(BRPTestCase):
             })
         response = client.delete(url)
 
-    @patch('api.views.base.BRPApiView.s_rh.get')
+    @patch('api.ehb_service_client.ServiceClient.ehb_api')
     @patch('api.views.base.BRPApiView.o_rh.get')
     @patch('api.views.base.BRPApiView.g_rh.get')
-    @patch('api.views.base.BRPApiView.g_rh.update')
-    def test_update_subject_on_protocol(self, mock_grh_update, mock_grh_get, mock_orh, mock_srh):
+    @patch('api.views.protocol.ProtocolSubjectDetailView.update_subject_group')
+    @patch('api.views.protocol.ProtocolSubjectDetailView.updateEhbSubject')
+    def test_update_subject_on_protocol(self, mock_subject_update, mock_grh_update, mock_grh_get, mock_orh, mock_srh):
         '''
         Ensure that we can create a subject on a Protocol
         '''
@@ -296,12 +297,11 @@ class ProtocolViewTests(BRPTestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         mock_orh.return_value = TestOrganization
-        mock_srh.return_value = TestSubject
+        mock_srh.return_value.json.return_value = subject
         mock_grh_get.return_value = TestGroup
-        mock_grh_update.return_value = [{'success': True}]
+        mock_grh_update.return_value = {'success': True}
         response = client.put(url, subject, format='json')
         self.assertTrue(response.status_code, 200)
-        print(response.data)
         self.assertEqual(response.data['first_name'], 'Johnny')
 
     def test_retrieve_subject_detail_from_protocol(self):
