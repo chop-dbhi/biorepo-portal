@@ -372,7 +372,12 @@ class ProtocolSubjectDetailView(BRPApiView):
             return Response({'error': 'subject not found'}, status=404)
 
         update_subject_response = self.updateEhbSubject(subject, subject_update, ehb_sub)
-        if (update_subject_response.status_code != 200):
+        try:
+            success = update_subject_response['success']
+        except:
+            success = (update_subject_response.status_code == 200)
+
+        if (success is False):
             return Response(json.dumps({'error': 'Unable to update subject'}), status=400)
 
         # If the update is succesful, update the subject record group associated with this subject
