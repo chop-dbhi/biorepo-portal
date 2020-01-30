@@ -359,10 +359,10 @@ class CreateView(DataEntryView):
         if request.method == 'GET' and not self.driver.new_record_form_required():
             # Just create the record and redirect (REDCap)
             try:
-                label_id = self.request.GET.get('label_id', 1)
+                self.label_id = self.request.GET.get('label_id', 1)
                 self.record_id = self.create_external_system_record(
                     self.request, self.driver, context['pds'], context['subject'],
-                    label=label_id)
+                    label=self.label_id)
                 if self.check_cache():
                     self.update_cache()
                 self.start_path = '{0}/dataentry/protocoldatasource/{1}/subject/{2}/record/{3}/start/'.format(

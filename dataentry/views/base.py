@@ -18,6 +18,8 @@ class DataEntryView(TemplateView):
     record = None
     record_id = None
     subject = None
+    label_id = None
+    label = None
     start_path = ''
     create_path = ''
 
@@ -35,28 +37,35 @@ class DataEntryView(TemplateView):
 
     def get_label(self, context):
 
-        if context['record']:
-            label_id = context['record'].label_id
-        else:
-            label_id = context['label_id']
+        if self.record:
+            self.label_id = self.record.label_id
+        if 'label_id' in context:
+            self.label_id = context['label_id']
         try:
-            label = self.service_client.get_rh_for(
-                record_type=ServiceClient.EXTERNAL_RECORD_LABEL).get(id=label_id)
-            return label
+            if not self.label:
+                self.label = self.service_client.get_rh_for(
+                    record_type=ServiceClient.EXTERNAL_RECORD_LABEL).get(id=self.label_id)
+            return self.label
         except:
             return
 
     def get_context_data(self, **kwargs):
         subject_api_url = "/api/subject/id/" + kwargs['subject_id'] + "/"
         context = super(DataEntryView, self).get_context_data(**kwargs)
-        
         self.pds = get_object_or_404(ProtocolDataSource, pk=kwargs['pds_id'])
-        self.subject = ServiceClient.ehb_api(subject_api_url, "GET").json()
-        self.record = self.get_external_record(**kwargs)
-        self.org = self.service_client.get_rh_for(
-            record_type=ServiceClient.ORGANIZATION).get(id=self.subject['organization'])
+        if not self.subject:
+            self.subject = ServiceClient.ehb_api(subject_api_url, "GET").json()
+        if not self.record:
+            self.record = self.get_external_record(**kwargs)
+        if not self.org:
+            self.org = self.service_client.get_rh_for(
+                record_type=ServiceClient.ORGANIZATION).get(id=self.subject['organization'])
         self.driver = DriverUtils.getDriverFor(
             protocol_data_source=self.pds, user=self.request.user)
+        if not self.label_id:
+            self.label_id = self.request.GET.get('label_id', 1)
+        if not self.label:
+            self.label = self.get_label(context)
         if self.record:
             self.start_path = '{0}/dataentry/protocoldatasource/{1}/subject/{2}/record/{3}/start/'.format(
                 self.service_client.self_root_path,
@@ -75,9 +84,9 @@ class DataEntryView(TemplateView):
             'pds': self.pds,
             'request': self.request,
             'record': self.record,
+            'label_id': self.label_id,
+            'label': self.label,
             'errors': []
         }
-        if not context['record']:
-            context['label_id'] = self.request.GET.get('label_id', 1)
-        context['label'] = self.get_label(context)
+
         return context
