@@ -1,10 +1,10 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns('django.contrib.auth.views', 
+urlpatterns = ['django.contrib.auth.views',
     url(r'^login/$', 'login', {
         'template_name': 'registration/login.html'
     }, name='login'),
-    
+
     url(r'^logout/$', 'logout_then_login', {
         'template_name': 'registration/logout.html'
     }, name='logout'),
@@ -17,4 +17,4 @@ urlpatterns = patterns('django.contrib.auth.views',
 
     url(r'^password/reset/complete/$', 'password_reset_complete',
         name='password-reset-complete'),
-)
+]
