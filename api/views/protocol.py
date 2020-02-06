@@ -217,6 +217,42 @@ class ProtocolSubjectsView(BRPApiView):
 
 
 class ProtocolSubjectDetailView(BRPApiView):
+    def edit_subject_user_audit(self, new_subject, old_subject, payload):
+        # check what subject elements have changed: first name, last name, DOB, organization, organization ID
+        final_payload = []
+
+        if (new_subject['first_name'] != old_subject['first_name']):
+            payload['change_field'] = "first_name"
+            payload['old_value'] = old_subject['first_name']
+            payload['new_value'] = new_subject['first_name']
+            final_payload.append(payload.copy())
+
+        if (new_subject['last_name'] != old_subject['last_name']):
+            payload['change_field'] = "last_name"
+            payload['old_value'] = old_subject['last_name']
+            payload['new_value'] = new_subject['last_name']
+            final_payload.append(payload.copy())
+
+        if (new_subject['organization_subject_id'] != old_subject['organization_subject_id']):
+            payload['change_field'] = "organization_subject_id"
+            payload['old_value'] = old_subject['organization_subject_id']
+            payload['new_value'] = new_subject['organization_subject_id']
+            final_payload.append(payload.copy())
+
+        if (new_subject['organization'] != old_subject['organization']):
+            payload['change_field'] = "organization"
+            payload['old_value'] = old_subject['organization']
+            payload['new_value'] = new_subject['organization']
+            final_payload.append(payload.copy())
+
+        if (datetime.strptime(new_subject['dob'], '%Y-%m-%d') != datetime.strptime(old_subject['dob'], '%Y-%m-%d')):
+            payload['change_field'] = "dob"
+            payload['old_value'] = old_subject['dob']
+            payload['new_value'] = new_subject['dob']
+            final_payload.append(payload.copy())
+
+        if (final_payload != []):
+            ServiceClient.user_audit(final_payload)
 
     def post(self, request, pk, *args, **kwargs):
         '''
@@ -224,7 +260,7 @@ class ProtocolSubjectDetailView(BRPApiView):
 
         Expects a request body of the form:
         {
-            "first_name": "John",
+            "last_name": "John",
             "last_name": "Doe",
             "organization_subject_id": "123123123",
             "organization": "1",
@@ -283,6 +319,16 @@ class ProtocolSubjectDetailView(BRPApiView):
             if self.subject_utils.create_protocol_subject_record_group(protocol, new_subject):
                 if protocol.addSubject(subject):
                     success = True
+                    # add this action to the user audit
+                    user_audit_payload = [{
+                        'subject': subject.id,
+                        'change_type': "SubjectGroup",
+                        'change_type_ehb_pk': protocol._subject_group().id,
+                        'change_action': "add subject",
+                        'user_name': request.user.username,
+                        'protocol_id': protocol.id
+                    }]
+                    self.edit_subject_user_audit(user_audit_payload)
                 else:
                     # Could not add subject to project
                     errors.append(
@@ -379,7 +425,15 @@ class ProtocolSubjectDetailView(BRPApiView):
 
         if (success is False):
             return Response(json.dumps({'error': 'Unable to update subject'}), status=400)
-
+        user_audit_payload = {
+            'subject': ehb_sub['id'],
+            'change_type': "Subject",
+            'change_type_ehb_pk': ehb_sub['id'],
+            'change_action': "edit",
+            'user_name': request.user.username,
+            'protocol_id': protocol.id
+        }
+        self.edit_subject_user_audit(subject_update, ehb_sub, user_audit_payload)
         # If the update is succesful, update the subject record group associated with this subject
         update_subj_gr_resp = self.update_subject_group(protocol, subject_update, group)
         if not update_subj_gr_resp['success']:
