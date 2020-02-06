@@ -324,11 +324,11 @@ class ProtocolSubjectDetailView(BRPApiView):
                         'subject': subject.id,
                         'change_type': "SubjectGroup",
                         'change_type_ehb_pk': protocol._subject_group().id,
-                        'change_action': "add subject",
+                        'change_action': "Add",
                         'user_name': request.user.username,
                         'protocol_id': protocol.id
                     }]
-                    self.edit_subject_user_audit(user_audit_payload)
+                    ServiceClient.user_audit(user_audit_payload)
                 else:
                     # Could not add subject to project
                     errors.append(
@@ -429,7 +429,7 @@ class ProtocolSubjectDetailView(BRPApiView):
             'subject': ehb_sub['id'],
             'change_type': "Subject",
             'change_type_ehb_pk': ehb_sub['id'],
-            'change_action': "edit",
+            'change_action': "Update",
             'user_name': request.user.username,
             'protocol_id': protocol.id
         }
