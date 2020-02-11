@@ -210,11 +210,12 @@ class ProtocolViewTests(BRPTestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['error'], 'Protocol requested not found')
 
+    @patch('api.models.protocols.Protocol._subject_group')
     @patch('api.views.base.BRPApiView.s_rh.get')
     @patch('api.views.base.BRPApiView.g_rh.create')
     @patch('api.views.base.BRPApiView.g_rh.add_subjects')
     @patch('api.views.base.BRPApiView.s_rh.create')
-    def test_create_and_delete_subject_on_protocol(self, screate_mock, gadd_mock, gcreate_mock, sget_mock):
+    def test_create_and_delete_subject_on_protocol(self, screate_mock, gadd_mock, gcreate_mock, sget_mock, subject_group_mock):
         '''
         Ensure that we can create a subject on a Protocol
         '''
@@ -253,6 +254,7 @@ class ProtocolViewTests(BRPTestCase):
                 created=datetime.datetime(2015, 1, 1)
             )
         }]
+        subject_group_mock.return_value.id = "12345"
 
         response = client.post(url, subject, format='json')
         success, subject, errors = response.data
