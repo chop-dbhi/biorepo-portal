@@ -5,7 +5,7 @@ import time
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.core.cache import cache
 from api.ehb_service_client import ServiceClient
 from api.utilities import SubjectUtils
@@ -464,11 +464,7 @@ class CreateView(DataEntryView):
                         else:
                             context['errors'].append(
                                 'This ID has already been assigned to another subject.')
-                            return render_to_response(
-                                'pds_dataentry_rec_create.html',
-                                context,
-                                context_instance=RequestContext(request)
-                            )
+                            return render(request, 'pds_dataentry_rec_create.html', context)
                     else:
                         request.META['action'] = 'Record could not be created'
                         request.META['error'] = True
@@ -486,8 +482,4 @@ class CreateView(DataEntryView):
             request.META['action'] = rce.errmsg
             request.META['error'] = True
             context['errors'].append(rce.cause)
-            return render_to_response(
-                'pds_dataentry_rec_create.html',
-                context,
-                context_instance=RequestContext(request)
-            )
+            return render(request, 'pds_dataentry_rec_create.html', context)
