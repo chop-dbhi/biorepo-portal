@@ -138,69 +138,70 @@ class ProtocolSubjectsView(BRPApiView):
             p = Protocol.objects.get(pk=pk)
         except ObjectDoesNotExist:
             return Response({'error': 'Protocol requested not found'}, status=404)
-        # Check cache
-        cache_data = cache.get('protocol{0}_sub_data'.format(p.id))
-        if cache_data:
-            # if all subjects have a modified date in cache then sort using modified date
-            try:
-                subs = sorted(json.loads(cache_data), key=lambda i: datetime.strptime(i['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
-            # if some subjects do not have modified date then sort by PK
-            except:
-                logger.info('subjects sorted by primary key for protocol {protocol}'.format(protocol=p.id))
-                subs = sorted(json.loads(cache_data), key=lambda i: (i['id'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
-            return Response(
-                subs,
-                headers={'Access-Control-Allow-Origin': '*'}
-            )
         if p.isUserAuthorized(request.user):
-            subjects = p.getSubjects()
-            organizations = p.organizations.all()
-            if subjects:
-                subs = [eHBSubjectSerializer(sub).data for sub in subjects]
-            else:
-                return Response([])
-            ehb_orgs = []
-            # We can't rely on Ids being consistent across apps so we must
-            # append the name here for display downstream.
-            for o in organizations:
-                ehb_orgs.append(o.getEhbServiceInstance())
-            # Check if the protocol has external IDs configured. If so retrieve them
-            manageExternalIDs = False
-
-            protocoldatasources = p.getProtocolDataSources()
-
-            for pds in protocoldatasources:
-                if pds.driver == 3:
-                    ExIdSource = pds
-                    manageExternalIDs = True
-
-            if manageExternalIDs:
+            # Check cache
+            cache_data = cache.get('protocol{0}_sub_data'.format(p.id))
+            if cache_data:
+                # if all subjects have a modified date in cache then sort using modified date
                 try:
-                    config = json.loads(ExIdSource.driver_configuration)
-                    if 'sort_on' in list(config.keys()):
-                        # er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
-                        # lbl = er_label_rh.get(id=config['sort_on'])
-                        lbl = ''
-                        addl_id_column = lbl
+                    subs = sorted(json.loads(cache_data), key=lambda i: datetime.strptime(i['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
+                # if some subjects do not have modified date then sort by PK
                 except:
-                    pass
+                    logger.info('subjects sorted by primary key for protocol {protocol}'.format(protocol=p.id))
+                    subs = sorted(json.loads(cache_data), key=lambda i: (i['id'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
+                return Response(
+                    subs,
+                    headers={'Access-Control-Allow-Origin': '*'}
+                )
+            else:
+                subjects = p.getSubjects()
+                organizations = p.organizations.all()
+                if subjects:
+                    subs = [eHBSubjectSerializer(sub).data for sub in subjects]
+                else:
+                    return Response([])
+                ehb_orgs = []
+                # We can't rely on Ids being consistent across apps so we must
+                # append the name here for display downstream.
+                for o in organizations:
+                    ehb_orgs.append(o.getEhbServiceInstance())
+                # Check if the protocol has external IDs configured. If so retrieve them
+                manageExternalIDs = False
 
-            for sub in subs:
-                sub['external_records'] = []
-                sub['external_ids'] = []
-                sub['organization'] = sub['organization_id']
-                sub['organization_id_label'] = sub['organization_id_label']
-                sub.pop('organization_id')
+                protocoldatasources = p.getProtocolDataSources()
+
                 for pds in protocoldatasources:
-                    sub['external_records'].extend(pds.getSubjectExternalRecords(sub))
+                    if pds.driver == 3:
+                        ExIdSource = pds
+                        manageExternalIDs = True
+
                 if manageExternalIDs:
-                    # Break out external ids into a separate object for ease of use
-                    for record in sub['external_records']:
-                        if record['external_system'] == 3:
-                            sub['external_ids'].append(record)
-                for ehb_org in ehb_orgs:
-                    if sub['organization'] == ehb_org.id:
-                        sub['organization_name'] = ehb_org.name
+                    try:
+                        config = json.loads(ExIdSource.driver_configuration)
+                        if 'sort_on' in list(config.keys()):
+                            # er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
+                            # lbl = er_label_rh.get(id=config['sort_on'])
+                            lbl = ''
+                            addl_id_column = lbl
+                    except:
+                        pass
+
+                for sub in subs:
+                    sub['external_records'] = []
+                    sub['external_ids'] = []
+                    sub['organization'] = sub['organization_id']
+                    sub['organization_id_label'] = sub['organization_id_label']
+                    sub.pop('organization_id')
+                    for pds in protocoldatasources:
+                        sub['external_records'].extend(pds.getSubjectExternalRecords(sub))
+                    if manageExternalIDs:
+                        # Break out external ids into a separate object for ease of use
+                        for record in sub['external_records']:
+                            if record['external_system'] == 3:
+                                sub['external_ids'].append(record)
+                    for ehb_org in ehb_orgs:
+                        if sub['organization'] == ehb_org.id:
+                            sub['organization_name'] = ehb_org.name
         else:
             return Response(
                 {"detail": "You are not authorized to view subjects in this protocol"},
