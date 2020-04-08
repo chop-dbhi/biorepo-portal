@@ -1,10 +1,11 @@
 import json
 import logging
 import inspect
+import time
 
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.core.cache import cache
 from api.ehb_service_client import ServiceClient
 from api.utilities import SubjectUtils
@@ -150,7 +151,7 @@ class StartView(DataEntryView):
         driverClass = inspect.getfile(self.driver.__class__)
         if "redcap" in str(driverClass):
             cache_key = 'protocoldatasource{pds_id}_redcap_completion_codes'.format(root=self.service_client.self_root_path, **kwargs)
-            subject_id = context['subject'].id
+            subject_id = context['subject']['id']
             record_id = context['record'].id
             record_name = context['record'].record_id
             redcap_form_complete_codes = self.redcap_form_complete_caching(self.driver, cache_key, subject_id, record_id, record_name)
@@ -253,12 +254,12 @@ class FormView(DataEntryView):
             return JsonResponse({'status': 'error', 'errors': errors})
         else:
             self.request.META['action'] = 'Form processed.'
-            self.request.META['subject_id'] = context['subject'].id  #The ehb PK for this subject
+            self.request.META['subject_id'] = context['subject']['id']  #The ehb PK for this subject
             # For all processed forms, clear cache for record selection table
             cache_key = 'protocoldatasource{pds_id}_redcap_completion_codes'.format(
                 root=self.service_client.self_root_path, **kwargs)
-            subject_id = context['subject'].id
-            record_id = context ['record'].id
+            subject_id = context['subject']['id']
+            record_id = context['record'].id
             try:
                 self.update_cache(cache_key, subject_id, record_id)
             except:
@@ -311,7 +312,7 @@ class CreateView(DataEntryView):
     def update_cache(self):
         subs = json.loads(self.cached_data)
         for sub in subs:
-            if sub['id'] == int(self.subject.id):
+            if sub['id'] == int(self.subject['id']):
                 er = self.get_external_record(record_id=self.record_id)
                 context = {"record": er}
                 label = json.loads(self.get_label(context))
@@ -345,29 +346,29 @@ class CreateView(DataEntryView):
             records = self.service_client.get_rh_for(
                 record_type=ServiceClient.EXTERNAL_RECORD).get(
                     external_system_url=self.pds.data_source.url,
-                    subject_id=self.subject.id,
+                    subject_id=self.subject['id'],
                     path=self.pds.path)
             allow_more_records = self.pds.max_records_per_subject == (
                 -1) or len(records) < self.pds.max_records_per_subject
         except PageNotFound:
             allow_more_records = self.pds.max_records_per_subject != 0
         if not allow_more_records:
-            request.META['action'] = 'Maximum number of records created for subject {0}'.format(self.subject.id)
+            request.META['action'] = 'Maximum number of records created for subject {0}'.format(self.subject['id'])
             request.META['error'] = True
             return HttpResponse('Error: The maximum number of records has been created.')
         if request.method == 'GET' and not self.driver.new_record_form_required():
             # Just create the record and redirect (REDCap)
             try:
-                label_id = self.request.GET.get('label_id', 1)
+                self.label_id = self.request.GET.get('label_id', 1)
                 self.record_id = self.create_external_system_record(
                     self.request, self.driver, context['pds'], context['subject'],
-                    label=label_id)
+                    label=self.label_id)
                 if self.check_cache():
                     self.update_cache()
                 self.start_path = '{0}/dataentry/protocoldatasource/{1}/subject/{2}/record/{3}/start/'.format(
                     self.service_client.self_root_path,
                     self.pds.id,
-                    self.subject.id,
+                    self.subject['id'],
                     self.record_id)
                 return HttpResponseRedirect(self.start_path)
             except RecordCreationError as rce:  # exception from the eHB
@@ -449,7 +450,7 @@ class CreateView(DataEntryView):
                         er_rh = ServiceClient.get_rh_for(
                             record_type=ServiceClient.EXTERNAL_RECORD)
                         ehb_recs = er_rh.get(
-                            external_system_url=self.pds.data_source.url, subject_id=self.subject.id, path=self.pds.path)
+                            external_system_url=self.pds.data_source.url, subject_id=self.subject['id'], path=self.pds.path)
                         ehb_rec_id = None
                         for record in ehb_recs:
                             if record.record_id == rec_id:
@@ -458,16 +459,12 @@ class CreateView(DataEntryView):
                             self.start_path = '%s/dataentry/protocoldatasource/%s/subject/%s/record/%s/start' % (
                                 ServiceClient.self_root_path,
                                 self.pds.id,
-                                self.subject.id,
+                                self.subject['id'],
                                 ehb_rec_id)
                         else:
                             context['errors'].append(
                                 'This ID has already been assigned to another subject.')
-                            return render_to_response(
-                                'pds_dataentry_rec_create.html',
-                                context,
-                                context_instance=RequestContext(request)
-                            )
+                            return render(request, 'pds_dataentry_rec_create.html', context)
                     else:
                         request.META['action'] = 'Record could not be created'
                         request.META['error'] = True
@@ -485,8 +482,4 @@ class CreateView(DataEntryView):
             request.META['action'] = rce.errmsg
             request.META['error'] = True
             context['errors'].append(rce.cause)
-            return render_to_response(
-                'pds_dataentry_rec_create.html',
-                context,
-                context_instance=RequestContext(request)
-            )
+            return render(request, 'pds_dataentry_rec_create.html', context)

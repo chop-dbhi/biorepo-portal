@@ -138,69 +138,70 @@ class ProtocolSubjectsView(BRPApiView):
             p = Protocol.objects.get(pk=pk)
         except ObjectDoesNotExist:
             return Response({'error': 'Protocol requested not found'}, status=404)
-        # Check cache
-        cache_data = cache.get('protocol{0}_sub_data'.format(p.id))
-        if cache_data:
-            # if all subjects have a modified date in cache then sort using modified date
-            try:
-                subs = sorted(json.loads(cache_data), key=lambda i: datetime.strptime(i['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
-            # if some subjects do not have modified date then sort by PK
-            except:
-                logger.info('subjects sorted by primary key for protocol {protocol}'.format(protocol=p.id))
-                subs = sorted(json.loads(cache_data), key=lambda i: (i['id'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
-            return Response(
-                subs,
-                headers={'Access-Control-Allow-Origin': '*'}
-            )
         if p.isUserAuthorized(request.user):
-            subjects = p.getSubjects()
-            organizations = p.organizations.all()
-            if subjects:
-                subs = [eHBSubjectSerializer(sub).data for sub in subjects]
-            else:
-                return Response([])
-            ehb_orgs = []
-            # We can't rely on Ids being consistent across apps so we must
-            # append the name here for display downstream.
-            for o in organizations:
-                ehb_orgs.append(o.getEhbServiceInstance())
-            # Check if the protocol has external IDs configured. If so retrieve them
-            manageExternalIDs = False
-
-            protocoldatasources = p.getProtocolDataSources()
-
-            for pds in protocoldatasources:
-                if pds.driver == 3:
-                    ExIdSource = pds
-                    manageExternalIDs = True
-
-            if manageExternalIDs:
+            # Check cache
+            cache_data = cache.get('protocol{0}_sub_data'.format(p.id))
+            if cache_data:
+                # if all subjects have a modified date in cache then sort using modified date
                 try:
-                    config = json.loads(ExIdSource.driver_configuration)
-                    if 'sort_on' in list(config.keys()):
-                        # er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
-                        # lbl = er_label_rh.get(id=config['sort_on'])
-                        lbl = ''
-                        addl_id_column = lbl
+                    subs = sorted(json.loads(cache_data), key=lambda i: datetime.strptime(i['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
+                # if some subjects do not have modified date then sort by PK
                 except:
-                    pass
+                    logger.info('subjects sorted by primary key for protocol {protocol}'.format(protocol=p.id))
+                    subs = sorted(json.loads(cache_data), key=lambda i: (i['id'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
+                return Response(
+                    subs,
+                    headers={'Access-Control-Allow-Origin': '*'}
+                )
+            else:
+                subjects = p.getSubjects()
+                organizations = p.organizations.all()
+                if subjects:
+                    subs = [eHBSubjectSerializer(sub).data for sub in subjects]
+                else:
+                    return Response([])
+                ehb_orgs = []
+                # We can't rely on Ids being consistent across apps so we must
+                # append the name here for display downstream.
+                for o in organizations:
+                    ehb_orgs.append(o.getEhbServiceInstance())
+                # Check if the protocol has external IDs configured. If so retrieve them
+                manageExternalIDs = False
 
-            for sub in subs:
-                sub['external_records'] = []
-                sub['external_ids'] = []
-                sub['organization'] = sub['organization_id']
-                sub['organization_id_label'] = sub['organization_id_label']
-                sub.pop('organization_id')
+                protocoldatasources = p.getProtocolDataSources()
+
                 for pds in protocoldatasources:
-                    sub['external_records'].extend(pds.getSubjectExternalRecords(sub))
+                    if pds.driver == 3:
+                        ExIdSource = pds
+                        manageExternalIDs = True
+
                 if manageExternalIDs:
-                    # Break out external ids into a separate object for ease of use
-                    for record in sub['external_records']:
-                        if record['external_system'] == 3:
-                            sub['external_ids'].append(record)
-                for ehb_org in ehb_orgs:
-                    if sub['organization'] == ehb_org.id:
-                        sub['organization_name'] = ehb_org.name
+                    try:
+                        config = json.loads(ExIdSource.driver_configuration)
+                        if 'sort_on' in list(config.keys()):
+                            # er_label_rh = ServiceClient.get_rh_for(record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
+                            # lbl = er_label_rh.get(id=config['sort_on'])
+                            lbl = ''
+                            addl_id_column = lbl
+                    except:
+                        pass
+
+                for sub in subs:
+                    sub['external_records'] = []
+                    sub['external_ids'] = []
+                    sub['organization'] = sub['organization_id']
+                    sub['organization_id_label'] = sub['organization_id_label']
+                    sub.pop('organization_id')
+                    for pds in protocoldatasources:
+                        sub['external_records'].extend(pds.getSubjectExternalRecords(sub))
+                    if manageExternalIDs:
+                        # Break out external ids into a separate object for ease of use
+                        for record in sub['external_records']:
+                            if record['external_system'] == 3:
+                                sub['external_ids'].append(record)
+                    for ehb_org in ehb_orgs:
+                        if sub['organization'] == ehb_org.id:
+                            sub['organization_name'] = ehb_org.name
         else:
             return Response(
                 {"detail": "You are not authorized to view subjects in this protocol"},
@@ -217,6 +218,42 @@ class ProtocolSubjectsView(BRPApiView):
 
 
 class ProtocolSubjectDetailView(BRPApiView):
+    def edit_subject_user_audit(self, new_subject, old_subject, payload):
+        # check what subject elements have changed: first name, last name, DOB, organization, organization ID
+        final_payload = []
+
+        if (new_subject['first_name'] != old_subject['first_name']):
+            payload['change_field'] = "first_name"
+            payload['old_value'] = old_subject['first_name']
+            payload['new_value'] = new_subject['first_name']
+            final_payload.append(payload.copy())
+
+        if (new_subject['last_name'] != old_subject['last_name']):
+            payload['change_field'] = "last_name"
+            payload['old_value'] = old_subject['last_name']
+            payload['new_value'] = new_subject['last_name']
+            final_payload.append(payload.copy())
+
+        if (new_subject['organization_subject_id'] != old_subject['organization_subject_id']):
+            payload['change_field'] = "organization_subject_id"
+            payload['old_value'] = old_subject['organization_subject_id']
+            payload['new_value'] = new_subject['organization_subject_id']
+            final_payload.append(payload.copy())
+
+        if (new_subject['organization'] != old_subject['organization']):
+            payload['change_field'] = "organization"
+            payload['old_value'] = old_subject['organization']
+            payload['new_value'] = new_subject['organization']
+            final_payload.append(payload.copy())
+
+        if (datetime.strptime(new_subject['dob'], '%Y-%m-%d') != datetime.strptime(old_subject['dob'], '%Y-%m-%d')):
+            payload['change_field'] = "dob"
+            payload['old_value'] = old_subject['dob']
+            payload['new_value'] = new_subject['dob']
+            final_payload.append(payload.copy())
+
+        if (final_payload != []):
+            ServiceClient.user_audit(final_payload)
 
     def post(self, request, pk, *args, **kwargs):
         '''
@@ -224,7 +261,7 @@ class ProtocolSubjectDetailView(BRPApiView):
 
         Expects a request body of the form:
         {
-            "first_name": "John",
+            "last_name": "John",
             "last_name": "Doe",
             "organization_subject_id": "123123123",
             "organization": "1",
@@ -283,6 +320,16 @@ class ProtocolSubjectDetailView(BRPApiView):
             if self.subject_utils.create_protocol_subject_record_group(protocol, new_subject):
                 if protocol.addSubject(subject):
                     success = True
+                    # add this action to the user audit
+                    user_audit_payload = [{
+                        'subject': subject.id,
+                        'change_type': "SubjectGroup",
+                        'change_type_ehb_pk': protocol._subject_group().id,
+                        'change_action': "Add",
+                        'user_name': request.user.username,
+                        'protocol_id': protocol.id
+                    }]
+                    ServiceClient.user_audit(user_audit_payload)
                 else:
                     # Could not add subject to project
                     errors.append(
@@ -304,6 +351,7 @@ class ProtocolSubjectDetailView(BRPApiView):
                         'Failed to complete eHB transactions. Could not add subject to project. Please try again.')
                     success = False
         subject = json.loads(Subject.json_from_identity(subject))
+        subject['organization_name'] = org.name
 
         if not success:
             return Response(
@@ -312,17 +360,7 @@ class ProtocolSubjectDetailView(BRPApiView):
                 status=400
             )
         # Add subject to cache
-        cache_key = 'protocol{0}_sub_data'.format(protocol.id)
-        cache_data = self.cache.get(cache_key)
-        if cache_data:
-            subject['external_ids'] = []
-            subject['external_records'] = []
-            subject['organization_name'] = org.name
-            subjects = json.loads(cache_data)
-            subjects.append(subject)
-            self.cache.set(cache_key, json.dumps(subjects))
-            if hasattr(self.cache, 'persist'):
-                self.cache.persist(cache_key)
+        self.update_subject_cache(protocol.id, subject, True)
         return Response(
             [success, subject, errors],
             headers={'Access-Control-Allow-Origin': '*'},
@@ -370,55 +408,46 @@ class ProtocolSubjectDetailView(BRPApiView):
 
     def put(self, request, pk, subject, *args, **kwargs):
         subject_update = json.loads(request.body.decode('utf-8'))
+        subject_api_url = "/api/subject/id/" + subject + "/"
         # See if subject exists
         try:
-            ehb_sub = self.s_rh.get(id=subject)
-            org = self.o_rh.get(id=subject_update['organization'])
+            ehb_sub = ServiceClient.ehb_api(subject_api_url, "GET").json()
             protocol = Protocol.objects.get(pk=pk)
             old_group_name = SubjectUtils.protocol_subject_record_group_name(protocol, ehb_sub)
             group = self.g_rh.get(name=old_group_name)
         except:
             return Response({'error': 'subject not found'}, status=404)
-        ehb_sub.old_subject = deepcopy(ehb_sub)
-        ehb_sub.first_name = subject_update['first_name']
-        ehb_sub.last_name = subject_update['last_name']
-        ehb_sub.organization_subject_id = subject_update['organization_subject_id']
-        ehb_sub.organization_id = org.id
-        ehb_sub.organization_id_label = org.subject_id_label
-        ehb_sub.dob = datetime.strptime(subject_update['dob'], '%Y-%m-%d')
-        new_group_name = SubjectUtils.protocol_subject_record_group_name(protocol, ehb_sub)
-        group.name = new_group_name
-        group.client_key = protocol._settings_prop(
-            'CLIENT_KEY', 'key', '')
-        group.current_client_key(group.client_key)
-        update = self.s_rh.update(ehb_sub)[0]
-        if update['errors']:
+
+        update_subject_response = self.updateEhbSubject(subject, subject_update, ehb_sub)
+        try:
+            success = update_subject_response['success']
+        except:
+            success = (update_subject_response.status_code == 200)
+
+        if (success is False):
             return Response(json.dumps({'error': 'Unable to update subject'}), status=400)
+        user_audit_payload = {
+            'subject': ehb_sub['id'],
+            'change_type': "Subject",
+            'change_type_ehb_pk': ehb_sub['id'],
+            'change_action': "Update",
+            'user_name': request.user.username,
+            'protocol_id': protocol.id
+        }
+        self.edit_subject_user_audit(subject_update, ehb_sub, user_audit_payload)
         # If the update is succesful, update the subject record group associated with this subject
-        res = self.g_rh.update(group)[0]
-        if not res['success']:
+        update_subj_gr_resp = self.update_subject_group(protocol, subject_update, group)
+        if not update_subj_gr_resp['success']:
             return Response(json.dumps({'error': 'Unable to update group'}), status=400)
+
         # If the update is succesful, update the cache.
-        sub = json.loads(Subject.json_from_identity(update['subject']))
-        sub['organization_name'] = org.name
-        cache_key = 'protocol{0}_sub_data'.format(pk)
-        cache_data = self.cache.get(cache_key)
-        if cache_data:
-            if 'external_ids' in list(subject_update.keys()):
-                sub['external_ids'] = subject_update['external_ids']
-            else:
-                sub['external_ids'] = []
-            sub['external_records'] = subject_update['external_records']
-            sub['organization_name'] = org.name
-            subjects = json.loads(cache_data)
-            for i in range(0, len(subjects)):
-                if subjects[i]['id'] == sub['id']:
-                    subjects[i] = sub
-            self.cache.set(cache_key, json.dumps(subjects))
-            if hasattr(self.cache, 'persist'):
-                self.cache.persist(cache_key)
+        try:
+            self.update_subject_cache(pk, subject_update, False)
+        except:
+            return Response(json.dumps({'error': 'Unable to update cache'}), status=400)
+
         return Response(
-            sub,
+            subject_update,
             headers={'Access-Control-Allow-Origin': '*'}
         )
 
@@ -432,6 +461,44 @@ class ProtocolSubjectDetailView(BRPApiView):
             return Response({'error': 'Unable to delete subject'}, status=400)
 
         return Response({'info': 'Subject deleted'}, status=200)
+
+    @staticmethod
+    def updateEhbSubject(subjectID, new_subject, old_subject):
+        subject_update_api_url = "/api/subject/"
+        ehb_update_subj = {}
+
+        ehb_update_subj["id"] = subjectID
+        ehb_update_subj["old_subject"] = deepcopy(old_subject)
+        ehb_update_subj["new_subject"] = deepcopy(new_subject)
+        ehb_update_subj_body = '[' + str(json.dumps(deepcopy(ehb_update_subj))) + ']'
+        return ServiceClient.ehb_api(subject_update_api_url, "PUT", json.loads(ehb_update_subj_body))
+
+    @classmethod
+    def update_subject_group(cls, protocol, subject_update, group):
+        new_group_name = SubjectUtils.protocol_subject_record_group_name(protocol, subject_update)
+        group.name = new_group_name
+        group.client_key = protocol._settings_prop(
+            'CLIENT_KEY', 'key', '')
+        group.current_client_key(group.client_key)
+        return cls.g_rh.update(group)[0]
+
+    @classmethod
+    def update_subject_cache(cls, protocol_pk, subject_update, new_subject):
+        cache_key = 'protocol{0}_sub_data'.format(protocol_pk)
+        cache_data = cls.cache.get(cache_key)
+        if cache_data:
+            subjects = json.loads(cache_data)
+            if new_subject:
+                subject_update['external_ids'] = []
+                subject_update['external_records'] = []
+                subjects.append(subject_update)
+            else:
+                for i in range(0, len(subjects)):
+                    if subjects[i]['id'] == subject_update['id']:
+                        subjects[i] = subject_update
+            cls.cache.set(cache_key, json.dumps(subjects))
+            if hasattr(cls.cache, 'persist'):
+                cls.cache.persist(cache_key)
 
 
 class ProtocolSubjFamDetailView(BRPApiView):

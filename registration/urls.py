@@ -1,8 +1,8 @@
-from django.conf.urls import url, patterns, include
+from django.conf.urls import url, include
 from django.views.generic.base import TemplateView
 from registration.views import verify, register
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^register/$', register, name='register'),
 
     url(r'^register/complete/$', TemplateView.as_view(
@@ -27,4 +27,4 @@ urlpatterns = patterns('',
         name='moderate-registration-list'),
 
     url(r'', include('registration.auth_urls')),
-)
+]

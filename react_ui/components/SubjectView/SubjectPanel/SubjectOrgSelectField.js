@@ -39,6 +39,7 @@ class SubjectOrgSelectField extends React.Component {
       // Changing the input fields should update the state of the active subject
       const sub = this.props.subject;
       sub.organization = e.value;
+      sub.organization_name = e.label
       dispatch(SubjectActions.setActiveSubject(sub));
     } else {
       const newSub = this.props.newSubject;

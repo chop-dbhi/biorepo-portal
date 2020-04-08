@@ -22,15 +22,15 @@ RUN apk add --update \
     rm -r /root/.cache &&\
     apk upgrade
 
-RUN pip3 install "Django>=1.9.6,<1.10"
+RUN pip3 install "Django>=1.11.27,<1.12"
 RUN pip3 install "django-environ>=0.4.0,<0.5"
 RUN pip3 install "django-markdown-deux>=1.0.5,<1.1"
 RUN pip3 install "django-session-security>=2.3.2,<2.4"
-RUN pip3 install "django_redis>=4.4.3,<4.5"
-RUN pip3 install "djangorestframework>=3.3.3,<3.4"
+RUN pip3 install "django_redis>=4.5,<4.6"
+RUN pip3 install "djangorestframework>=3.9.1,<3.10"
 RUN pip3 install "djangorestframework-jwt>=1.5.0,<1.6"
 RUN pip3 install "git+https://github.com/chop-dbhi/ehb-client.git@dev#egg=ehb_client"
-RUN pip3 install "git+https://github.com/chop-dbhi/ehb-datasources.git@master#egg=ehb_datasources"
+RUN pip3 install "git+https://github.com/chop-dbhi/ehb-datasources.git@dev#egg=ehb_datasources"
 RUN pip3 install "ldap3>=1.4.0,<1.5"
 RUN pip3 install "gunicorn>=19,<20"
 RUN pip3 install "psycopg2-binary"

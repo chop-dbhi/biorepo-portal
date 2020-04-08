@@ -98,13 +98,25 @@ class SubjectUtils(object):
         from .models.protocols import Organization
 
         orh = ServiceClient.get_rh_for(record_type=ServiceClient.ORGANIZATION)
-        ehb_org = orh.get(id=subject.organization_id)
-        brp_org = Organization.objects.get(name=ehb_org.name)
 
-        return ':'.join(['BRP',
-                         protocol.immutable_key.key,
-                         brp_org.immutable_key.key,
-                         subject.organization_subject_id])
+        '''this Try catch is temporary untill all 'subject' parameters are
+        consistantly dict and not a subject object'''
+        try:
+            ehb_org = orh.get(id=subject['organization'])
+        except:
+            ehb_org = orh.get(id=subject.organization_id)
+
+        brp_org = Organization.objects.get(name=ehb_org.name)
+        try:
+            return ':'.join(['BRP',
+                             protocol.immutable_key.key,
+                             brp_org.immutable_key.key,
+                             subject.organization_subject_id])
+        except:
+            return ':'.join(['BRP',
+                             protocol.immutable_key.key,
+                             brp_org.immutable_key.key,
+                             subject['organization_subject_id']])
 
     @staticmethod
     def get_protocol_subject_record_group(protocol, subject):
@@ -142,8 +154,8 @@ class SubjectUtils(object):
         # TODO: This Exception handling is confusing. Does it work?
         except:
             raise
-            logger.error("Failure creating a subject record group for"
-                         " {0}".format(subject.id))
+            logger.error("Failure creating a subject record group for {0}".format(
+                subject['id']))
 
             return False
 
@@ -171,10 +183,10 @@ class SubjectUtils(object):
         """Get the standard record prefix for a subject."""
 
         return ''.join([ProtocolConstants.ex_rec_org_pre,
-                        str(subject.organization_id),
+                        str(subject['organization']),
                         ProtocolConstants.ex_rec_sep,
                         ProtocolConstants.ex_rec_sub_id_pre,
-                        str(subject.organization_subject_id)])
+                        str(subject['organization_subject_id'])])
 
     @staticmethod
     def add_record_to_subject_record_group(protocol, subject, record):
@@ -224,21 +236,20 @@ class SubjectUtils(object):
 
             for record in ehb_recs:
                 if record.record_id == record_id:
-                    if record.subject_id == subject.id:
+                    if record.subject_id == subject['id']:
 
                         logger.error(
-                            'Record id {0} already exists for subject {1} on'
-                            ' datasource {2}'.format(
+                            'Record id {0} already exists for subject {1} on datasource {2}'.format(
                                 record.record_id,
-                                subject.id,
+                                subject['id'],
                                 protocol_data_source))
 
                         return 1
 
                     else:
                         logger.error(
-                            'Record id {0} already exists for a different'
-                            ' Subject').format(record.record_id)
+                            'Record id {0} already exists for a different Subject'.format(
+                                record.record_id))
 
                         return 2
 
@@ -275,7 +286,7 @@ class SubjectUtils(object):
 
             er = ExternalRecord(
                 record_id=record_id,
-                subject_id=subject.id,
+                subject_id=subject['id'],
                 external_system_id=es.id,
                 path=protocol_data_source.path,
                 label_id=label

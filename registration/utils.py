@@ -3,7 +3,7 @@ import random
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from registration.user import UserModel
 
@@ -47,7 +47,7 @@ def validate_password(password, length):
 
 
 def create_urls(backend):
-    return patterns('',
+    urlpatterns = [
         url(r'^activate/complete/$', 'django.views.generic.simple.direct_to_template', {
             'template': 'registration/activation_complete.html'
         }, name='registration_activation_complete'),
@@ -71,4 +71,5 @@ def create_urls(backend):
         url(r'^register/closed/$', 'django.views.generic.simple.direct_to_template', {
             'template': 'registration/registration_closed.html'
         }, name='registration-disabled'),
-    )
+    ]
+    return urlpatterns
