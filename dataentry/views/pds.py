@@ -437,7 +437,7 @@ class CreateView(DataEntryView):
                     self.start_path = '{0}/dataentry/protocoldatasource/{1}/subject/{2}/record/{3}/start/'.format(
                         self.service_client.self_root_path,
                         self.pds.id,
-                        self.subject.id,
+                        self.subject['id'],
                         self.record_id)
                     return HttpResponseRedirect(self.start_path)
 
