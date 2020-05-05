@@ -9,7 +9,12 @@ class ProtocolUserForm(ModelForm):
         model = ProtocolUser
         fields = ('protocol', 'user', 'role')
 
-class ProtocolUserCredentialsForm(Form):
+class ProtocolUserCredentialsForm(ModelForm):
+    class Meta:
+        model = ProtocolUserCredentials
+        fields = ('data_source', 'data_source_username', 'data_source_password')
+
+class NautilusCredentialsForm(Form):
     protocol = forms.ModelChoiceField(queryset=Protocol.objects.all(), empty_label="Select a Protocol")
     user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="Select a User")
     protocol_user = forms.ModelChoiceField(queryset=ProtocolUser.objects.all(), empty_label="Select a Protocol User")
