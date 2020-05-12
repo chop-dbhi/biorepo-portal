@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 
 from .views.protocol import Fn_in_progress, ProtocolUserView
-
+from .views.protocol import UpdateNautilusCredentialsView
 from .views.brp_commands import CacheSubjects, ReactivateUsers, CacheLabels
 
 
@@ -15,6 +15,10 @@ urlpatterns = [
     url(
         r'^fn_in_progress/$',
         login_required(Fn_in_progress.as_view())),
+    url(
+        r'^update_nautilus_credentials/$',
+        login_required(UpdateNautilusCredentialsView.as_view()),
+        name='user_credentials'),
     url(
         r'^cache_subjects/$',
         login_required(CacheSubjects.as_view()),
