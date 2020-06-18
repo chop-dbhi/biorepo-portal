@@ -33,6 +33,7 @@ class ServiceClient(object):
     isSecure = SERVICE_CLIENT_SETTINGS['ISSECURE']
     APP_URL = SERVICE_CLIENT_SETTINGS['APP_URL']
     api_key = SERVICE_CLIENT_SETTINGS['API_KEY']
+    client_key = settings.PROTOCOL_PROPS['CLIENT_KEY']
 
     ext_rec_client = ExternalRecordRequestHandler(
         host, root_path, isSecure, api_key)
@@ -159,6 +160,7 @@ class ServiceClient(object):
         headers = {
             'Content-Type': "application/json",
             'Api-token': ServiceClient.api_key,
+            'GROUP-CLIENT-KEY': ServiceClient.client_key['key'],
             'cache-control': "no-cache",
             'Accept': "application/json"
             }
