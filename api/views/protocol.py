@@ -452,19 +452,24 @@ class ProtocolSubjectDetailView(BRPApiView):
         )
 
     def delete(self, request, pk, subject, *args, **kwargs):
+        if request.user.is_superuser:
+            try:
+                subject = self.s_rh.get(id=subject)
+                protocol = Protocol.objects.get(pk=pk)
+                group_id = self.get_group_id(protocol.immutable_key.key)
+                # instead of deleting a subject - we want to just remove them from the subject group
+                # self.s_rh.delete(id=subject.id)
+                self.remove_sub_from_ehb_group(subject.id, group_id)
+                SubjectUtils.delete_protocol_subject_record_group(protocol, subject)
+            except:
+                return Response({'error': 'Unable to delete subject'}, status=400)
 
-        try:
-            subject = self.s_rh.get(id=subject)
-            protocol = Protocol.objects.get(pk=pk)
-            group_id = self.get_group_id(protocol.immutable_key.key)
-            # instead of deleting a subject - we want to just remove them from the subject group
-            # self.s_rh.delete(id=subject.id)
-            self.remove_sub_from_ehb_group(subject.id, group_id)
-            SubjectUtils.delete_protocol_subject_record_group(protocol, subject)
-        except:
-            return Response({'error': 'Unable to delete subject'}, status=400)
-
-        return Response({'info': 'Subject deleted'}, status=200)
+            return Response({'info': 'Subject deleted'}, status=200)
+        else:
+            return Response(
+                {"detail": "You are not authorized to view subjects in this protocol"},
+                status=403
+            )
 
     @staticmethod
     def get_group_id(key):
