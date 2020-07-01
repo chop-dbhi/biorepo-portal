@@ -254,7 +254,7 @@ class DataSource(Base):
 
             rh = ServiceClient.get_rh_for(
                 record_type=ServiceClient.EXTERNAL_SYSTEM)
-            # print('subs in datasource'.format(rh.subjects(es.id)))
+
             try:
                 return rh.subjects(es.id)
             except:
