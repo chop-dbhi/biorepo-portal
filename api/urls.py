@@ -85,5 +85,8 @@ urlpatterns = [
         name='subjFam-get-rel-types'),
     url(r'^subj_fam/relationship_id/(?P<relationship_id>[0-9]+)/$',
         views.ProtocolSubjFamDetailView.as_view(),
-        name='delete-subjFam')
+        name='delete-subjFam'),
+    url(r'^external-protocol-sub-ids/protocol/(?P<protocol_pk>[0-9]+)/datasource/(?P<datasource_pk>[0-9]+)',
+        views.ProtocolSubjectIdView.as_view(),
+        name='protocol_external_ids')
 ]

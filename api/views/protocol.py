@@ -1,5 +1,7 @@
 import logging
 import json
+import string
+import random
 from datetime import datetime
 
 from copy import deepcopy
@@ -8,7 +10,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 
 from .base import BRPApiView
-from api.models.protocols import Protocol, ProtocolUserCredentials
+from api.models.protocols import Protocol, ProtocolUserCredentials, DataSource
 from api.serializers import OrganizationSerializer, ProtocolSerializer, \
     eHBSubjectSerializer, ProtocolDataSourceSerializer, DataSourceSerializer
 from api.utilities import SubjectUtils
@@ -788,3 +790,96 @@ class ProtocolSubjFamDetailView(BRPApiView):
             logger.info('error updating relationship id {0}'.format(relationship_id))
 
         return Response({'updatedRelationship': updated_relationship, 'oldRelationship': old_relationship}, status=200)
+
+
+class ProtocolSubjectIdView(BRPApiView):
+    """
+    API endpoint that allows creation of Id to be used as de-identifiers in
+    external datasets and external applications not directly connected to the BRP.
+    """
+    def get(self, request, protocol_pk, datasource_pk):
+        try:
+            datasource = DataSource.objects.get(pk=datasource_pk)
+            protocol = Protocol.objects.get(pk=protocol_pk)
+        except:
+            return Response('datasource or protocol does not exist in the BRP', status=404)
+
+        # check to make sure that protocol name is somewhere in the datasource description
+        if not (protocol.name in str(datasource.description)):
+            return Response('protocol name is not in the datasource description', status=400)
+
+        # Check to make sure user is authorized for this protocol
+        if not protocol.isUserAuthorized(request.user):
+            return Response('user is not authorized for this protocol', status=403)
+
+        # get all subjects in the protocol
+        subjects_protocol = self.get_protocol_subjects(protocol)
+
+        # get all subjects in DataSource
+        subjects_datasource = self.get_datasource_subjects()
+
+        check_subs = self.check_all_sub_in_datasource(subjects_protocol, subjects_datasource)
+
+        print(check_subs)
+        return Response('response', status=200)
+
+    @staticmethod
+    def get_protocol_subjects(protocol):
+        try:
+            subjects_protocol_obj = protocol.getSubjects()
+            if subjects_protocol_obj:
+                subjects_protocol = [eHBSubjectSerializer(sub).data for sub in subjects_protocol_obj]
+            else:
+                subjects_protocol = None
+        except:
+            return Response('there are no subjects aligned to this protocol', status=200)
+        if (subjects_protocol is None):
+            return Response('there are no subjects aligned to this protocol', status=200)
+
+        return subjects_protocol
+
+    def check_all_sub_in_datasource(self, protocol_subs, datasource_subs):
+        # print('protocol_subs: {}'.format(protocol_subs))
+        print('protocol_subs count: {}'.format(len(protocol_subs)))
+        # print('datasource subs: {}'.format(datasource_subs))
+        for subject in protocol_subs:
+            print(subject['organization_subject_id'])
+            if(str(subject['organization_subject_id']) not in datasource_subs):
+                # generate a new ID for this subject
+                new_id = self.generate_unique_random_id(datasource_subs)
+
+                # TODO add subject to eHB datasource
+
+                # get a fresh list of subjects in the datasource
+                datasource_subs = self.get_datasource_subjects()
+        if (datasource_subs is not None):
+            print('datasource_subs count: {}'.format(len(datasource_subs)))
+        return None
+
+    @staticmethod
+    def add_subject_to_eHB_datasource(sub):
+        # todo make API call to add subject to eHN DataSource
+        return None
+
+    @staticmethod
+    def get_datasource_subjects(datasource):
+        try:
+            return datasource.getSubjects()
+        except:
+            return Response('there was an error getting subjects aligned to datasource', status=400)
+
+    @staticmethod
+    def generate_random_id():
+        seed = 493827561
+        length = 10
+        chars = string.ascii_uppercase + string.digits
+        random.seed(random.randrange(0, seed))
+        return ''.join(random.choice(chars) for idx in range(length))
+
+    def generate_unique_random_id(self, exisiting_ids):
+        success = False
+        while not success:
+            new_id = self.generate_random_id()
+            if not (new_id in exisiting_ids):
+                success = True
+        return new_id
