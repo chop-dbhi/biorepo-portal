@@ -254,8 +254,12 @@ class DataSource(Base):
 
             rh = ServiceClient.get_rh_for(
                 record_type=ServiceClient.EXTERNAL_SYSTEM)
-
-            return rh.subjects(es.id)
+            # print('subs in datasource'.format(rh.subjects(es.id)))
+            try:
+                return rh.subjects(es.id)
+            except:
+                # if there are no subjects in datasource, then return None
+                return None
 
 
 class Protocol(BaseWithImmutableKey):
