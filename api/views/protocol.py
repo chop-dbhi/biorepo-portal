@@ -823,7 +823,7 @@ class ProtocolSubjectIdView(BRPApiView):
             return Response(msg, status=status)
 
         # get all subjects in DataSource
-        subs_org_id_datasource, subs_pk_datasource, subs_record_id, msg, status = self.get_datasource_subjects(datasource, eHB_ex_sys_pk)
+        subs_pk_datasource, subs_record_id, msg, status = self.get_datasource_subjects(datasource, eHB_ex_sys_pk)
         if status is not 200:
             return Response(msg, status=status)
 
@@ -871,9 +871,7 @@ class ProtocolSubjectIdView(BRPApiView):
         except:
             msg = 'error formatting subjects and their external record'
             status_code = 300
-
         return formatted_subs, msg, status_code
-
 
     def get_subject_external_ids(self, ehb_external_system):
         msg = ' '
@@ -892,7 +890,6 @@ class ProtocolSubjectIdView(BRPApiView):
 
         return msg, status_code, subject_ids
 
-
     def get_ehb_external_system(self, brp_external_sys_name):
         msg = ' '
         status_code = 200
@@ -900,18 +897,12 @@ class ProtocolSubjectIdView(BRPApiView):
         success = True
         api_url = '/api/externalsystem/query/'
         payload = [{"name": brp_external_sys_name}]
-        # payload = json.loads(payload)
-        # print(brp_external_sys_name)
-        # ehb_response = ServiceClient.ehb_api(api_url, "POST", payload)
-        # print(ehb_response.text)
         try:
             ehb_response = ServiceClient.ehb_api(api_url, "POST", payload)
-            print(ehb_response)
             ehb_ex_sys_json = ehb_response.json()
             ehb_ex_sys_pk = ehb_ex_sys_json[0]['externalSystem']['id']
         except:
             success = False
-        # print("ehb_ex_sys_pk: {}".format(ehb_ex_sys_pk[0]['externalSystem']['id']))
         if (not success) or (ehb_response.status_code is not 200):
             msg = 'cannot retreive external system from the eHB'
             status_code = 400
@@ -921,39 +912,17 @@ class ProtocolSubjectIdView(BRPApiView):
     def add_subs_to_datasource(self, subs, datasource_subs, datasource, label=1):
         msg = ' '
         status_code = 200
-        print("datasource external system: {}".format(datasource.getExternalSystem().id))
-        # for sub in subs:
-        #     print("we are hitting multiple subs")
-        #     print(sub)
-        #     # generate a new ID for this subject
-        #     new_id = self.generate_unique_random_id(datasource_subs)
-        #     print("new_id: {}".format(new_id))
-        #     ehb_response = self.add_subject_to_eHB_datasource(sub, datasource, new_id, label)
-        #     print(ehb_response)
 
         try:
             for sub in subs:
-                # print("sub not in datasource_subs: {}".format(sub not in datasource_subs))
-                # if sub not in datasource_subs:
-                    # print("sub: {}".format(sub))
-                    # print("we are hitting multiple subs")
-                    # print(sub)
-                    # generate a new ID for this subject
+
                 new_id = self.generate_unique_random_id(datasource_subs)
-                    # print("new_id: {}".format(new_id))
                 ehb_response = self.add_subject_to_eHB_datasource(sub, datasource, new_id, label)
-                # print("ehb_response.text in add subs to datsource: \n {}".format(json.dumps(ehb_response.json)))
                 if ehb_response.status_code == 200:
                     datasource_subs.append(new_id)
-                    # print(ehb_response)
-                # else:
-                #     print("subject {} already added".format(sub))
         except:
-            # print("we could not add subjects to ehb")
-            # return Response('error adding subjects to the eHB datasource', status=300)
             msg = 'error adding subjects to the eHB datasource'
             status_code = 300
-        print("datasourrce subs at end of add sub function: \n {}".format(datasource_subs))
         return msg, status_code
 
     @staticmethod
@@ -968,16 +937,15 @@ class ProtocolSubjectIdView(BRPApiView):
             else:
                 subjects_protocol = None
         except:
-            # return Response('there are no subjects aligned to this protocol', status=200)
+
             msg = 'there are no subjects aligned to this protocol'
             status_code = 204
         if (subjects_protocol is None):
-            # return Response('there are no subjects aligned to this protocol', status=200)
+
             msg = 'there are no subjects aligned to this protocol'
             status_code = 204
 
         return subjects_protocol, msg, status_code
-        # return subjects_protocol
 
     def check_all_sub_in_datasource(self, protocol_subs, datasource_subs):
         """
@@ -986,36 +954,14 @@ class ProtocolSubjectIdView(BRPApiView):
         """
         msg = ' '
         status_code = 200
-        # print('protocol_subs: {}'.format(protocol_subs))
-        print('protocol_subs count: {}'.format(len(protocol_subs)))
         subs_to_be_added = []
-        print('datasource subs: {}'.format(datasource_subs))
         for subject in protocol_subs:
             if subject['id'] not in datasource_subs:
                 subs_to_be_added.append(subject['id'])
-            # print(subject['organization_subject_id'])
-            # if(str(subject['organization_subject_id']) not in datasource_subs):
-            #     # generate a new ID for this subject
-            #     new_id = self.generate_unique_random_id(datasource_subs)
-
-                # TODO add subject to eHB datasource
-                # ehb_response = self.add_subject_to_eHB_datasource(sub['id'], ex_system_pk, sub_record_id, path, label=1)
-                # get a fresh list of subjects in the datasource
-                # datasource_subs = self.get_datasource_subjects()
-        # if (datasource_subs is not None) and (datasource_subs.status_code == 200):
-        #     print('datasource_subs count: {}'.format(len(datasource_subs)))
         return subs_to_be_added, msg, status_code
 
     def add_subject_to_eHB_datasource(self, sub_pk, datasource, sub_record_id, label=1):
-        print("we are in add_subject_to_eHB_datasource")
-        # todo make API call to add subject to eHN DataSource
         ehb_api_url = '/api/externalrecord/'
-        # print("datasource external system: {}".format(datasource.getExternalSystem()))
-        print("we are about to make payload")
-        print("sub_pk: {}".format(sub_pk))
-        print("datasource id: {}".format(str(datasource.getExternalSystem().id)))
-        print("path: {}".format(datasource.url))
-        print("label: {}".format(label))
         payload = [{
             'subject': str(sub_pk),
             'external_system': str(datasource.getExternalSystem().id),
@@ -1023,48 +969,25 @@ class ProtocolSubjectIdView(BRPApiView):
             'path': datasource.url,
             'label': label
         }]
-        print("after making payload")
-        print("payload: {}".format(payload))
         ehb_response = ServiceClient.ehb_api(ehb_api_url, "POST", payload)
-        print(ehb_response)
         return ehb_response
 
     @staticmethod
     def get_datasource_subjects(datasource, datasource_ehb_pk):
         msg = ' '
         status_code = 200
-        subjects_org_id = []
         subjects_pk = []
         subjects_record_id = []
         ehb_api_url = "/api/externalsystem/id/{}/records/".format(datasource_ehb_pk)
-        # subjects = datasource.getSubjects()
         try:
             ehb_response = ServiceClient.ehb_api(ehb_api_url, "GET")
-            # print("ehb response when getting datasource subjects \n {}".format(ehb_response.text))
-            # class_subjects = datasource.getSubjects()
-            # print("class_subjects: \n {}".format(class_subjects))
-            # if class_subjects:
-            #     for sub in class_subjects:
-            #         print("sub: {}".format(sub))
-            #         print("datasource subjects: {}".format(sub.organization_subject_id))
-            #         subjects_org_id.append(sub.organization_subject_id)
-            #         subjects_pk.append(sub.id)
-            #         subjects_record_id.append(sub.record_id)
             for sub in ehb_response.json():
-                print("record in get datasource subs: {}".format(sub))
-                # subjects_org_id.append(sub['organization_subject_id'])
                 subjects_pk.append(sub['subject'])
                 subjects_record_id.append(sub['record_id'])
-
-
         except:
             msg = 'there was an error getting subjects aligned to datasource'
             status_code = 400
-            # subjects = None
-            # return msg, status_code
-            # return Response('there was an error getting subjects aligned to datasource', status=400)
-        # print("subjects: {}".format(subjects))
-        return subjects_org_id, subjects_pk, subjects_record_id, msg, status_code
+        return subjects_pk, subjects_record_id, msg, status_code
 
     @staticmethod
     def generate_random_id():
