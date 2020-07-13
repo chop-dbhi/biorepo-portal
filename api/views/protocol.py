@@ -797,6 +797,60 @@ class ProtocolSubjectIdView(BRPApiView):
     API endpoint that allows creation of Id to be used as de-identifiers in
     external datasets and external applications not directly connected to the BRP.
     """
+    def put(self, request, protocol_pk, datasource_pk):
+        try:
+            datasource = DataSource.objects.get(pk=datasource_pk)
+            protocol = Protocol.objects.get(pk=protocol_pk)
+        except:
+            return Response('datasource or protocol does not exist in the BRP', status=404)
+
+        # check to make sure that protocol name is somewhere in the datasource description
+        if not (protocol.name in str(datasource.description)):
+            return Response('protocol name is not in the datasource description', status=400)
+
+        # Check to make sure user is authorized for this protocol
+        if not protocol.isUserAuthorized(request.user):
+            return Response('user is not authorized for this protocol', status=403)
+        try:
+            return Response('Adding subjects to datasource, use get API call in a few minutes for large protocols', status=200)
+        finally:
+
+            # get all subjects in the protocol
+            subjects_protocol, msg, status = self.get_protocol_subjects(protocol)
+            if status is not 200:
+                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
+            # get ehb PK of the external system since it might not match what is in the BRP
+            eHB_ex_sys_pk, msg, status = self.get_ehb_external_system(datasource.name)
+            if status is not 200:
+                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
+            # get all subjects in DataSource
+            subs_pk_datasource, subs_record_id, msg, status = self.get_datasource_subjects(datasource, eHB_ex_sys_pk)
+            if status is not 200:
+                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
+            # get list of subjects that need to be added to the eHB datasource
+            subs_to_be_added, msg, status = self.check_all_sub_in_datasource(subjects_protocol, subs_pk_datasource)
+            if status is not 200:
+                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
+            # add subjects to the eHB DataSource
+            msg, status = self.add_subs_to_datasource(subs_to_be_added, subs_record_id, datasource)
+            if status is not 200:
+                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
+            #
+            msg, status, sub_ids = self.get_subject_external_ids(eHB_ex_sys_pk)
+            if status is not 200:
+                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
+            formatted_sub_ids, msg, status = self.format_sub_id_return(sub_ids, subjects_protocol, protocol)
+            if status is not 200:
+                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
+            logger.info('successfully initiated IDs for protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
     def get(self, request, protocol_pk, datasource_pk):
         try:
             datasource = DataSource.objects.get(pk=datasource_pk)
