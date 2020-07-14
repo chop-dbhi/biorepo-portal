@@ -908,7 +908,6 @@ class ProtocolSubjectIdView(BRPApiView):
             logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
 
         logger.info('successfully initiated IDs for protocol: {}, datasource {}'.format(protocol.name, datasource.name))
-        print('successfully initiated IDs for protocol: {}, datasource {}'.format(protocol.name, datasource.name))
 
     def format_sub_id_return(self, ex_system_subjects, protocol_subs, protocol):
         protocol_orgs = {}
@@ -1067,8 +1066,6 @@ class ProtocolSubjectIdView(BRPApiView):
         success = False
         while not success:
             new_id = self.generate_random_id()
-            print("new_id in generate unique random id: {}".format(new_id))
             if (exisiting_ids is None) or (new_id not in exisiting_ids):
                 success = True
-                print("success")
         return new_id
