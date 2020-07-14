@@ -2,6 +2,7 @@ import logging
 import json
 import string
 import random
+import threading
 from datetime import datetime
 
 from copy import deepcopy
@@ -811,45 +812,13 @@ class ProtocolSubjectIdView(BRPApiView):
         # Check to make sure user is authorized for this protocol
         if not protocol.isUserAuthorized(request.user):
             return Response('user is not authorized for this protocol', status=403)
-        try:
-            return Response('Adding subjects to datasource, use get API call in a few minutes for large protocols', status=200)
-        finally:
+        # create a thread that will keep running after response was returned
+        thread = threading.Thread(target=self.full_proccess_add_subs_to_ds, args=[protocol, datasource])
+        # an attribute to stop thread after complete
+        thread.setDaemon(False)
+        thread.start()
 
-            # get all subjects in the protocol
-            subjects_protocol, msg, status = self.get_protocol_subjects(protocol)
-            if status is not 200:
-                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
-
-            # get ehb PK of the external system since it might not match what is in the BRP
-            eHB_ex_sys_pk, msg, status = self.get_ehb_external_system(datasource.name)
-            if status is not 200:
-                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
-
-            # get all subjects in DataSource
-            subs_pk_datasource, subs_record_id, msg, status = self.get_datasource_subjects(datasource, eHB_ex_sys_pk)
-            if status is not 200:
-                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
-
-            # get list of subjects that need to be added to the eHB datasource
-            subs_to_be_added, msg, status = self.check_all_sub_in_datasource(subjects_protocol, subs_pk_datasource)
-            if status is not 200:
-                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
-
-            # add subjects to the eHB DataSource
-            msg, status = self.add_subs_to_datasource(subs_to_be_added, subs_record_id, datasource)
-            if status is not 200:
-                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
-
-            #
-            msg, status, sub_ids = self.get_subject_external_ids(eHB_ex_sys_pk)
-            if status is not 200:
-                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
-
-            formatted_sub_ids, msg, status = self.format_sub_id_return(sub_ids, subjects_protocol, protocol)
-            if status is not 200:
-                logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
-
-            logger.info('successfully initiated IDs for protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+        return Response('Adding subjects to datasource, use get API call in a few minutes for large protocols', status=200)
 
     def get(self, request, protocol_pk, datasource_pk):
         try:
@@ -877,19 +846,19 @@ class ProtocolSubjectIdView(BRPApiView):
             return Response(msg, status=status)
 
         # get all subjects in DataSource
-        subs_pk_datasource, subs_record_id, msg, status = self.get_datasource_subjects(datasource, eHB_ex_sys_pk)
-        if status is not 200:
-            return Response(msg, status=status)
+        # subs_pk_datasource, subs_record_id, msg, status = self.get_datasource_subjects(datasource, eHB_ex_sys_pk)
+        # if status is not 200:
+        #     return Response(msg, status=status)
 
         # get list of subjects that need to be added to the eHB datasource
-        subs_to_be_added, msg, status = self.check_all_sub_in_datasource(subjects_protocol, subs_pk_datasource)
-        if status is not 200:
-            return Response(msg, status=status)
+        # subs_to_be_added, msg, status = self.check_all_sub_in_datasource(subjects_protocol, subs_pk_datasource)
+        # if status is not 200:
+        #     return Response(msg, status=status)
 
         # add subjects to the eHB DataSource
-        msg, status = self.add_subs_to_datasource(subs_to_be_added, subs_record_id, datasource)
-        if status is not 200:
-            return Response(msg, status=status)
+        # msg, status = self.add_subs_to_datasource(subs_to_be_added, subs_record_id, datasource)
+        # if status is not 200:
+        #     return Response(msg, status=status)
 
         #
         msg, status, sub_ids = self.get_subject_external_ids(eHB_ex_sys_pk)
@@ -901,6 +870,46 @@ class ProtocolSubjectIdView(BRPApiView):
             return Response(msg, status=status)
 
         return Response(formatted_sub_ids, status=200)
+
+    def full_proccess_add_subs_to_ds(self, protocol, datasource):
+
+        # get all subjects in the protocol
+        subjects_protocol, msg, status = self.get_protocol_subjects(protocol)
+        if status is not 200:
+            logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+        print("Completed get_protocol_subjects ")
+        # get ehb PK of the external system since it might not match what is in the BRP
+        eHB_ex_sys_pk, msg, status = self.get_ehb_external_system(datasource.name)
+        if status is not 200:
+            logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+        print("compelted get_ehb_external_system")
+        # get all subjects in DataSource
+        subs_pk_datasource, subs_record_id, msg, status = self.get_datasource_subjects(datasource, eHB_ex_sys_pk)
+        if status is not 200:
+            logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+        print("comleted get_datasource_subjects")
+        # get list of subjects that need to be added to the eHB datasource
+        subs_to_be_added, msg, status = self.check_all_sub_in_datasource(subjects_protocol, subs_pk_datasource)
+        if status is not 200:
+            logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+        print("completed check_all_sub_in_datasource")
+        # add subjects to the eHB DataSource
+        msg, status = self.add_subs_to_datasource(subs_to_be_added, subs_record_id, datasource)
+        if status is not 200:
+            logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+        print("completed add_subs_to_datasource")
+        #
+        msg, status, sub_ids = self.get_subject_external_ids(eHB_ex_sys_pk)
+        if status is not 200:
+            logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+        print("Completed get_subject_external_ids")
+        formatted_sub_ids, msg, status = self.format_sub_id_return(sub_ids, subjects_protocol, protocol)
+        if status is not 200:
+            logger.info(msg + ' protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
+        logger.info('successfully initiated IDs for protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+        print('successfully initiated IDs for protocol: {}, datasource {}'.format(protocol.name, datasource.name))
+
 
     def format_sub_id_return(self, ex_system_subjects, protocol_subs, protocol):
         protocol_orgs = {}
@@ -916,15 +925,23 @@ class ProtocolSubjectIdView(BRPApiView):
             org_json = ehb_response.json()
             protocol_orgs[int(org_json[0]['organization']['id'])] = item.name
 
-        try:
-            for sub in protocol_subs:
-                sub_ex_rec_id = next((ex_sub_rec for ex_sub_rec in ex_system_subjects if ex_sub_rec['subject'] == sub['id']), None)
-                formatted_subs.append({'record_id': sub_ex_rec_id['record_id'],
-                                      'sub_org_id': sub['organization_subject_id'],
-                                       'sub_org_name': protocol_orgs[int(sub['organization_id'])]})
-        except:
-            msg = 'error formatting subjects and their external record'
-            status_code = 300
+        for sub in protocol_subs:
+
+            sub_ex_rec_id = next((ex_sub_rec for ex_sub_rec in ex_system_subjects if ex_sub_rec['subject'] == sub['id']), None)
+            print(sub_ex_rec_id['record_id'])
+            formatted_subs.append({'record_id': sub_ex_rec_id['record_id'],
+                                  'sub_org_id': sub['organization_subject_id'],
+                                   'sub_org_name': protocol_orgs[int(sub['organization_id'])]})
+
+        # try:
+        #     for sub in protocol_subs:
+        #         sub_ex_rec_id = next((ex_sub_rec for ex_sub_rec in ex_system_subjects if ex_sub_rec['subject'] == sub['id']), None)
+        #         formatted_subs.append({'record_id': sub_ex_rec_id['record_id'],
+        #                               'sub_org_id': sub['organization_subject_id'],
+        #                                'sub_org_name': protocol_orgs[int(sub['organization_id'])]})
+        # except:
+        #     msg = 'error formatting subjects and their external record'
+        #     status_code = 300
         return formatted_subs, msg, status_code
 
     def get_subject_external_ids(self, ehb_external_system):
