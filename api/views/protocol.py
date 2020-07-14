@@ -845,7 +845,7 @@ class ProtocolSubjectIdView(BRPApiView):
         if status is not 200:
             return Response(msg, status=status)
 
-        #
+        # get external records for subjects
         msg, status, sub_ids = self.get_subject_external_ids(eHB_ex_sys_pk)
         if status is not 200:
             return Response(msg, status=status)
