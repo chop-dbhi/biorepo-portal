@@ -845,21 +845,6 @@ class ProtocolSubjectIdView(BRPApiView):
         if status is not 200:
             return Response(msg, status=status)
 
-        # get all subjects in DataSource
-        # subs_pk_datasource, subs_record_id, msg, status = self.get_datasource_subjects(datasource, eHB_ex_sys_pk)
-        # if status is not 200:
-        #     return Response(msg, status=status)
-
-        # get list of subjects that need to be added to the eHB datasource
-        # subs_to_be_added, msg, status = self.check_all_sub_in_datasource(subjects_protocol, subs_pk_datasource)
-        # if status is not 200:
-        #     return Response(msg, status=status)
-
-        # add subjects to the eHB DataSource
-        # msg, status = self.add_subs_to_datasource(subs_to_be_added, subs_record_id, datasource)
-        # if status is not 200:
-        #     return Response(msg, status=status)
-
         #
         msg, status, sub_ids = self.get_subject_external_ids(eHB_ex_sys_pk)
         if status is not 200:
