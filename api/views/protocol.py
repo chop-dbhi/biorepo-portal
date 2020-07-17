@@ -807,7 +807,7 @@ class ProtocolSubjectIdView(BRPApiView):
 
         # check to make sure that protocol name is somewhere in the datasource description
         if not (protocol.name in str(datasource.description)):
-            return Response('protocol name is not in the datasource description', status=400)
+            return Response('protocol name is not in the datasource description', status=431)
 
         # Check to make sure user is authorized for this protocol
         if not protocol.isUserAuthorized(request.user):
@@ -829,7 +829,7 @@ class ProtocolSubjectIdView(BRPApiView):
 
         # check to make sure that protocol name is somewhere in the datasource description
         if not (protocol.name in str(datasource.description)):
-            return Response('protocol name is not in the datasource description', status=400)
+            return Response('protocol name is not in the datasource description', status=431)
 
         # Check to make sure user is authorized for this protocol
         if not protocol.isUserAuthorized(request.user):
@@ -913,14 +913,14 @@ class ProtocolSubjectIdView(BRPApiView):
                 sub_ex_rec_id = next((ex_sub_rec for ex_sub_rec in ex_system_subjects if ex_sub_rec['subject'] == sub['id']), None)
                 if not sub_ex_rec_id:
                     msg = 'not all subjects in this protocol are added to this datasource'
-                    status_code = 315
+                    status_code = 427
                     return [], msg, status_code
-                formatted_subs.append({'record_id': sub_ex_rec_id['record_id'],
+                formatted_subs.append({'reco rd_id': sub_ex_rec_id['record_id'],
                                       'sub_org_id': sub['organization_subject_id'],
                                        'sub_org_name': protocol_orgs[int(sub['organization_id'])]})
         except:
             msg = 'error formatting subjects and their external record'
-            status_code = 300
+            status_code = 425
         return formatted_subs, msg, status_code
 
     def get_subject_external_ids(self, ehb_external_system):
@@ -936,7 +936,7 @@ class ProtocolSubjectIdView(BRPApiView):
                 status_code = ehb_response.status_code
         except:
             msg = 'error getting records from the eHB'
-            status_code = 400
+            status_code = 428
 
         return msg, status_code, subject_ids
 
@@ -955,7 +955,7 @@ class ProtocolSubjectIdView(BRPApiView):
             success = False
         if (not success) or (ehb_response.status_code is not 200):
             msg = 'cannot retreive external system from the eHB'
-            status_code = 400
+            status_code = 429
 
         return ehb_ex_sys_pk, msg, status_code
 
@@ -972,7 +972,7 @@ class ProtocolSubjectIdView(BRPApiView):
                     datasource_subs.append(new_id)
         except:
             msg = 'error adding subjects to the eHB datasource'
-            status_code = 300
+            status_code = 426
         return msg, status_code
 
     @staticmethod
@@ -987,13 +987,12 @@ class ProtocolSubjectIdView(BRPApiView):
             else:
                 subjects_protocol = None
         except:
-
             msg = 'there are no subjects aligned to this protocol'
-            status_code = 204
+            status_code = 325
+
         if (subjects_protocol is None):
-
             msg = 'there are no subjects aligned to this protocol'
-            status_code = 204
+            status_code = 325
 
         return subjects_protocol, msg, status_code
 
@@ -1036,7 +1035,7 @@ class ProtocolSubjectIdView(BRPApiView):
                 subjects_record_id.append(sub['record_id'])
         except:
             msg = 'there was an error getting subjects aligned to datasource'
-            status_code = 400
+            status_code = 430
         return subjects_pk, subjects_record_id, msg, status_code
 
     @staticmethod
