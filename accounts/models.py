@@ -5,7 +5,7 @@ from django.contrib.flatpages.models import FlatPage
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, related_name='profile')
+    user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     institution = models.CharField(max_length=100, null=True)
     # the user agrees to the End User License Agreement
     eula = models.BooleanField(default=False)

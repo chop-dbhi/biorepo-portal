@@ -111,7 +111,7 @@ class BaseWithImmutableKey(Base):
 
     # TODO: Why is this a relation?
     immutable_key = models.OneToOneField(
-        ImmutableKey, editable=False, blank=True, unique=True, null=True)
+        ImmutableKey, editable=False, blank=True, unique=True, null=True, on_delete=models.CASCADE)
 
     def _create_immutable_key(self):
         """Generate an immutable_key for this entity."""
