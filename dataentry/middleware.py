@@ -5,7 +5,7 @@ from django.http import HttpResponseForbidden, HttpResponseNotFound
 class CheckPdsCredentialsMiddleware(object):
 
     def process_view(self, request, view_func, *args):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             view_args_dict = args[1]
             if 'pds_id' in view_args_dict:
                 try:

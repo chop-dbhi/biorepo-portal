@@ -20,7 +20,7 @@ def throttled_login(request):
     user_agent = request.META['HTTP_USER_AGENT']
 
     # if the user is already logged-in, simply redirect them to the entry page
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
 
     if (re.findall(r'MSIE', user_agent) or re.findall(r'Trident', user_agent)):

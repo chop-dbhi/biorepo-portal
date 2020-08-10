@@ -29,7 +29,7 @@ class LoggingMiddleware(object):
         ''' Attempt to get the user if authenticated through session otherwise
         resolve the provided API token if it exists.
         '''
-        if hasattr(request, 'user') and request.user.is_authenticated():
+        if hasattr(request, 'user') and request.user.is_authenticated:
             return request.user
         else:
             try:

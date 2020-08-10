@@ -4,7 +4,7 @@ from accounts.views import eula
 
 class CheckEulaMiddleware(object):
     def process_request(self, request):
-        if request.user.is_authenticated() and not request.user.profile.eula:
+        if request.user.is_authenticated and not request.user.profile.eula:
             # ignore static and media files since, the EULA page has to render
             # properly
             if (
