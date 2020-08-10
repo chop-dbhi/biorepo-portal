@@ -2,7 +2,7 @@ import json
 import datetime
 from unittest.mock import MagicMock, patch
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.models import User
 
 from rest_framework.test import APIRequestFactory, APITestCase, \
