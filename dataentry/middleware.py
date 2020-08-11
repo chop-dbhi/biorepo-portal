@@ -1,8 +1,8 @@
 from api.models.protocols import ProtocolDataSource
 from django.http import HttpResponseForbidden, HttpResponseNotFound
+from django.utils.deprecation import MiddlewareMixin
 
-
-class CheckPdsCredentialsMiddleware(object):
+class CheckPdsCredentialsMiddleware(MiddlewareMixin):
 
     def process_view(self, request, view_func, *args):
         if request.user.is_authenticated:

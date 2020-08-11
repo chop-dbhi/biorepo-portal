@@ -1,8 +1,9 @@
 from django.conf import settings
 from accounts.views import eula
+from django.utils.deprecation import MiddlewareMixin
 
 
-class CheckEulaMiddleware(object):
+class CheckEulaMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if request.user.is_authenticated and not request.user.profile.eula:
             # ignore static and media files since, the EULA page has to render
