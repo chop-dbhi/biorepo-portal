@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.core.cache import cache
+from django.utils.deprecation import MiddlewareMixin
 from django.template import RequestContext, loader
 from redis.exceptions import ConnectionError
 from api.models.protocols import ProtocolDataSource
@@ -11,7 +12,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class MaintenanceMiddleware(object):
+class MaintenanceMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
         try:
@@ -23,7 +24,7 @@ class MaintenanceMiddleware(object):
             return HttpResponse(t.render(RequestContext(request)))
 
 
-class LoggingMiddleware(object):
+class LoggingMiddleware(MiddlewareMixin):
 
     def get_user(self, request):
         ''' Attempt to get the user if authenticated through session otherwise
