@@ -45,7 +45,7 @@ class DefaultBackend(Backend):
         return ChopRegistrationForm
 
 
-class LdapBackend(ModelBackend):
+class LdapBackend:
     '''
     Authenticate a user against an Active Directory server using LDAP.
     '''
@@ -99,7 +99,7 @@ class LdapBackend(ModelBackend):
         seconds_since_epoch = timestamp / 10**7
         return epoch_start + timedelta(seconds=seconds_since_epoch)
 
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request, username=None, password=None):
         # handle an email address being supplied
         idx = username.find('@')
         if idx > -1:
@@ -128,19 +128,25 @@ class LdapBackend(ModelBackend):
             server,
             user=bind_string,
             password=password)
-        _filter = self.settings['SEARCH_FILTER'].format(username)
+        # _filter = self.settings['SEARCH_FILTER'].format(username)
         conn.bind()
-        res = conn.search('dc=chop,dc=edu', _filter, attributes=['pwdLastSet'])
-
-        if res:
-            pwdLastSet = self.get_ad_timestamp(conn.response)
-            pwdAge = (datetime.now() - pwdLastSet).days
-            if pwdAge > self.settings['MAX_AGE']:
-                log.error('User {0}: Password has expired'.format(username))
-                user.profile.password_expired = True
-                user.is_active = False
-                return user
+        # res = conn.search('dc=chop,dc=edu', _filter, attributes=['pwdLastSet'])
+        #
+        # if res:
+        #     pwdLastSet = self.get_ad_timestamp(conn.response)
+        #     pwdAge = (datetime.now() - pwdLastSet).days
+        #     if pwdAge > self.settings['MAX_AGE']:
+        #         log.error('User {0}: Password has expired'.format(username))
+        #         user.profile.password_expired = True
+        #         user.is_active = False
+        #         return user
 
         if conn.bind():
             conn.unbind()
             return user
+
+    def get_user(self, user_id):
+        try:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return None
