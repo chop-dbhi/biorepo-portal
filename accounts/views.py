@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib.auth.views import login, logout_then_login
+from django.contrib.auth.views import logout_then_login, LoginView
 from django.contrib.flatpages.models import FlatPage
 from django.views.decorators.cache import never_cache
 from django.core.cache import cache
@@ -50,8 +50,8 @@ def throttled_login(request):
         login_allowed = throttle_login(request)
 
         if login_allowed:
-            response = login(request, template_name=template_name,
-                             authentication_form=BrpAuthenticationForm)
+            response = LoginView.as_view(template_name=template_name)
+
             # We know if the response is a redirect, the login
             # was successful, thus we can clear the throttled login counter
             if isinstance(response, HttpResponseRedirect):
