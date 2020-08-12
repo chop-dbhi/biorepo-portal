@@ -143,6 +143,7 @@ class LdapBackend:
 
         if conn.bind():
             conn.unbind()
+            user = User.objects.get(username=user)
             return user
 
     def get_user(self, user_id):
