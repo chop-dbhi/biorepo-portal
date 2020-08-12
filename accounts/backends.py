@@ -114,7 +114,7 @@ class LdapBackend:
             user = User.objects.get(email__iexact=email)
         except User.DoesNotExist:
             log.error('Unable to find user with email {0}'.format(email))
-            return
+            return None
 
         # initialize connection to the server
         server = ldap.Server('chop.edu', port=3268)
@@ -122,7 +122,7 @@ class LdapBackend:
 
         if not bind_string:
             log.error('Unable to initialize connection to LDAP server')
-            return
+            return None
 
         conn = ldap.Connection(
             server,
@@ -145,6 +145,8 @@ class LdapBackend:
             conn.unbind()
             user = User.objects.get(username=user)
             return user
+        else:
+            return None
 
     def get_user(self, user_id):
         try:
