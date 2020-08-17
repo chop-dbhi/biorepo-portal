@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-urlpatterns = ['django.contrib.auth.views',
+urlpatterns = ['django.contrib.auth',
     url(r'^login/$', 'login', {
         'template_name': 'registration/login.html'
     }, name='login'),
