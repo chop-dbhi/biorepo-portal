@@ -411,7 +411,7 @@ class ProtocolSubjectDetailView(BRPApiView):
         subject_api_url = "/api/subject/id/" + subject + "/"
         # See if subject exists
         try:
-            ehb_sub = ServiceClient.ehb_api(subject_api_url, "GET").json()
+            ehb_sub = ServiceClient.ehb_api(subject_api_url, "GET")
             protocol = Protocol.objects.get(pk=pk)
             old_group_name = SubjectUtils.protocol_subject_record_group_name(protocol, ehb_sub)
             group = self.g_rh.get(name=old_group_name)
@@ -474,7 +474,7 @@ class ProtocolSubjectDetailView(BRPApiView):
     @staticmethod
     def get_group_id(key):
         get_group_url = '/api/group/?name=' +'BRP:' + key
-        group = ServiceClient.ehb_api(get_group_url, "GET").json()
+        group = ServiceClient.ehb_api(get_group_url, "GET")
         return group['id']
 
     @staticmethod
@@ -491,7 +491,7 @@ class ProtocolSubjectDetailView(BRPApiView):
         ehb_update_subj["old_subject"] = deepcopy(old_subject)
         ehb_update_subj["new_subject"] = deepcopy(new_subject)
         ehb_update_subj_body = '[' + str(json.dumps(deepcopy(ehb_update_subj))) + ']'
-        return ServiceClient.ehb_api(subject_update_api_url, "PUT", json.loads(ehb_update_subj_body))
+        return ServiceClient.ehb_api(subject_update_api_url, "PUT", ehb_update_subj_body)
 
     @classmethod
     def update_subject_group(cls, protocol, subject_update, group):
