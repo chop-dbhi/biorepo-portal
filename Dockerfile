@@ -1,45 +1,42 @@
-FROM alpine:3.3
+FROM python:3.8
+RUN apt-get update \
+ && apt-get install wget
 
-RUN apk add --update \
+RUN echo ls opt
+
+RUN apt-get -y install \
     bash \
-    postgresql-dev \
+#    postgresql-dev \
     gcc \
-    python3 \
-    python3-dev \
-    build-base \
+#    python3 \
+#    python3-dev \
+#    build-base \
     git \
-    openldap-dev \
-    linux-headers \
-    pcre-dev \
+#    openldap-dev \
+#    linux-headers \
+#    pcre-dev \
     musl-dev \
-    postgresql-dev \
-    mailcap \
-    vim \
-  && rm -rf /var/cache/apk/* && \
-  python3 -m ensurepip && \
-    rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip setuptools && \
-    rm -r /root/.cache &&\
-    apk upgrade
+#    postgresql-dev \
+#    mailcap \
+    vim
+#  && rm -rf /var/cache/apk/* && \
+#  python3 -m ensurepip && \
+#    rm -r /usr/lib/python*/ensurepip &&
 
-RUN pip3 install "Django>=1.11.27,<1.12"
-RUN pip3 install "django-environ>=0.4.0,<0.5"
-RUN pip3 install "django-markdown-deux>=1.0.5,<1.1"
-RUN pip3 install "django-session-security>=2.3.2,<2.4"
-RUN pip3 install "django_redis>=4.5,<4.6"
-RUN pip3 install "djangorestframework>=3.9.1,<3.10"
-RUN pip3 install "djangorestframework-jwt>=1.5.0,<1.6"
-RUN pip3 install "git+https://github.com/chop-dbhi/ehb-client.git@dev#egg=ehb_client"
-RUN pip3 install "git+https://github.com/chop-dbhi/ehb-datasources.git@dev#egg=ehb_datasources"
-RUN pip3 install "ldap3>=1.4.0,<1.5"
-RUN pip3 install "gunicorn>=19,<20"
-RUN pip3 install "psycopg2-binary"
-RUN pip3 install "dj-static>=0.0.6,<0.1.0"
-RUN pip3 install "python-json-logger==0.1.7"
-RUN pip3 install "django-admin-tools"
-RUN pip3 install "django-crispy-forms"
-RUN pip3 install "requests"
+RUN pip install --upgrade pip setuptools && \
+    rm -r /root/.cache
+#    apk upgrade
+RUN pwd
+RUN ls opt
+RUN ls
+RUN mkdir -p /opt/app
 
+#RUN mkdir -p /opt/app/
+# COPY requirements.txt /opt/app/
+
+COPY . /opt/app/
+#RUN pip3 install -r /opt/app/requirements.txt
+RUN pip install -r /opt/app/requirements.txt
 
 ENV APP_ENV test
 ADD . /opt/app/
