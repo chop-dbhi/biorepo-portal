@@ -2,7 +2,7 @@ version: '2'
 services:
   postgres:
     image: postgres:9.4
-    container_name: postgres
+    container_name: brp_dev_pg
     environment:
       - POSTGRES_DB=brp_dev
     volumes:
@@ -26,6 +26,11 @@ services:
   ehb-service:
     image: 508852077039.dkr.ecr.us-east-1.amazonaws.com/dbhi/eig/ehb-service:latest
     container_name: ehb
+    env_file: ../../ehb_settings.env
+    restart: always
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_DB=ehb_dev
     restart: always
     environment:
       - REDIS_HOST=redis
@@ -48,7 +53,7 @@ services:
     command: ["/opt/app/bin/wait-for-it.sh", "127.0.0.1:5000", "--", "/opt/app/bin/run.sh"]
 
     external_links:
-        - postgres
+        - brp_dev_pg
         - redis
         - ehb-service:ehb
 
