@@ -2,7 +2,7 @@ version: '2'
 services:
   postgres:
     image: postgres:9.4
-    container_name: brp_dev_pg
+    container_name: brp_feature_db
     environment:
       - POSTGRES_DB=brp_dev
     volumes:
@@ -53,7 +53,7 @@ services:
     command: ["/opt/app/bin/wait-for-it.sh", "127.0.0.1:5000", "--", "/opt/app/bin/run.sh"]
 
     external_links:
-        - brp_dev_pg
+        - brp_feature_db
         - redis
         - ehb-service:ehb
 
