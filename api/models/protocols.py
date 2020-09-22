@@ -531,6 +531,8 @@ class ProtocolDataSource(Base):
 
         erl_rh = ServiceClient.get_rh_for(
             record_type=ServiceClient.EXTERNAL_RECORD_LABEL)
+        print("external record label:")
+        print(erl_rh)
 
         labels = cache.get('ehb_labels')
 

@@ -23,10 +23,10 @@ class SubjectView extends React.Component {
     const protocolId = this.props.match.params.prot_id;
     const subjectId = this.props.match.params.sub_id;
 
-    if (!this.props.subject.activeSubject) {
-      dispatch(SubjectActions.fetchSubject(protocolId, subjectId));
-    }
-
+    // if (!this.props.subject.activeSubject) {
+    //   dispatch(SubjectActions.fetchSubject(protocolId, subjectId));
+    // }
+    dispatch(SubjectActions.fetchSubject(protocolId, subjectId));
     if (!this.props.protocol.activeProtocol) {
       dispatch(ProtocolActions.setActiveProtocol(protocolId));
     }
@@ -34,7 +34,10 @@ class SubjectView extends React.Component {
 
   componentWillUnmount() {
     const { dispatch } = this.props;
+    const protocolId = this.props.match.params.prot_id;
+    const subjectId = this.props.match.params.sub_id;
     dispatch(ProtocolActions.setActiveProtocol(null));
+    // dispatch(SubjectActions.fetchSubject(protocolId, subjectId));
   }
   render() {
     // Checks for empty subject state and updates it if necessary

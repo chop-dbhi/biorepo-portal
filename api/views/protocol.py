@@ -129,6 +129,64 @@ class ProtocolOrganizationView(BRPApiView):
         )
 
 
+class ProtocolSubjectsOnlyView(BRPApiView):
+    def get(self, request, pk, *args, **kwargs):
+        """
+        Returns a list of subjects associated with a protocol.
+        """
+        ehb_orgs = []
+        all_subs = []
+        try:
+            p = Protocol.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            return Response({'error': 'Protocol requested not found'}, status=404)
+        if p.isUserAuthorized(request.user):
+
+            subjects = p.getSubjects()
+            organizations = p.organizations.all()
+            if subjects:
+                pass
+            else:
+                return Response([])
+            # We can't rely on Ids being consistent across apps so we must
+            # append the name here for display downstream.
+            for o in organizations:
+                ehb_orgs.append(o.getEhbServiceInstance())
+
+            for sub in subjects:
+                # print("sub: \n {}".format(sub))
+                sub_dict = {}
+                sub_dict['external_records'] = []
+                sub_dict['external_ids'] = []
+                sub_dict['organization'] = sub.organization_id
+                sub_dict['organization_subject_id'] = sub.organization_subject_id
+                sub_dict['organization_id_label'] = sub.organization_id_label
+                sub_dict['first_name'] = sub.first_name
+                sub_dict['last_name'] = sub.last_name
+                sub_dict['dob'] = sub.dob
+                sub_dict['created'] = sub.created
+                sub_dict['id'] = sub.id
+
+                for ehb_org in ehb_orgs:
+                    if sub_dict['organization'] == ehb_org.id:
+                        sub_dict['organization_name'] = ehb_org.name
+
+                all_subs.append(sub_dict)
+
+        else:
+            return Response(
+                {"detail": "You are not authorized to view subjects in this protocol"},
+                status=403
+            )
+
+        if subjects:
+            return Response(
+                all_subs,
+                headers={'Access-Control-Allow-Origin': '*'}
+            )
+
+        return Response([])
+
 class ProtocolSubjectsView(BRPApiView):
     def get(self, request, pk, *args, **kwargs):
         """
