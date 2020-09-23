@@ -154,7 +154,6 @@ class ProtocolSubjectsOnlyView(BRPApiView):
                 ehb_orgs.append(o.getEhbServiceInstance())
 
             for sub in subjects:
-                # print("sub: \n {}".format(sub))
                 sub_dict = {}
                 sub_dict['external_records'] = []
                 sub_dict['external_ids'] = []
@@ -186,6 +185,7 @@ class ProtocolSubjectsOnlyView(BRPApiView):
             )
 
         return Response([])
+
 
 class ProtocolSubjectsView(BRPApiView):
     def get(self, request, pk, *args, **kwargs):
