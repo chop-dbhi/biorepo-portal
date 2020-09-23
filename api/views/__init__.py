@@ -5,7 +5,7 @@ from .datasource import DataSourceViewSet
 from .protocol import ProtocolViewSet, ProtocolSubjectsView, \
     ProtocolSubjectDetailView, ProtocolOrganizationView,  \
     ProtocolDataSourceView, ProtocolSubjFamDetailView, ProtocolAllViewSet, \
-    ProtocolSubjectIdView, ProtocolSubjectsOnlyView
+    ProtocolSubjectsOnlyView
 from .pds import PDSSubjectView, PDSSubjectRecordsView, \
     PDSSubjectRecordDetailView, PDSAvailableLinksView, \
     PDSRecordLinkDetailView, PDSViewSet
