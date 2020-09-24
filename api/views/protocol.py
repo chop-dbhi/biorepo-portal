@@ -134,8 +134,6 @@ class ProtocolSubjectsOnlyView(BRPApiView):
         """
         Returns a list of subjects associated with a protocol.
         """
-        ehb_orgs = []
-        all_subs = []
         try:
             p = Protocol.objects.get(pk=pk)
         except ObjectDoesNotExist:
@@ -143,6 +141,7 @@ class ProtocolSubjectsOnlyView(BRPApiView):
         if p.isUserAuthorized(request.user):
             cache_data = cache.get('protocol{0}_sub_only_data'.format(p.id))
             if cache_data:
+                print("we are using cached data! ")
                 # if all subjects have a modified date in cache then sort using modified date
                 try:
                     all_subs = sorted(json.loads(cache_data), key=lambda i: datetime.strptime(i['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
@@ -151,35 +150,7 @@ class ProtocolSubjectsOnlyView(BRPApiView):
                     logger.info('subjects sorted by primary key for protocol {protocol}'.format(protocol=p.id))
                     all_subs = sorted(json.loads(cache_data), key=lambda i: (i['id'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
             else:
-                subjects = p.getSubjects()
-                organizations = p.organizations.all()
-                if subjects:
-                    pass
-                else:
-                    return Response([])
-                # We can't rely on Ids being consistent across apps so we must
-                # append the name here for display downstream.
-                for o in organizations:
-                    ehb_orgs.append(o.getEhbServiceInstance())
-
-                for sub in subjects:
-                    sub_dict = {}
-                    sub_dict['external_records'] = []
-                    sub_dict['external_ids'] = []
-                    sub_dict['organization'] = sub.organization_id
-                    sub_dict['organization_subject_id'] = sub.organization_subject_id
-                    sub_dict['organization_id_label'] = sub.organization_id_label
-                    sub_dict['first_name'] = sub.first_name
-                    sub_dict['last_name'] = sub.last_name
-                    sub_dict['dob'] = sub.dob
-                    sub_dict['created'] = sub.created
-                    sub_dict['id'] = sub.id
-
-                    for ehb_org in ehb_orgs:
-                        if sub_dict['organization'] == ehb_org.id:
-                            sub_dict['organization_name'] = ehb_org.name
-
-                    all_subs.append(sub_dict)
+                all_subs = SubjectUtils.get_protocol_subjects(p)
 
         else:
             return Response(
