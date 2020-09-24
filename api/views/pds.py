@@ -207,7 +207,7 @@ class PDSSubjectRecordsView(BRPApiView):
                 "external_system_id": pds.data_source.ehb_service_es_id,
                 "path": pds.path
             })[0]
-
+            
             if res["success"]:
                 for ex_rec in res["external_record"]:
                     t = json.loads(ex_rec.json_from_identity(ex_rec))

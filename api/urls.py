@@ -17,6 +17,8 @@ urlpatterns = [
     # Retrieve all subjects on a Protocol (with their external records)
     url(r'^protocols/(?P<pk>[0-9]+)/subjects/$',
         views.ProtocolSubjectsView.as_view(), name='protocol-subject-list'),
+    url(r'^protocols/(?P<pk>[0-9]+)/subjects_only/$',
+        views.ProtocolSubjectsOnlyView.as_view(), name='protocol-subject-list'),
     url(r'^protocols/all/$',
         views.ProtocolAllViewSet.as_view(), name='protocol-all-list'),
     # Create a subject on a Protocol

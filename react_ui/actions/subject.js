@@ -109,7 +109,7 @@ export function setNewSubject(subject) {
 export function fetchSubjects(protocolId) {
   return dispatch => {
     dispatch(requestSubjects(protocolId));
-    const url = `api/protocols/${protocolId}/subjects/`;
+    const url = `api/protocols/${protocolId}/subjects_only/`;
     return fetch(url, {
       method: 'GET',
       headers: {
