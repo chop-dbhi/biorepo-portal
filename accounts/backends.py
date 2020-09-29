@@ -128,18 +128,7 @@ class LdapBackend:
             server,
             user=bind_string,
             password=password)
-        # _filter = self.settings['SEARCH_FILTER'].format(username)
         conn.bind()
-        # res = conn.search('dc=chop,dc=edu', _filter, attributes=['pwdLastSet'])
-        #
-        # if res:
-        #     pwdLastSet = self.get_ad_timestamp(conn.response)
-        #     pwdAge = (datetime.now() - pwdLastSet).days
-        #     if pwdAge > self.settings['MAX_AGE']:
-        #         log.error('User {0}: Password has expired'.format(username))
-        #         user.profile.password_expired = True
-        #         user.is_active = False
-        #         return user
 
         if conn.bind():
             conn.unbind()
