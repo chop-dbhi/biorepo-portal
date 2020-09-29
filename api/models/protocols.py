@@ -255,7 +255,11 @@ class DataSource(Base):
             rh = ServiceClient.get_rh_for(
                 record_type=ServiceClient.EXTERNAL_SYSTEM)
 
-            return rh.subjects(es.id)
+            try:
+                return rh.subjects(es.id)
+            except:
+                # if there are no subjects in datasource, then return None
+                return None
 
 
 class Protocol(BaseWithImmutableKey):
@@ -403,10 +407,10 @@ class ProtocolDataSource(Base):
         ordering = ['protocol']
 
     protocol = models.ForeignKey(
-        Protocol, related_name='protocol_data_sources')
+        Protocol, related_name='protocol_data_sources', on_delete=models.CASCADE)
 
     data_source = models.ForeignKey(
-        DataSource, verbose_name='Data Source')
+        DataSource, verbose_name='Data Source', on_delete=models.CASCADE)
 
     # Path to the records associated with the protocol on the data_source
     path = models.CharField(
@@ -660,13 +664,15 @@ class ProtocolDataSourceLink(models.Model):
     pds_one = models.ForeignKey(
         ProtocolDataSource,
         verbose_name="Protocol Data Source",
-        related_name='pds_one_set'
+        related_name='pds_one_set',
+        on_delete=models.CASCADE
     )
 
     pds_two = models.ForeignKey(
         ProtocolDataSource,
         verbose_name='Protocol Data Source',
-        related_name='pds_two_set'
+        related_name='pds_two_set',
+        on_delete=models.CASCADE
     )
 
     PLUGIN_CHOICES = []
@@ -751,9 +757,9 @@ class ProtocolUser(Base):
     It defines that User's role (permission level for the protocol).
     """
 
-    protocol = models.ForeignKey(Protocol)
+    protocol = models.ForeignKey(Protocol, on_delete=models.CASCADE)
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     roles = (
         (ProtocolUserConstants.research_coordinator, 'Research Coordinator'),
@@ -778,15 +784,17 @@ class ProtocolUserCredentials(Base):
 
     # TODO: Some of the below fields seem like unecessary duplicates...
 
-    protocol = models.ForeignKey(Protocol, verbose_name='Protocol')
+    protocol = models.ForeignKey(
+        Protocol, verbose_name='Protocol', on_delete=models.CASCADE)
 
     data_source = models.ForeignKey(
-        ProtocolDataSource, verbose_name='Protocol Data Source')
+        ProtocolDataSource, verbose_name='Protocol Data Source', on_delete=models.CASCADE)
 
-    user = models.ForeignKey(User, verbose_name='User')
+    user = models.ForeignKey(
+        User, verbose_name='User', on_delete=models.CASCADE)
 
     protocol_user = models.ForeignKey(
-        ProtocolUser, verbose_name='Protocol User')
+        ProtocolUser, verbose_name='Protocol User', on_delete=models.CASCADE)
 
     data_source_username = models.CharField(
         max_length=50, verbose_name='Username for Data Source', blank=True)

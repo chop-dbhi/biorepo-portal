@@ -23,7 +23,10 @@ class RegistrationProfile(models.Model):
     """
 
     user = models.OneToOneField(
-        UserModelString(), related_name='registration_profile', verbose_name=_('user'))
+        UserModelString(),
+        related_name='registration_profile',
+        verbose_name=_('user'),
+        on_delete=models.CASCADE)
 
     activation_key = models.CharField(_('activation key'), max_length=40)
 
@@ -40,7 +43,11 @@ class RegistrationProfile(models.Model):
 
     # denotes the user has been moderated
     moderator = models.ForeignKey(
-        UserModelString(), related_name='moderated_profiles', null=True, verbose_name=_('moderator'))
+        UserModelString(),
+        related_name='moderated_profiles',
+        null=True,
+        verbose_name=_('moderator'),
+        on_delete=models.CASCADE)
 
     # the time the user was moderated
     moderation_time = models.DateTimeField(_('moderation_time'), null=True)

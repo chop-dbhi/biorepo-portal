@@ -43,14 +43,13 @@ INSTALLED_APPS = [
     'dataentry',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'brp.middleware.LoggingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'session_security.middleware.SessionSecurityMiddleware',
     'dataentry.middleware.CheckPdsCredentialsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

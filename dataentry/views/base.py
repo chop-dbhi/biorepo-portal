@@ -54,7 +54,7 @@ class DataEntryView(TemplateView):
         context = super(DataEntryView, self).get_context_data(**kwargs)
         self.pds = get_object_or_404(ProtocolDataSource, pk=kwargs['pds_id'])
         if not self.subject:
-            self.subject = ServiceClient.ehb_api(subject_api_url, "GET").json()
+            self.subject = ServiceClient.ehb_api(subject_api_url, "GET")
         if not self.record:
             self.record = self.get_external_record(**kwargs)
         if not self.org:

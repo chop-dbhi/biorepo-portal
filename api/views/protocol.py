@@ -129,6 +129,44 @@ class ProtocolOrganizationView(BRPApiView):
         )
 
 
+class ProtocolSubjectsOnlyView(BRPApiView):
+    def get(self, request, pk, *args, **kwargs):
+        """
+        Returns a list of subjects associated with a protocol.
+        """
+        try:
+            p = Protocol.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            return Response({'error': 'Protocol requested not found'}, status=404)
+        if p.isUserAuthorized(request.user):
+            cache_data = cache.get('protocol{0}_sub_only_data'.format(p.id))
+            if cache_data:
+                print("we are using cached data! ")
+                # if all subjects have a modified date in cache then sort using modified date
+                try:
+                    all_subs = sorted(json.loads(cache_data), key=lambda i: datetime.strptime(i['modified'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
+                # if some subjects do not have modified date then sort by PK
+                except:
+                    logger.info('subjects sorted by primary key for protocol {protocol}'.format(protocol=p.id))
+                    all_subs = sorted(json.loads(cache_data), key=lambda i: (i['id'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
+            else:
+                all_subs = SubjectUtils.get_protocol_subjects(p)
+
+        else:
+            return Response(
+                {"detail": "You are not authorized to view subjects in this protocol"},
+                status=403
+            )
+
+        if all_subs:
+            return Response(
+                all_subs,
+                headers={'Access-Control-Allow-Origin': '*'}
+            )
+
+        return Response([])
+
+
 class ProtocolSubjectsView(BRPApiView):
     def get(self, request, pk, *args, **kwargs):
         """
@@ -411,7 +449,7 @@ class ProtocolSubjectDetailView(BRPApiView):
         subject_api_url = "/api/subject/id/" + subject + "/"
         # See if subject exists
         try:
-            ehb_sub = ServiceClient.ehb_api(subject_api_url, "GET").json()
+            ehb_sub = ServiceClient.ehb_api(subject_api_url, "GET")
             protocol = Protocol.objects.get(pk=pk)
             old_group_name = SubjectUtils.protocol_subject_record_group_name(protocol, ehb_sub)
             group = self.g_rh.get(name=old_group_name)
@@ -474,7 +512,7 @@ class ProtocolSubjectDetailView(BRPApiView):
     @staticmethod
     def get_group_id(key):
         get_group_url = '/api/group/?name=' +'BRP:' + key
-        group = ServiceClient.ehb_api(get_group_url, "GET").json()
+        group = ServiceClient.ehb_api(get_group_url, "GET")
         return group['id']
 
     @staticmethod
@@ -491,7 +529,7 @@ class ProtocolSubjectDetailView(BRPApiView):
         ehb_update_subj["old_subject"] = deepcopy(old_subject)
         ehb_update_subj["new_subject"] = deepcopy(new_subject)
         ehb_update_subj_body = '[' + str(json.dumps(deepcopy(ehb_update_subj))) + ']'
-        return ServiceClient.ehb_api(subject_update_api_url, "PUT", json.loads(ehb_update_subj_body))
+        return ServiceClient.ehb_api(subject_update_api_url, "PUT", ehb_update_subj_body)
 
     @classmethod
     def update_subject_group(cls, protocol, subject_update, group):
@@ -506,6 +544,8 @@ class ProtocolSubjectDetailView(BRPApiView):
     def update_subject_cache(cls, protocol_pk, subject_update, new_subject):
         cache_key = 'protocol{0}_sub_data'.format(protocol_pk)
         cache_data = cls.cache.get(cache_key)
+        sub_only_cache_key = 'protocol{0}_sub_only_data'.format(protocol_pk)
+        sub_only_cache_data = cls.cache.get(sub_only_cache_key)
         if cache_data:
             subjects = json.loads(cache_data)
             if new_subject:
@@ -519,6 +559,20 @@ class ProtocolSubjectDetailView(BRPApiView):
             cls.cache.set(cache_key, json.dumps(subjects))
             if hasattr(cls.cache, 'persist'):
                 cls.cache.persist(cache_key)
+
+        if sub_only_cache_key:
+            subjects = json.loads(sub_only_cache_data)
+            if new_subject:
+                subject_update['external_ids'] = []
+                subject_update['external_records'] = []
+                subjects.append(subject_update)
+            else:
+                for i in range(0, len(subjects)):
+                    if subjects[i]['id'] == subject_update['id']:
+                        subjects[i] = subject_update
+            cls.cache.set(sub_only_cache_key, json.dumps(subjects))
+            if hasattr(cls.cache, 'persist'):
+                cls.cache.persist(sub_only_cache_key)
 
 
 class ProtocolSubjFamDetailView(BRPApiView):

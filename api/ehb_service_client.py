@@ -1,5 +1,5 @@
-import requests
 import json
+import http.client
 
 from django.conf import settings
 
@@ -155,25 +155,38 @@ class ServiceClient(object):
             raise Exception(msg)
 
     @staticmethod
-    def ehb_api(url, request_type, payload=None):
-        url = ServiceClient.APP_URL + url
+    def ehb_api(url, request_type, payload=''):
         headers = {
             'Content-Type': "application/json",
             'Api-token': ServiceClient.api_key,
             'GROUP-CLIENT-KEY': ServiceClient.client_key['key'],
             'cache-control': "no-cache",
-            'Accept': "application/json"
+            'Accept': "application/json",
+            'Host': ServiceClient.host
             }
 
-        return requests.request(request_type, url, data=json.dumps(payload), headers=headers)
+        conn = http.client.HTTPConnection(ServiceClient.host)
+        conn.request(request_type, url, payload, headers)
+        response = conn.getresponse()
+        return ServiceClient.format_http_client_response(response)
 
     @staticmethod
     def user_audit(payload):
-        url = ServiceClient.APP_URL + "/api/auditlog/"
         headers = {
             'Content-Type': "application/json",
             'Api-token': ServiceClient.api_key,
             'cache-control': "no-cache"
             }
+        conn = http.client.HTTPConnection(ServiceClient.host)
+        conn.request("POST", "/api/auditlog/", json.dumps(payload), headers)
+        response = conn.getresponse()
+        return ServiceClient.format_http_client_response(response)
 
-        response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
+    @staticmethod
+    def format_http_client_response(payload):
+        data = payload.read()
+        utf_8_data = data.decode("utf-8")
+        json_response = json.loads(utf_8_data)
+        if (str(type(json_response)) == "<class 'list'>"):
+            json_response = json_response[0]
+        return json_response

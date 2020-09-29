@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     'brp_admin',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -72,7 +72,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'brp.middleware.LoggingMiddleware',
     'brp.middleware.MaintenanceMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'session_security.middleware.SessionSecurityMiddleware',
     'dataentry.middleware.CheckPdsCredentialsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

@@ -330,3 +330,37 @@ class SubjectUtils(object):
                 record_id,
                 str(e)
             )
+
+    @staticmethod
+    def get_protocol_subjects(protocol):
+        subjects = protocol.getSubjects()
+        organizations = protocol.organizations.all()
+        all_subs = []
+        ehb_orgs = []
+        if subjects:
+            # We can't rely on Ids being consistent across apps so we must
+            # append the name here for display downstream.
+            for o in organizations:
+                ehb_orgs.append(o.getEhbServiceInstance())
+
+            for sub in subjects:
+                sub_dict = {}
+                sub_dict['external_records'] = []
+                sub_dict['external_ids'] = []
+                sub_dict['organization'] = sub.organization_id
+                sub_dict['organization_subject_id'] = sub.organization_subject_id
+                sub_dict['organization_id_label'] = sub.organization_id_label
+                sub_dict['first_name'] = sub.first_name
+                sub_dict['last_name'] = sub.last_name
+                dob_datetime_obj = sub.dob
+                sub_dict['dob'] = dob_datetime_obj.strftime("%Y-%m-%d")
+                created_datetime_obj = sub.created
+                sub_dict['created'] = created_datetime_obj.strftime("%m/%d/%Y")
+                sub_dict['id'] = sub.id
+
+                for ehb_org in ehb_orgs:
+                    if sub_dict['organization'] == ehb_org.id:
+                        sub_dict['organization_name'] = ehb_org.name
+
+                all_subs.append(sub_dict)
+        return all_subs

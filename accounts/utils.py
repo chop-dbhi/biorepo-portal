@@ -35,14 +35,14 @@ def throttle_login(request):
     attempts. If the user succeeds at a login before the max attempts has
     been reached, the attempts are reset.
     """
+    user_already_inactive = False
+    ip_address = get_ip_address(request)
     email = request.POST.get('email')
     password = request.POST.get('password')
 
     # if the form is not filled out completely, pass along
     if not (email and password):
         return True
-
-    ip_address = get_ip_address(request)
 
     log.debug('[authentication] login attempt from {0} - {1}'.format(ip_address, email.lower()))
 
@@ -54,12 +54,19 @@ def throttle_login(request):
     # session, the IP will be blacklisted.
     key = MAX_LOGIN_ATTEMPTS_KEY % (email.lower(), ip_address)
     attempts = cache.get(key, 0) + 1
+
+    try:
+        user = UserModel.objects.get(email=email.lower())
+    except UserModel.DoesNotExist:
+        try:
+            user = UserModel.objects.get(username=email.lower())
+        except UserModel.DoesNotExist:
+            return False
+
     if attempts >= MAX_LOGIN_ATTEMPTS:
 
         # once the max attempts has been reached, deactive the account
         # and email the admins
-        user_already_inactive = False
-
         try:
             user = UserModel.objects.get(email=email.lower())
         except UserModel.DoesNotExist:
@@ -78,6 +85,9 @@ def throttle_login(request):
             else:
                 user_already_inactive = True
 
+        if user.is_active:
+            user.is_active = False
+            user.save()
         t = get_template('accounts/max_login_attempts.txt')
         c = {
             'user': user,
