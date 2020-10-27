@@ -127,8 +127,9 @@ CACHES = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    'accounts.backends.LdapBackend',
+    # 'accounts.backends.LdapBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'accounts.auth0backend.Auth0'
 )
 
 # Password validation
