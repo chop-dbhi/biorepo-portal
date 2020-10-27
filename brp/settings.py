@@ -62,8 +62,7 @@ INSTALLED_APPS = [
     'api',
     'dataentry',
     'brp_admin',
-    'social_django',
-    'auth0login'
+    'social_django'
 ]
 
 MIDDLEWARE = [
