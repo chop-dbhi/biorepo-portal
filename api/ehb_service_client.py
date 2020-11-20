@@ -164,8 +164,10 @@ class ServiceClient(object):
             'Accept': "application/json",
             'Host': ServiceClient.host
             }
-
-        conn = http.client.HTTPConnection(ServiceClient.host)
+        if ServiceClient.isSecure:
+            conn = http.client.HTTPSConnection(ServiceClient.host)
+        else:
+            conn = http.client.HTTPConnection(ServiceClient.host)
         conn.request(request_type, url, payload, headers)
         response = conn.getresponse()
         return ServiceClient.format_http_client_response(response)
@@ -177,7 +179,10 @@ class ServiceClient(object):
             'Api-token': ServiceClient.api_key,
             'cache-control': "no-cache"
             }
-        conn = http.client.HTTPConnection(ServiceClient.host)
+        if ServiceClient.isSecure:
+            conn = http.client.HTTPSConnection(ServiceClient.host)
+        else:
+            conn = http.client.HTTPConnection(ServiceClient.host)
         conn.request("POST", "/api/auditlog/", json.dumps(payload), headers)
         response = conn.getresponse()
         return ServiceClient.format_http_client_response(response)
