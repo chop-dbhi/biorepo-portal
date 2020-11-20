@@ -22,49 +22,13 @@
     </h1>
   </div>
 </div>
-{% if form.non_field_errors %}
-<div class="row">
-  <div class="info messages col-md-8 col-md-offset-2">
-    <div class="alert alert-danger">
-      <center>
-        {% for e in form.non_field_errors %}
-        <span>{{ e }}</span>{% if not forloop.last %}<br>{% endif %}
-        {% endfor %}
-        <center>
-    </div>
-  </div>
-</div>
-{% endif %}
+<div class="login-box auth0-box before">
+    <a class="btn btn-primary btn-lg btn-login btn-block" href="/login/auth0">Log In</a>
 
-{% if error %}
-<div class="row">
-  <div class="info messages col-md-8 col-md-offset-2">
-    <div class="alert alert-danger">
-      <center>{{ error }}</center>
-    </div>
-  </div>
-</div>
-{% endif %}
-
-{% if login_not_allowed %}
-<p class="message warning">You have reached the maximum number of login attempts. </p>
-{% else %}
-
-<form class="login" method="post" action="{% url 'login' %}">
-  {% csrf_token %}
-  <input type="hidden" name="next" value="{{ next }}">
-  <div class="form-group">
-    <input type="text" class="form-control" id="id_email" name="email" placeholder="user@email.chop.edu">
-  </div>
-  <div class="form-group">
-    <input type="password" class="form-control" id="id_password" name="password" placeholder="Password"></input>
-  </div>
   <a href="{% url 'password_reset' %}">Forgot Password?</a>
 
   <center><button type="submit" class="btn-primary">Login</button></center>
   <center><a href="{% url 'register' %}">New here? Create an account</a></center>
-</form>
-{% endif %}
 </div>
 <div class="col-md-12">
   <div>
