@@ -35,5 +35,7 @@ urlpatterns = [
     url(r'^changelog/$', changelog, name='changelog'),
     url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^brp_admin/', include('brp_admin.urls'), name='brp_admin'),
+    url('', include('django.contrib.auth.urls')),
+    url('', include('social_django.urls')),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
