@@ -62,6 +62,8 @@ INSTALLED_APPS = [
     'api',
     'dataentry',
     'brp_admin',
+    'social_django',
+    'auth0login',
 ]
 
 MIDDLEWARE = [
@@ -76,7 +78,7 @@ MIDDLEWARE = [
     'dataentry.middleware.CheckPdsCredentialsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'accounts.middleware.CheckEulaMiddleware',
+    # 'accounts.middleware.CheckEulaMiddleware',
 ]
 
 ROOT_URLCONF = 'brp.urls'
@@ -124,15 +126,29 @@ CACHES = {
     'default': env.cache(),
 }
 
-AUTHENTICATION_BACKENDS = (
-    'accounts.backends.LdapBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
+# AUTHENTICATION_BACKENDS = (
+#     'accounts.backends.LdapBackend',
+#     'django.contrib.auth.backends.ModelBackend',
+# )
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = []
+# AUTH_PASSWORD_VALIDATORS =
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 # django auth user profile integration
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
@@ -231,14 +247,14 @@ REST_FRAMEWORK = {
 }
 
 # LDAP integration
-LDAP = {}
-LDAP['DEBUG'] = env.bool('LDAP_DEBUG')
-LDAP['PREBINDDN'] = env.str('LDAP_PREBINDDN')
-LDAP['SEARCHDN'] = env.str('LDAP_SEARCHDN')
-LDAP['SEARCH_FILTER'] = env.str('LDAP_SEARCH_FILTER')
-LDAP['SERVER_URI'] = env('LDAP_SERVER_URI')
-LDAP['PREBINDPW'] = env('LDAP_PREBINDPW')
-LDAP['MAX_AGE'] = env.int('LDAP_MAX_AGE')
+# LDAP = {}
+# LDAP['DEBUG'] = env.bool('LDAP_DEBUG')
+# LDAP['PREBINDDN'] = env.str('LDAP_PREBINDDN')
+# LDAP['SEARCHDN'] = env.str('LDAP_SEARCHDN')
+# LDAP['SEARCH_FILTER'] = env.str('LDAP_SEARCH_FILTER')
+# LDAP['SERVER_URI'] = env('LDAP_SERVER_URI')
+# LDAP['PREBINDPW'] = env('LDAP_PREBINDPW')
+# LDAP['MAX_AGE'] = env.int('LDAP_MAX_AGE')
 
 # Enable Performance logging of 'ehb-client' logging facility
 EHB_LOG = env.bool('EHB_LOG', True)
@@ -315,3 +331,42 @@ if FORCE_SCRIPT_NAME:
     LOGOUT_URL = os.path.join(FORCE_SCRIPT_NAME, LOGOUT_URL[1:])
     LOGIN_REDIRECT_URL = os.path.join(
         FORCE_SCRIPT_NAME, LOGIN_REDIRECT_URL[1:])
+
+# SOCIAL AUTH AUTH0 BACKEND CONFIG
+AUTH_USER_MODEL= 'auth.User'
+SOCIAL_AUTH_TRAILING_SLASH = False
+SOCIAL_AUTH_AUTH0_KEY = os.environ.get('AUTH0_CLIENT_ID')
+SOCIAL_AUTH_AUTH0_SECRET = os.environ.get('AUTH0_CLIENT_SECRET')
+SOCIAL_AUTH_AUTH0_SCOPE = [
+    'openid',
+    'profile',
+    'email'
+]
+SOCIAL_AUTH_AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN')
+AUDIENCE = None
+if os.environ.get('AUTH0_AUDIENCE'):
+    AUDIENCE = os.environ.get('AUTH0_AUDIENCE')
+else:
+    if SOCIAL_AUTH_AUTH0_DOMAIN:
+        AUDIENCE = 'https://' + SOCIAL_AUTH_AUTH0_DOMAIN + '/userinfo'
+if AUDIENCE:
+    SOCIAL_AUTH_AUTH0_AUTH_EXTRA_ARGUMENTS = {'audience': AUDIENCE}
+AUTHENTICATION_BACKENDS = {
+    'auth0login.auth0backend.Auth0',
+    # 'social_core.backends.auth0.Auth0OAuth2',
+    'django.contrib.auth.backends.ModelBackend'
+}
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',  # <--- enable this one
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
+LOGIN_URL = '/login/auth0'
+LOGIN_REDIRECT_URL = '/#/'
