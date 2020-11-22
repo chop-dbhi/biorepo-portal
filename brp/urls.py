@@ -20,6 +20,10 @@ from django.conf import settings
 from .views import index, changelog
 from accounts.views import eula, throttled_login
 from django.contrib.auth.views import logout_then_login
+from django.contrib.auth.decorators import login_required
+
+admin.site.login = login_required(admin.site.login)
+
 urlpatterns = [
     url(r'^$', index),
     url(r'^admin/', admin.site.urls),
